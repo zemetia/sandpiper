@@ -1,34 +1,53 @@
-import { RateLimitStrategy, withRateLimit } from 'next-limitr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const LIMIT = 60;
+// The Payload admin fires dozens of /api calls per screen. The cookie is unverified here,
+// so it only raises the ceiling — it never removes the limit.
+const CMS_SESSION_LIMIT = 600;
 const WINDOW_MS = 60_000; // 1 minute
 
-// next-limitr is a Route Handler HOF. We adapt it for middleware.ts by wrapping a
-// noop handler — the 429 path fires our custom `handler` before the noop runs.
-const limitedNoop = withRateLimit({
-  limit: LIMIT,
-  windowMs: WINDOW_MS,
-  strategy: RateLimitStrategy.SLIDING_WINDOW,
-  keyGenerator: (req) =>
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    req.headers.get('x-real-ip') ??
-    'anonymous',
-  handler: (_, usage) =>
-    new NextResponse('Too Many Requests', {
-      status: 429,
-      headers: {
-        'Retry-After': String(Math.max(0, usage.reset - Math.floor(Date.now() / 1000))),
-        'X-RateLimit-Limit': String(usage.limit),
-        'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': String(usage.reset),
-      },
-    }),
-})(() => NextResponse.next());
+// Edge-safe in-memory sliding window rate limiter
+interface RateLimitRecord {
+  count: number;
+  resetAt: number;
+}
+
+const ipMap = new Map<string, RateLimitRecord>();
 
 export async function applyRateLimit(request: NextRequest): Promise<NextResponse | null> {
   if (!request.nextUrl.pathname.startsWith('/api')) return null;
-  const response = await limitedNoop(request);
-  return response.status === 429 ? response : null;
+
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    request.headers.get('x-real-ip') ??
+    'anonymous';
+  const hasSession = request.cookies.has('payload-token');
+  const limit = hasSession ? CMS_SESSION_LIMIT : LIMIT;
+  const key = hasSession ? `cms:${ip}` : ip;
+
+  const now = Date.now();
+  const record = ipMap.get(key);
+
+  if (!record || now > record.resetAt) {
+    ipMap.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return null;
+  }
+
+  record.count += 1;
+
+  if (record.count > limit) {
+    const retryAfter = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
+    return new NextResponse('Too Many Requests', {
+      status: 429,
+      headers: {
+        'Retry-After': String(retryAfter),
+        'X-RateLimit-Limit': String(limit),
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(Math.floor(record.resetAt / 1000)),
+      },
+    });
+  }
+
+  return null;
 }

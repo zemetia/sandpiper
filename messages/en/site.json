@@ -1,0 +1,32 @@
+{
+  "skipToContent": "Skip to content",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "seeFullMenu": "See the full menu",
+  "jumpToSection": "Jump to section",
+  "soldOut": "Sold out today",
+  "seasonal": "Seasonal",
+  "menuEmpty": "The menu is being updated — check back soon.",
+  "hours": "Opening hours",
+  "address": "Find us",
+  "contact": "Contact",
+  "directions": "Get directions",
+  "whatsapp": "Message us on WhatsApp",
+  "follow": "Follow",
+  "rights": "All rights reserved.",
+  "previewMode": "You are viewing a draft preview.",
+  "exitPreview": "Exit preview",
+  "emptyTitle": "Your homepage is ready to build",
+  "emptyBody": "Open the content studio and create a page with the slug \"home\", or load the Sandpiper starter content from the dashboard.",
+  "emptyCta": "Open content studio",
+  "tags": {
+    "signature": "Signature",
+    "new": "New",
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarian",
+    "glutenFree": "Gluten-free",
+    "dairyFree": "Dairy-free",
+    "spicy": "Spicy",
+    "nuts": "Contains nuts"
+  }
+}

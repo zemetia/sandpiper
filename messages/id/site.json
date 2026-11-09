@@ -1,0 +1,32 @@
+{
+  "skipToContent": "Langsung ke konten",
+  "openMenu": "Buka menu",
+  "closeMenu": "Tutup menu",
+  "seeFullMenu": "Lihat menu lengkap",
+  "jumpToSection": "Lompat ke bagian",
+  "soldOut": "Habis hari ini",
+  "seasonal": "Musiman",
+  "menuEmpty": "Menu sedang diperbarui — kembali lagi nanti.",
+  "hours": "Jam buka",
+  "address": "Lokasi",
+  "contact": "Kontak",
+  "directions": "Petunjuk arah",
+  "whatsapp": "Chat kami di WhatsApp",
+  "follow": "Ikuti",
+  "rights": "Hak cipta dilindungi.",
+  "previewMode": "Anda sedang melihat pratinjau draf.",
+  "exitPreview": "Keluar pratinjau",
+  "emptyTitle": "Beranda Anda siap dibangun",
+  "emptyBody": "Buka studio konten dan buat halaman dengan slug \"home\", atau muat konten awal Sandpiper dari dasbor.",
+  "emptyCta": "Buka studio konten",
+  "tags": {
+    "signature": "Andalan",
+    "new": "Baru",
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarian",
+    "glutenFree": "Bebas gluten",
+    "dairyFree": "Bebas susu",
+    "spicy": "Pedas",
+    "nuts": "Mengandung kacang"
+  }
+}

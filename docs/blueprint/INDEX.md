@@ -17,6 +17,7 @@ Cross-linked reference for AI agents. Every path is a backlink. Read this file f
 | [SERVICES.md](./SERVICES.md) | ApiClient, interceptors, domain services, Zod schemas | API calls, validation, error handling |
 | [STATE.md](./STATE.md) | Zustand stores, cookie persistence, storage decision tree | Global state, persistence |
 | [SEO_GEO_LLM.md](./SEO_GEO_LLM.md) | SEO metadata, GEO structured data, sitemap, robots, LLMs.txt | Any public page — read before writing metadata or content |
+| [CMS.md](./CMS.md) | Payload collections, blocks, globals, admin UI, preview, seed | Any content, page or admin change |
 | [KNOWLEDGE.md](./KNOWLEDGE.md) | Rules for THIS.md + LEARN.md — the learning system | Before every task; after every correction or new insight |
 
 ---
@@ -25,11 +26,14 @@ Cross-linked reference for AI agents. Every path is a backlink. Read this file f
 
 | Package | Version | Config / Entry |
 |---|---|---|
-| next | 16.2.7 | [next.config.ts](../../next.config.ts) |
+| next | 16.4.5 | [next.config.ts](../../next.config.ts) |
 | react | 19.2.7 | Server Components default |
 | typescript | 6.0.3 | [tsconfig.json](../../tsconfig.json) |
 | tailwindcss | v4 | [src/app/globals.css](../../src/app/globals.css) `@theme {}` |
 | next-intl | 4.13.0 | [src/i18n/routing.ts](../../src/i18n/routing.ts) |
+| payload | 3.93.0 | [src/payload.config.ts](../../src/payload.config.ts) → [CMS.md](./CMS.md) |
+| @payloadcms/db-postgres | 3.93.0 | `DATABASE_URI` |
+| @tanstack/react-query | 5.101.0 | [src/providers/QueryProvider.tsx](../../src/providers/QueryProvider.tsx) |
 | zustand | 5.0.14 | [src/stores/](../../src/stores/) |
 | sonner | 2.0.7 | [src/components/ui/Sonner/](../../src/components/ui/Sonner/) |
 | @shadcn/ui | CLI only | [components.json](../../components.json) |
@@ -52,6 +56,9 @@ Cross-linked reference for AI agents. Every path is a backlink. Read this file f
 // Utilities
 import { cn }                          from '@/lib/cn';
 import { formatDate, truncate, assertNever } from '@/lib/utils';
+import { formatPrice }                 from '@/lib/format';
+import { isSafePath }                  from '@/lib/safe-path';
+import { buildMetadata, localizedUrl } from '@/lib/seo';
 import { captureError, captureMessage } from '@/lib/sentry';
 import { getCookie, setCookie }         from '@/lib/cookies';
 
@@ -70,9 +77,13 @@ import { toast }                       from '@/hooks';   // direct sonner fn
 import { apiClient, ApiError }         from '@/services';
 import { healthService }               from '@/services';
 
+// CMS — server-only, NOT in the @/services barrel (it would bundle Payload client-side)
+import { cmsService }                  from '@/services/cms.service';
+import type { Page, MenuItem }         from '@/payload-types';   // generated
+
 // Types — DTOs (service layer only) + VOs (services + pages)
 import type { AdminDTO, AdminListDTO } from '@/types/dtos';
-import type { AdminVO, AdminListVO }   from '@/types/value-objects';
+import type { AdminVO, AdminListVO, SiteSettingsVO, MenuItemVO } from '@/types/value-objects';
 
 // i18n — NEVER import from 'next/navigation'
 import { Link, useRouter, usePathname, redirect } from '@/i18n/navigation';
@@ -80,11 +91,12 @@ import { routing }                     from '@/i18n/routing';
 
 // UI Components
 import { Button, Input, Badge, Card, Typography, Toaster } from '@/components/ui';
-import { Header, Footer, PageWrapper } from '@/components/layout';
-import { LanguageSwitcher }            from '@/components/shared';
+import { Header, Footer, PageWrapper, AnnouncementBar } from '@/components/layout';
+import { LanguageSwitcher, StructuredData } from '@/components/shared';
+import { CmsPage, cmsMetadata }        from '@/components/cms/CmsPage';
 
 // Providers
-import { PostHogProvider }             from '@/providers';
+import { PostHogProvider, QueryProvider } from '@/providers';
 ```
 
 ---
@@ -103,8 +115,11 @@ import { PostHogProvider }             from '@/providers';
 | 8 | One `<Toaster />` mount only | [src/app/[locale]/layout.tsx](../../src/app/%5Blocale%5D/layout.tsx) |
 | 9 | `displayName` on every component | Required for Sentry + DevTools |
 | 10 | Sentry/PostHog are no-ops without env vars | Safe to omit in dev |
-| 11 | `middleware.ts` is deprecated — use `proxy.ts` only | Next.js 16 renamed this convention |
-| 12 | Proxy logic lives in `src/proxy/` — compose in `proxy.ts` | No inline logic in proxy.ts beyond orchestration |
+| 11 | Request intercept lives in `src/middleware.ts` (export `middleware`) — never root `proxy.ts` | Known production/Windows bugs in Next.js 16 → [04-proxy.md](./ARCHITECTURE/04-proxy.md) |
+| 12 | Intercept logic lives in `src/proxy/` — compose in `src/middleware.ts` | No inline logic in middleware beyond orchestration |
+| 13 | `/admin`, `/api`, `/preview` bypass next-intl | Otherwise Payload redirects to `/en/admin` |
+| 14 | Visitor-facing content lives in Payload, not in code or `messages/` | `messages/` holds UI chrome strings only → [CMS.md](./CMS.md) |
+| 15 | Never hand-edit `importMap.js` or `payload-types.ts` | Generated files — see [CMS.md](./CMS.md) |
 
 ---
 
@@ -134,7 +149,11 @@ import { PostHogProvider }             from '@/providers';
 
 ### New Page
 
-- [ ] [src/app/[locale]/<path>/page.tsx](../../src/app/%5Blocale%5D/) — Server Component by default
+**Default: create it in the CMS** (`/admin` → Pages). It is served by [src/app/[locale]/[...slug]/page.tsx](../../src/app/%5Blocale%5D/%5B...slug%5D/page.tsx) via `CmsPage`, which already handles `buildMetadata()`, `<StructuredData>`, draft preview and the sitemap. Optionally add a `siteConfig.pages` entry for fallback SEO copy + `/llms.txt` listing.
+
+Only for a page that must be hand-coded (not CMS-driven):
+
+- [ ] [src/app/[locale]/<path>/page.tsx](../../src/app/%5Blocale%5D/) — Server Component by default (a static segment wins over `[...slug]`)
 - [ ] `generateStaticParams` if dynamic segments
 - [ ] Translation keys in [messages/en/<ns>.json](../../messages/en/) and [messages/id/<ns>.json](../../messages/id/)
 - [ ] Namespace in [src/i18n/request.ts](../../src/i18n/request.ts) if new namespace
@@ -143,8 +162,13 @@ import { PostHogProvider }             from '@/providers';
 - [ ] `<StructuredData id="webpage" schema={webPageSchema(...)} />` from `@/lib/structured-data`
 - [ ] `<StructuredData id="breadcrumb" schema={breadcrumbSchema(...)} />` (all pages except home)
 
+### New Block / Collection / Global
+
+- [ ] Follow [CMS.md](./CMS.md) — config, regenerate `payload-types.ts`, renderer, admin nav icon
+
 ### New Locale
 
 - [ ] Add to `routing.locales` in [src/i18n/routing.ts](../../src/i18n/routing.ts)
+- [ ] Add to `localization.locales` in [src/payload.config.ts](../../src/payload.config.ts)
 - [ ] Create [messages/<locale>/](../../messages/) with all namespace JSON files
 - [ ] Middleware + `generateStaticParams` auto-handle the rest

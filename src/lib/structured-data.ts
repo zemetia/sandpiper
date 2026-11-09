@@ -49,6 +49,7 @@ export interface WebPageSchemaOptions {
   /** ISO 8601, e.g. '2024-01-01' */
   datePublished?: string;
   dateModified?: string;
+  locale?: string;
 }
 
 /** WebPage schema — attach to every public page. */
@@ -62,7 +63,43 @@ export function webPageSchema(opts: WebPageSchemaOptions): WithContext<unknown> 
     isPartOf: { '@type': 'WebSite', url: siteConfig.url, name: siteConfig.name },
     ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
     ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
-    inLanguage: 'en',
+    inLanguage: opts.locale ?? 'en',
+  };
+}
+
+export interface LocalBusinessOptions {
+  name: string;
+  description?: string | null;
+  url: string;
+  image?: string | null;
+  telephone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  mapUrl?: string | null;
+  hours: { days: string; time: string }[];
+  sameAs: string[];
+  menuUrl: string;
+}
+
+/** CafeOrCoffeeShop schema — powers the local knowledge panel and AI "cafés near me" answers. */
+export function localBusinessSchema(opts: LocalBusinessOptions): WithContext<unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CafeOrCoffeeShop',
+    name: opts.name,
+    url: opts.url,
+    menu: opts.menuUrl,
+    servesCuisine: ['Coffee', 'Indonesian', 'Brunch'],
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.image ? { image: opts.image } : {}),
+    ...(opts.telephone ? { telephone: opts.telephone } : {}),
+    ...(opts.email ? { email: opts.email } : {}),
+    ...(opts.address
+      ? { address: { '@type': 'PostalAddress', streetAddress: opts.address.replace(/\n/g, ', ') } }
+      : {}),
+    ...(opts.mapUrl ? { hasMap: opts.mapUrl } : {}),
+    ...(opts.hours.length ? { openingHours: opts.hours.map((h) => `${h.days} ${h.time}`) } : {}),
+    ...(opts.sameAs.length ? { sameAs: opts.sameAs } : {}),
   };
 }
 
@@ -169,5 +206,6 @@ export function articleSchema(opts: ArticleSchemaOptions): WithContext<unknown> 
  * ```
  */
 export function serializeSchema(schema: WithContext<unknown> | WithContext<unknown>[]): string {
-  return JSON.stringify(schema);
+  // CMS-authored strings flow into JSON-LD — escape "<" so "</script>" cannot break out.
+  return JSON.stringify(schema).replace(/</g, '\\u003c');
 }

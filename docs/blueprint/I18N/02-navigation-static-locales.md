@@ -131,8 +131,9 @@ t('items', { count: 3 })  // "3 items"
 | Step | Action |
 |---|---|
 | 1 | Add locale string to `locales` array in [src/i18n/routing.ts](../../../src/i18n/routing.ts) |
-| 2 | Create `messages/<locale>/common.json`, `navigation.json`, `home.json` |
-| 3 | Done — `intlMiddleware` in `proxy.ts` and `generateStaticParams` auto-handle the rest |
+| 2 | Create `messages/<locale>/common.json`, `navigation.json`, `home.json`, `site.json` |
+| 3 | Add the locale to `localization.locales` in [src/payload.config.ts](../../../src/payload.config.ts), then translate CMS content in the admin |
+| 4 | Done — `intlMiddleware` in `src/middleware.ts` and `generateStaticParams` auto-handle the rest |
 
 ---
 

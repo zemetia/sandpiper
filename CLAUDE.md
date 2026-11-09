@@ -33,6 +33,7 @@
 | TypeScript + ESLint + anti-patterns | [docs/blueprint/BEST_PRACTICE.md](docs/blueprint/BEST_PRACTICE.md) |
 | **SEO + GEO + LLMs.txt** | [docs/blueprint/SEO_GEO_LLM.md](docs/blueprint/SEO_GEO_LLM.md) |
 | **Knowledge system rules** | [docs/blueprint/KNOWLEDGE.md](docs/blueprint/KNOWLEDGE.md) |
+| **Payload CMS — collections, blocks, preview** | [docs/blueprint/CMS.md](docs/blueprint/CMS.md) |
 
 ## Stack snapshot
 

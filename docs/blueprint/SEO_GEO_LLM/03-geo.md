@@ -14,56 +14,49 @@ Where traditional SEO wins clicks, GEO wins **citations in AI-generated answers*
 
 ## File: `src/lib/structured-data.ts`
 
-Exports schema builders and a `serializeSchema()` serializer. Render schemas as raw `<script>` tags in Server Components (safe — `JSON.stringify` escapes all HTML).
+Exports schema builders and a `serializeSchema()` serializer. Render them with the `<StructuredData>` component from `@/components/shared` — never hand-write the `<script>`. `serializeSchema` escapes `<` as `\u003c`, so CMS-authored strings containing `</script>` cannot break out.
 
 | Export | Schema type | Use on |
 |---|---|---|
 | `organizationSchema()` | `Organization` | Root layout or home page — once per site |
-| `webPageSchema(opts)` | `WebPage` | Every public page |
+| `webPageSchema(opts)` | `WebPage` | Every public page (pass `locale` → `inLanguage`) |
+| `localBusinessSchema(opts)` | `CafeOrCoffeeShop` | Home page — built from CMS `SiteSettings` (address, hours, phone, socials, menu URL) |
 | `faqSchema(faqs)` | `FAQPage` | Any page with a FAQ section |
 | `breadcrumbSchema(items)` | `BreadcrumbList` | All pages except home |
 | `articleSchema(opts)` | `Article` | Blog posts, changelog, docs |
-| `serializeSchema(schema)` | — | Converts a schema to a JSON string for `dangerouslySetInnerHTML` |
+| `serializeSchema(schema)` | — | Escaped JSON string — used internally by `<StructuredData>` |
 
 ---
 
 ## Using Structured Data in Pages
 
-Inline the `<script>` tag in your Server Component. This is the standard Next.js App Router pattern — no extra wrapper component needed:
+**CMS pages need nothing extra** — `CmsPage` renders `webpage`, `breadcrumb` (non-home), `business` (home, `localBusinessSchema` from `SiteSettings`) and `faq` (when the page has an FAQ block).
+
+For a hand-coded page, use `<StructuredData>`:
 
 ```tsx
-// src/app/[locale]/about/page.tsx
-import { serializeSchema, webPageSchema, breadcrumbSchema } from '@/lib/structured-data';
+// src/app/[locale]/<path>/page.tsx
+import { StructuredData } from '@/components/shared';
 import { siteConfig } from '@/config/site';
+import { localizedUrl } from '@/lib/seo';
+import { breadcrumbSchema, webPageSchema } from '@/lib/structured-data';
 
-export default function AboutPage() {
+export default async function Page({ params }: Props) {
+  const { locale } = await params;
+  const page = siteConfig.pages['about'];
+  const url = localizedUrl('/about', locale);
   return (
     <>
-      <script
-        id="webpage-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeSchema(
-            webPageSchema({
-              name: 'About My Product',
-              description: siteConfig.pages['about']?.description ?? '',
-              url: `${siteConfig.url}/about`,
-              datePublished: '2024-01-01',
-            })
-          ),
-        }}
+      <StructuredData
+        id="webpage"
+        schema={webPageSchema({ name: page?.title ?? '', description: page?.description ?? '', url, locale })}
       />
-      <script
-        id="breadcrumb-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeSchema(
-            breadcrumbSchema([
-              { name: 'Home', url: siteConfig.url },
-              { name: 'About', url: `${siteConfig.url}/about` },
-            ])
-          ),
-        }}
+      <StructuredData
+        id="breadcrumb"
+        schema={breadcrumbSchema([
+          { name: siteConfig.name, url: localizedUrl('/', locale) },
+          { name: 'About', url },
+        ])}
       />
       {/* page content */}
     </>
@@ -71,45 +64,16 @@ export default function AboutPage() {
 }
 ```
 
-### Organization schema — root layout (once per site)
-
-```tsx
-// src/app/[locale]/layout.tsx
-import { serializeSchema, organizationSchema } from '@/lib/structured-data';
-
-// Inside the layout JSX:
-<script
-  id="org-schema"
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema()) }}
-/>
-```
+`id` becomes `ld-<id>` on the `<script>`; keep it unique per page.
 
 ---
 
 ## FAQ Schema
 
-Use on any page that has a Q&A section. This drives "People also ask" rich results and populates AI answer boxes.
+Drives "People also ask" rich results and AI answer boxes. On CMS pages, adding an **FAQ block** is enough — `CmsPage` collects its items into `faqSchema()`. Hand-coded:
 
 ```tsx
-import { serializeSchema, faqSchema } from '@/lib/structured-data';
-
-const faqs = [
-  {
-    question: 'How long does it take to set up My Product?',
-    answer: 'Under 5 minutes — clone, run npm install, copy .env.example to .env.local, and run npm run dev.',
-  },
-  {
-    question: 'Does My Product support TypeScript?',
-    answer: 'Yes. My Product is built with TypeScript 6 in strict mode with noUncheckedIndexedAccess.',
-  },
-];
-
-<script
-  id="faq-schema"
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{ __html: serializeSchema(faqSchema(faqs)) }}
-/>
+<StructuredData id="faq" schema={faqSchema([{ question: '…', answer: '…' }])} />
 ```
 
 ---

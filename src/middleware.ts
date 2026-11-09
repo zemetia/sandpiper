@@ -13,8 +13,14 @@ export async function middleware(request: NextRequest) {
   const rateLimited = await applyRateLimit(request);
   if (rateLimited) return rateLimited;
 
-  // API routes — skip intl routing, only security headers
-  if (request.nextUrl.pathname.startsWith('/api')) {
+  const { pathname } = request.nextUrl;
+
+  // Admin, API and draft-preview routes — skip intl routing, only security headers
+  if (
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/preview')
+  ) {
     return applySecurityHeaders(NextResponse.next());
   }
 
@@ -25,6 +31,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // All routes except static assets — /api is included so rate limiting applies
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)).*)',
+    // SEO files (sitemap/robots/llms.txt) are excluded so they are not locale-redirected.
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)).*)',
   ],
 };

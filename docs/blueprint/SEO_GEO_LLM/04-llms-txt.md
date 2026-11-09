@@ -62,7 +62,7 @@ Two-sentence pitch...
 
 LLMs.txt is auto-generated from `siteConfig`. Workflow:
 
-1. **New page** → add to `siteConfig.pages` → sitemap + llms.txt update automatically
+1. **New core page** → add to `siteConfig.pages` → sitemap + llms.txt update automatically. CMS-only pages reach the sitemap but not llms.txt — add a `siteConfig.pages` entry if LLMs should know about them
 2. **Rebranding / description change** → edit `siteConfig.name`, `company.*`, `description`
 3. **New locale** → the "Guidance for AI Systems" section is the only manual part — update `src/app/llms.txt/route.ts` language list if adding a locale beyond `en` + `id`
 

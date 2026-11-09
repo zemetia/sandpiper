@@ -25,18 +25,18 @@ Browser Request
 src/middleware.ts  (Node.js — runs before route rendering)
     │
     ├── applyRateLimit(request)
-    │       /api/* only — sliding window 60 req/min per IP
+    │       /api/* only — 60 req/min per IP (600 with payload-token cookie)
     │       → 429 Too Many Requests (early return)        if exceeded
     │       → null                                        if ok
     │
-    ├── /api/* routes
-    │       applySecurityHeaders(NextResponse.next())
-    │       → continue to Route Handler
+    ├── /admin, /api/*, /preview
+    │       applySecurityHeaders(NextResponse.next())   ← no locale routing
+    │       → Payload admin / REST / GraphQL, Route Handlers, draft-mode toggle
     │
     └── page routes
             intlMiddleware(request)   ← createMiddleware(routing) from next-intl
                 reads Accept-Language, sets locale cookie,
-                redirects /path → /id/path (non-default locale)
+                redirects /path → /en/path (localePrefix: 'always')
             applySecurityHeaders(intlResponse)
             → continue to src/app/[locale]/layout.tsx
 ```
@@ -48,7 +48,7 @@ src/middleware.ts  (Node.js — runs before route rendering)
 | File | Purpose |
 |---|---|
 | [`src/middleware.ts`](../../../src/middleware.ts) | Root entry — composes all intercept logic, exports `config.matcher` |
-| [`src/proxy/rate-limit.ts`](../../../src/proxy/rate-limit.ts) | Sliding window rate limiter for `/api/*` routes |
+| [`src/proxy/rate-limit.ts`](../../../src/proxy/rate-limit.ts) | In-memory rate limiter for `/api/*` routes |
 | [`src/proxy/security-headers.ts`](../../../src/proxy/security-headers.ts) | Attaches security headers to every response |
 
 ---
@@ -61,44 +61,27 @@ src/middleware.ts  (Node.js — runs before route rendering)
 applyRateLimit(request: NextRequest): Promise<NextResponse | null>
 ```
 
-Powered by **[next-limitr](https://github.com/Pallepadehat/next-limitr)**.
-
-`next-limitr` is a Route Handler HOF (`withRateLimit(config)(handler)`). In `middleware.ts` we adapt it by wrapping a noop handler — when the rate limit is hit, `next-limitr` fires our custom `handler` and returns 429 before the noop is ever called.
+Self-contained, Edge-safe in-memory limiter (a `Map` keyed by IP). It replaced the earlier `next-limitr` adapter; the package is still in `package.json` but unused.
 
 | Detail | Value |
 |---|---|
-| Library | `next-limitr` |
-| Algorithm | `RateLimitStrategy.SLIDING_WINDOW` |
+| Algorithm | Fixed window per key (`count` + `resetAt`) |
 | Default limit | 60 requests / 60 s per IP |
+| CMS session limit | 600 requests / 60 s when a `payload-token` cookie is present (key `cms:<ip>`) — the admin fires dozens of `/api` calls per screen. The cookie is **not verified** here, so it only raises the ceiling, never removes it |
 | Key | `x-forwarded-for[0]` → `x-real-ip` → `'anonymous'` |
-| Applies to | `/api/*` only |
+| Applies to | `/api/*` only (includes Payload REST/GraphQL) |
 | Response | `429` with `Retry-After`, `X-RateLimit-*` headers |
-| Storage | In-memory (default) — swap to `RedisStorage` for multi-instance |
+| Storage | Per-instance memory — replace with a shared KV (Redis/Upstash) for multi-instance |
 
 To change the limit, edit the constants at the top of `rate-limit.ts`:
 
 ```ts
-const LIMIT = 60;        // max requests per window
-const WINDOW_MS = 60_000; // window duration in ms
+const LIMIT = 60;               // anonymous requests per window
+const CMS_SESSION_LIMIT = 600;  // with payload-token cookie
+const WINDOW_MS = 60_000;       // window duration in ms
 ```
 
-To switch to Redis for multi-instance deployments:
-
-```ts
-import { RedisStorage } from 'next-limitr';
-import { Redis } from 'ioredis';
-
-const redis = new Redis({ host: '...', port: 6379 });
-
-const limitedNoop = withRateLimit({
-  limit: LIMIT,
-  windowMs: WINDOW_MS,
-  strategy: RateLimitStrategy.SLIDING_WINDOW,
-  storage: 'redis',
-  redisClient: redis,
-  // ...rest unchanged
-})(() => NextResponse.next());
-```
+For multi-instance deployments, swap the `ipMap` reads/writes for an Edge-compatible KV client (e.g. `@upstash/ratelimit`), keeping the `applyRateLimit` signature.
 
 ### Security Headers (`src/proxy/security-headers.ts`)
 
@@ -123,12 +106,22 @@ applySecurityHeaders(response: NextResponse): NextResponse
 // src/middleware.ts
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)).*)',
   ],
 };
 ```
 
-Static assets (`_next/static`, `_next/image`, `favicon.ico`, images) are excluded. `/api` routes are **included** so rate limiting applies.
+Static assets (`_next/static`, `_next/image`, `favicon.ico`, images) are excluded. `sitemap.xml`, `robots.txt` and `llms.txt` are excluded so next-intl never locale-redirects them. `/api` routes are **included** so rate limiting applies.
+
+## CMS Route Bypass
+
+`/admin`, `/api` and `/preview` skip `intlMiddleware` — otherwise next-intl redirects `/admin` to `/en/admin` and Payload 404s. Any new non-localized top-level route (webhooks, feeds) must be added to this check:
+
+```ts
+if (pathname.startsWith('/admin') || pathname.startsWith('/api') || pathname.startsWith('/preview')) {
+  return applySecurityHeaders(NextResponse.next());
+}
+```
 
 ---
 
@@ -149,7 +142,8 @@ export async function middleware(request: NextRequest) {
   const authBlocked = await applyAuthGuard(request);  // ← new early-exit handler
   if (authBlocked) return authBlocked;
 
-  if (request.nextUrl.pathname.startsWith('/api')) {
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith('/admin') || pathname.startsWith('/api') || pathname.startsWith('/preview')) {
     return applySecurityHeaders(NextResponse.next());
   }
 
@@ -168,6 +162,7 @@ export async function middleware(request: NextRequest) {
 | 3 | Rate limiter is in-memory — not suitable for multi-instance without KV replacement |
 | 4 | Auth logic in middleware is a first-line filter only — always re-verify inside Server Functions |
 | 5 | Use `src/middleware.ts` — never root `proxy.ts` (known production/Windows bugs in Next.js 16) |
+| 6 | Never import Payload (`payload`, `@payload-config`) in middleware — verify CMS sessions in Route Handlers via `payload.auth()` |
 
 ---
 

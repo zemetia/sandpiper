@@ -6,9 +6,7 @@
 
 import type { MetadataRoute } from 'next';
 
-export type SitemapChangeFreq = NonNullable<
-  MetadataRoute.Sitemap[number]['changeFrequency']
->;
+export type SitemapChangeFreq = NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
 
 export interface PageConfig {
   /** URL path relative to root, e.g. '/about' */
@@ -56,64 +54,70 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   // ─── Core Identity ───────────────────────────────────────────────────────────
-  name: 'My Product',
-  tagline: 'One sentence that nails the value proposition.',
+  // Brand copy for SEO/GEO/LLMs.txt. Visitor-facing contact details, hours and
+  // navigation are edited in the CMS (Site settings / Header / Footer globals).
+  name: 'Sandpiper',
+  tagline: 'Specialty coffee and all-day kitchen by the shore.',
   description:
-    'Two-sentence pitch: what the product does, who it is for, and what makes it different from alternatives.',
-  url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://example.com',
+    'Sandpiper is a neighbourhood café serving single-origin Indonesian coffee, all-day breakfast and seasonal plates. Open daily from 7am, with Wi-Fi, vegan options and a view of the water.',
+  url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://sandpiper.cafe',
 
   // ─── Brand Assets ────────────────────────────────────────────────────────────
   ogImage: '/og.png',
 
   // ─── Company Details (drives Organization schema + LLMs.txt) ─────────────────
   company: {
-    legalName: 'My Company, Inc.',
+    legalName: 'Sandpiper Café',
     foundedYear: 2024,
-    industry: 'Software / SaaS',
+    industry: 'Food & beverage / Specialty coffee café',
     targetAudience:
-      'Developers and product teams building modern web applications who need …',
+      'Locals, remote workers and travellers looking for great coffee, an all-day brunch menu and a relaxed place to sit by the water.',
     problemSolved:
-      'Most teams waste weeks bootstrapping the same infrastructure decisions — auth, state, i18n, design system — before they can ship any real product value.',
+      'Good specialty coffee and honest food in a calm setting are hard to find in one place — most cafés pick either the coffee or the kitchen.',
     solution:
-      'My Product is a production-ready Next.js template with every architectural decision pre-made, documented, and tested, so teams can ship features from day one.',
+      'Sandpiper roasts single-origin Indonesian beans weekly and runs a full kitchen from open to close, with clearly labelled vegan, vegetarian and gluten-free options.',
     keyBenefits: [
-      'Zero config — works out of the box with TypeScript, Tailwind v4, and next-intl',
-      'Opinionated patterns that scale — CVA components, Zustand stores, Zod validation',
-      'AI-agent friendly — every pattern is documented in machine-readable blueprint docs',
+      'Single-origin Indonesian coffee (Aceh, Toraja, Flores) roasted in small weekly batches',
+      'All-day breakfast and Indonesian classics, made in-house',
+      'Vegan, vegetarian and gluten-free dishes tagged on every menu item',
+      'Open daily from 07:00 with fast Wi-Fi and seating by the water',
     ],
-    contactEmail: 'contact@example.com',
-    socialLinks: {
-      twitter: 'https://twitter.com/handle',
-      github: 'https://github.com/org/repo',
-      linkedin: 'https://linkedin.com/company/my-company',
-    },
+    contactEmail: 'hello@sandpiper.cafe',
+    socialLinks: {},
   },
 
   // ─── SEO Settings ────────────────────────────────────────────────────────────
   seo: {
-    titleTemplate: '%s | My Product',
-    defaultTitle: 'My Product — One sentence value prop',
-    twitterHandle: '@handle',
+    titleTemplate: '%s · Sandpiper',
+    defaultTitle: 'Sandpiper — Specialty coffee & all-day kitchen',
     locale: 'en_US',
   },
 
   // ─── Pages Registry ──────────────────────────────────────────────────────────
-  // Add a new entry here every time you create a new public page.
+  // Core pages. Any other page published in the CMS is added to the sitemap automatically.
   // Path is locale-stripped (the sitemap helper adds locale prefixes).
   pages: {
     home: {
       path: '/',
-      title: 'My Product — One sentence value prop',
+      title: 'Sandpiper — Specialty coffee & all-day kitchen',
       description:
-        'My Product is a production-ready Next.js 16 template. Ship features from day one with TypeScript, Tailwind v4, next-intl, Zustand, and full SEO / GEO / LLMs.txt support.',
+        'Neighbourhood café serving single-origin Indonesian coffee, all-day breakfast and seasonal plates. See the menu, opening hours and how to find us.',
       changeFreq: 'weekly',
       priority: 1.0,
     },
+    menu: {
+      path: '/menu',
+      title: 'Menu — coffee, breakfast & mains',
+      description:
+        'The full Sandpiper menu with prices: espresso and pour-over coffee, teas, all-day breakfast, Indonesian mains and house-baked pastry. Vegan and gluten-free options marked.',
+      changeFreq: 'daily',
+      priority: 0.9,
+    },
     about: {
       path: '/about',
-      title: 'About My Product',
+      title: 'About Sandpiper — our story, hours & location',
       description:
-        'Learn the story, team, and mission behind My Product — the opinionated Next.js template built for teams who want to skip the boilerplate and focus on shipping.',
+        'How Sandpiper sources and roasts its coffee, what the kitchen cooks, answers to common questions, and our opening hours and address.',
       changeFreq: 'monthly',
       priority: 0.8,
     },
