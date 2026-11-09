@@ -72,11 +72,9 @@ export async function middleware(request: NextRequest) {
 |---|---|
 | [messages/en/common.json](../../../messages/en/common.json) | `common` |
 | [messages/en/navigation.json](../../../messages/en/navigation.json) | `navigation` |
-| [messages/en/home.json](../../../messages/en/home.json) | `home` |
 | [messages/en/site.json](../../../messages/en/site.json) | `site` |
 | [messages/id/common.json](../../../messages/id/common.json) | `common` |
 | [messages/id/navigation.json](../../../messages/id/navigation.json) | `navigation` |
-| [messages/id/home.json](../../../messages/id/home.json) | `home` |
 | [messages/id/site.json](../../../messages/id/site.json) | `site` |
 
 Namespace key = JSON filename without extension. Loaded in `src/i18n/request.ts`:
@@ -87,7 +85,6 @@ return {
   messages: {
     common:     (await import(`../../messages/${locale}/common.json`)).default,
     navigation: (await import(`../../messages/${locale}/navigation.json`)).default,
-    home:       (await import(`../../messages/${locale}/home.json`)).default,
     site:       (await import(`../../messages/${locale}/site.json`)).default,
   },
 };

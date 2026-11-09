@@ -46,7 +46,7 @@ toast.error('msg');      // direct sonner fn — outside components
 |---|---|
 | [src/i18n/routing.ts](../../../src/i18n/routing.ts) | `defineRouting` — locales `['en','id']`, `localePrefix: 'always'` |
 | [src/i18n/navigation.ts](../../../src/i18n/navigation.ts) | `Link`, `redirect`, `usePathname`, `useRouter`, `getPathname` |
-| [src/i18n/request.ts](../../../src/i18n/request.ts) | `getRequestConfig` — loads `common`, `navigation`, `home`, `site` per locale per RSC render |
+| [src/i18n/request.ts](../../../src/i18n/request.ts) | `getRequestConfig` — loads `common`, `navigation`, `site` per locale per RSC render |
 
 ---
 
@@ -147,11 +147,9 @@ Payload has no DTO layer: the generated types in `src/payload-types.ts` play tha
 |---|---|---|
 | [messages/en/common.json](../../../messages/en/common.json) | `common` | Shared labels, buttons, errors |
 | [messages/en/navigation.json](../../../messages/en/navigation.json) | `navigation` | Nav labels |
-| [messages/en/home.json](../../../messages/en/home.json) | `home` | Unused since the homepage moved to the CMS — safe to remove with its `request.ts` import |
 | [messages/en/site.json](../../../messages/en/site.json) | `site` | Site chrome: skip link, menu toggles, footer labels, preview banner, empty-site state |
 | [messages/id/common.json](../../../messages/id/common.json) | `common` | Indonesian |
 | [messages/id/navigation.json](../../../messages/id/navigation.json) | `navigation` | Indonesian |
-| [messages/id/home.json](../../../messages/id/home.json) | `home` | Indonesian |
 | [messages/id/site.json](../../../messages/id/site.json) | `site` | Indonesian |
 
 Namespace key = JSON filename without extension. Loaded in [src/i18n/request.ts](../../../src/i18n/request.ts). `messages/` is for UI chrome only — page content, nav labels and menu copy are localized fields in Payload.

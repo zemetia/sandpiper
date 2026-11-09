@@ -61,7 +61,7 @@ src/middleware.ts  (Node.js — runs before route rendering)
 applyRateLimit(request: NextRequest): Promise<NextResponse | null>
 ```
 
-Self-contained, Edge-safe in-memory limiter (a `Map` keyed by IP). It replaced the earlier `next-limitr` adapter; the package is still in `package.json` but unused.
+Self-contained, Edge-safe in-memory limiter (a `Map` keyed by IP). No external dependency.
 
 | Detail | Value |
 |---|---|

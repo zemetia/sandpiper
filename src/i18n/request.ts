@@ -9,10 +9,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requestedLocale
     : routing.defaultLocale;
 
-  const [common, navigation, home, site] = await Promise.all([
+  const [common, navigation, site] = await Promise.all([
     import(`../../messages/${locale}/common.json`),
     import(`../../messages/${locale}/navigation.json`),
-    import(`../../messages/${locale}/home.json`),
     import(`../../messages/${locale}/site.json`),
   ]);
 
@@ -21,7 +20,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
     messages: {
       common: common.default as Record<string, string>,
       navigation: navigation.default as Record<string, string>,
-      home: home.default as Record<string, unknown>,
       site: site.default as Record<string, unknown>,
     },
   };
