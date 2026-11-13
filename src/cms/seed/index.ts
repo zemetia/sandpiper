@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'crypto';
 import path from 'path';
 import type { Endpoint, Payload, PayloadRequest } from 'payload';
 
@@ -39,6 +40,23 @@ export async function seed(payload: Payload, req: PayloadRequest) {
     overrideAccess: true,
     context: { disableRevalidate: true },
   } as const;
+
+  // ─── Users ───────────────────────────────────────────────────────────────
+  // A fresh DB gets its first admin from env; credentials never live in the repo.
+  const { SEED_ADMIN_EMAIL: email, SEED_ADMIN_PASSWORD: password } = process.env;
+  const { totalDocs: userCount } = await payload.count({ ...base, collection: 'users' });
+  if (userCount === 0 && email && password) {
+    await payload.create({
+      ...base,
+      collection: 'users',
+      data: {
+        name: process.env.SEED_ADMIN_NAME || 'Sandpiper team',
+        email,
+        password,
+        roles: ['admin'],
+      },
+    });
+  }
 
   // Users created before roles existed have none — promote them so nobody is locked out.
   const roleless = await payload.find({
@@ -377,11 +395,24 @@ export async function seed(payload: Payload, req: PayloadRequest) {
   });
 }
 
+// `npm run seed` authenticates with SEED_SECRET, so a fresh DB (no users yet) can be seeded.
+// Unset SEED_SECRET disables this path; only a signed-in admin session works then.
+function hasSeedSecret(req: PayloadRequest) {
+  const secret = process.env.SEED_SECRET;
+  const given = req.headers.get('authorization')?.replace(/^Bearer /, '');
+  if (!secret || secret.length < 32 || !given) return false;
+  const a = Buffer.from(given);
+  const b = Buffer.from(secret);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export const seedEndpoint: Endpoint = {
   path: '/seed',
   method: 'post',
   handler: async (req) => {
-    if (!req.user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!req.user && !hasSeedSecret(req)) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const existing = await req.payload.count({ collection: 'pages', overrideAccess: true });
     if (existing.totalDocs > 0) {
