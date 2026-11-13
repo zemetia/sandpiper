@@ -80,12 +80,12 @@ export async function cateringLayout(upload: (file: string, alt: string) => Prom
             {
               name: 'Sandwich Platter',
               price: '$140',
-              description: 'Turkey Club, Hammisphere, Fig & Prosciutto, 10',
+              description: 'Turkey Shorty, The Thanksgiving, Chipotle Chicken, 10',
             },
             {
               name: 'Wrap Platter',
               price: '$130',
-              description: 'chicken caesar & veggie wraps, 10',
+              description: 'chicken caesar & chipotle chicken wraps, 10',
             },
             {
               name: 'Quesadilla Tray',

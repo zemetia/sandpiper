@@ -8,6 +8,8 @@
 
 <!-- Entries below, newest first -->
 
+[2026-11-13] - Syncing the new menu into the dev DB, a generic page-layout remap rewrote every block key named `items`/`categories`, which also emptied the Gift Cards FAQ and Catering menu (arrays of objects, not relationship ids) - Restored both pages from the on-disk backup taken before the sync and verified they matched exactly - When remapping relationship ids in page layouts, match on blockType + field, never on a field name alone
+
 [2026-11-13] - Asked to remove i18n "for this branch landing-page", I first created a new branch `chore/remove-i18n` before noticing the instruction - Switched back to `feat/landing-page` and deleted the empty branch before any commit - When the user names the branch to work on, work on that branch; don't branch off by reflex
 
 [2026-11-13] - Catering mobile hero headline wrapped to 3 lines at 412px although the design fits 2: sizing it `15vw` matched the Pencil px value, but the web font renders a little wider than Pencil's - Dropped to `min(14.5vw,62px)` and re-checked the screenshot - Don't trust a 1:1 px→vw conversion for giant display type; leave ~5% headroom and verify at the exact frame width

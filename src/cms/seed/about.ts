@@ -63,7 +63,7 @@ export async function aboutLayout(
           tag: 'BREAKFAST',
         },
         {
-          image: await upload('buttermilk-pancakes.webp', 'Short Stack'),
+          image: await upload('buttermilk-pancakes.webp', 'Buttermilk Pancakes'),
           name: 'Buttermilk Pancakes',
           tag: 'ALL DAY',
         },
