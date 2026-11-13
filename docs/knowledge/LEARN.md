@@ -8,6 +8,8 @@
 
 <!-- Entries below, newest first -->
 
+[2026-11-13] - Catering mobile hero headline wrapped to 3 lines at 412px although the design fits 2: sizing it `15vw` matched the Pencil px value, but the web font renders a little wider than Pencil's - Dropped to `min(14.5vw,62px)` and re-checked the screenshot - Don't trust a 1:1 px→vw conversion for giant display type; leave ~5% headroom and verify at the exact frame width
+
 [2026-11-13] - Reseeding the dev DB for the landing page: a temp route deleted pages/menu/categories, then the seed failed validation, and the "backup" of the old pages was only in the HTTP response (an error page), so the old starter pages and one user edit to Home were lost; each failed run also re-uploaded every seed image - Reseeded, deleted the 66 orphaned media docs, reported the loss - Write any backup to disk BEFORE the destructive step, and dry-run a seed (or wrap it in a transaction) before deleting what it replaces
 
 [2026-11-13] - Seed's `locale: 'id'` page-title updates failed: Payload validates every required localized block field in that locale, and they are empty until translated - Dropped page-title translations from the seed and made new landing-block text fields optional - Avoid `required: true` on localized fields in blocks; never update a block page in a second locale from a seed

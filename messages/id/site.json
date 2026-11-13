@@ -54,5 +54,33 @@
   "orbit": "Menu kopi",
   "ratings": "Penilaian",
   "mapAlt": "Peta kafe di {street}",
-  "swipe": "Geser"
+  "swipe": "Geser",
+  "catering": {
+    "jumpToCategory": "Lompat ke kategori katering",
+    "send": "Kirim permintaan",
+    "thanks": "Sudah kami terima, terima kasih!",
+    "form": {
+      "name": "Nama",
+      "email": "Email",
+      "phone": "Telepon",
+      "date": "Tanggal acara",
+      "headcount": "Jumlah orang",
+      "budget": "Anggaran (opsional)",
+      "occasion": "Acara apa?",
+      "fulfillment": "Ambil atau antar",
+      "pickup": "Ambil",
+      "delivery": "Antar",
+      "notes": "Ada yang lain?",
+      "namePlaceholder": "Jane Doe",
+      "emailPlaceholder": "kamu@email.com",
+      "phonePlaceholder": "267-555-0123",
+      "headcountPlaceholder": "# orang",
+      "budgetPlaceholder": "$ per orang",
+      "notesPlaceholder": "Alergi, menu favorit, alamat pengantaran…",
+      "sending": "Mengirim…",
+      "invalid": "Periksa lagi nama dan email kamu.",
+      "error": "Permintaan gagal terkirim. Coba lagi atau telepon kami."
+    }
+  },
+  "giftAmount": "Nominal kartu hadiah"
 }

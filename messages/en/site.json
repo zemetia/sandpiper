@@ -54,5 +54,33 @@
   "orbit": "Coffee menu",
   "ratings": "Ratings",
   "mapAlt": "Map of the café on {street}",
-  "swipe": "Swipe"
+  "swipe": "Swipe",
+  "catering": {
+    "jumpToCategory": "Jump to a catering category",
+    "send": "Send my request",
+    "thanks": "Got it, thanks!",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "date": "Event date",
+      "headcount": "Headcount",
+      "budget": "Budget (optional)",
+      "occasion": "What's the occasion?",
+      "fulfillment": "Pickup or delivery",
+      "pickup": "Pickup",
+      "delivery": "Delivery",
+      "notes": "Anything else?",
+      "namePlaceholder": "Jane Doe",
+      "emailPlaceholder": "you@email.com",
+      "phonePlaceholder": "267-555-0123",
+      "headcountPlaceholder": "# of people",
+      "budgetPlaceholder": "$ per person",
+      "notesPlaceholder": "Allergies, favorite items, delivery address…",
+      "sending": "Sending…",
+      "invalid": "Please check your name and email.",
+      "error": "Couldn't send your request. Please try again or give us a call."
+    }
+  },
+  "giftAmount": "Gift card amount"
 }

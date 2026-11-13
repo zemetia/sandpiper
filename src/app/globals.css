@@ -332,3 +332,105 @@
     rotate: none;
   }
 }
+
+/* ─── Gift cards page ─────────────────────────────────────────── */
+@keyframes gc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes gc-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -8px;
+  }
+}
+
+@layer utilities {
+  /* Sections rise in as they scroll into view (plays once on load where scroll timelines are unsupported) */
+  .gc-rise {
+    animation: gc-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @supports (animation-timeline: view()) {
+    .gc-rise {
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+
+  /* The illustrated gift cards bob gently, out of step with each other */
+  .gc-float {
+    animation: gc-float 3.2s ease-in-out var(--float-delay, 0s) infinite alternate;
+  }
+
+  /* Front card's amount re-pops when a chip is picked */
+  .gc-amount-pop {
+    animation: sticker-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .shadow-gift-card {
+    box-shadow: 10px 12px 0 color-mix(in oklab, var(--color-ink) 50%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc-rise,
+  .gc-float,
+  .gc-amount-pop {
+    animation: none !important;
+  }
+}
+
+/* ─── Catering page ───────────────────────────────────────────── */
+@keyframes ct-bob {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -6px;
+  }
+}
+
+@layer utilities {
+  /* Sections drift up as they scroll in; without scroll timelines they simply show */
+  @supports (animation-timeline: view()) {
+    .ct-reveal {
+      animation: slide-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+  }
+
+  /* Doodles bob lazily behind the hero copy */
+  .ct-bob {
+    animation: ct-bob 3.6s ease-in-out infinite alternate;
+  }
+
+  /* Menu cards and contact cards lift with a hard ink shadow on hover */
+  .ct-lift {
+    transition:
+      translate 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .ct-lift:hover {
+    translate: 0 -4px;
+    box-shadow: 4px 4px 0 var(--color-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-reveal,
+  .ct-bob {
+    animation: none !important;
+  }
+  .ct-lift:hover {
+    translate: none;
+  }
+}

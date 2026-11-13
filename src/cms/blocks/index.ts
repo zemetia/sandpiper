@@ -1,9 +1,19 @@
 import { CallToAction } from './CallToAction';
+import { CateringHero } from './CateringHero';
+import { CateringMenu } from './CateringMenu';
+import { CateringQuote } from './CateringQuote';
+import { CateringRibbon } from './CateringRibbon';
+import { CateringSteps } from './CateringSteps';
+import { CateringUseCases } from './CateringUseCases';
 import { CoffeeOrbit } from './CoffeeOrbit';
 import { Content } from './Content';
 import { Faq } from './Faq';
 import { FullMenu } from './FullMenu';
 import { Gallery } from './Gallery';
+import { GiftCardFaq } from './GiftCardFaq';
+import { GiftCardHero } from './GiftCardHero';
+import { GiftCardPanels } from './GiftCardPanels';
+import { GiftCardSteps } from './GiftCardSteps';
 import { GramWall } from './GramWall';
 import { Hero } from './Hero';
 import { HomeHero } from './HomeHero';
@@ -30,6 +40,16 @@ export const pageBlocks = [
   ReviewThread,
   VisitHours,
   SunCta,
+  CateringHero,
+  CateringRibbon,
+  CateringMenu,
+  CateringUseCases,
+  CateringSteps,
+  CateringQuote,
+  GiftCardHero,
+  GiftCardSteps,
+  GiftCardPanels,
+  GiftCardFaq,
   Hero,
   Content,
   MediaContent,

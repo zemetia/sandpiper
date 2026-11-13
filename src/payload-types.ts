@@ -72,6 +72,7 @@ export interface Config {
     categories: Category;
     media: Media;
     subscribers: Subscriber;
+    'catering-requests': CateringRequest;
     users: User;
     'payload-kv': PayloadKv;
     'payload-folders': FolderInterface;
@@ -90,6 +91,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
+    'catering-requests': CateringRequestsSelect<false> | CateringRequestsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -160,6 +162,16 @@ export interface Page {
         | ReviewThreadBlock
         | VisitHoursBlock
         | SunCtaBlock
+        | CateringHeroBlock
+        | CateringRibbonBlock
+        | CateringMenuBlock
+        | CateringUseCasesBlock
+        | CateringStepsBlock
+        | CateringQuoteBlock
+        | GiftCardHeroBlock
+        | GiftCardStepsBlock
+        | GiftCardPanelsBlock
+        | GiftCardFaqBlock
         | HeroBlock
         | ContentBlock
         | MediaContentBlock
@@ -660,6 +672,384 @@ export interface SunCtaBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringHeroBlock".
+ */
+export interface CateringHeroBlock {
+  eyebrow?: string | null;
+  /**
+   * Giant headline. Each line break starts a new line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: (number | null) | Page;
+          url?: string | null;
+          label: string;
+          appearance?: ('primary' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Small icon facts under the buttons, e.g. "48 HRS · notice".
+   */
+  facts?:
+    | {
+        icon?:
+          | (
+              | 'timer'
+              | 'users'
+              | 'truck'
+              | 'briefcase'
+              | 'party'
+              | 'graduation'
+              | 'coffee'
+              | 'sandwich'
+              | 'croissant'
+              | 'calendar'
+              | 'leaf'
+              | 'heart'
+              | 'star'
+            )
+          | null;
+        value?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Three round photos: a big plate, a smaller one and a little cup.
+   */
+  photos?: {
+    main?: (number | null) | Media;
+    side?: (number | null) | Media;
+    small?: (number | null) | Media;
+  };
+  /**
+   * Round blue stamp over the big photo.
+   */
+  stamp?: {
+    label?: string | null;
+    value?: string | null;
+  };
+  /**
+   * Handwritten note under the photos.
+   */
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cateringHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringRibbonBlock".
+ */
+export interface CateringRibbonBlock {
+  /**
+   * Scrolling ink strip. Press Enter after each phrase.
+   */
+  words?: string[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cateringRibbon';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringMenuBlock".
+ */
+export interface CateringMenuBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  intro?: string | null;
+  /**
+   * Each category is a card, numbered automatically. Cards alternate white and soft yellow.
+   */
+  categories?:
+    | {
+        title?: string | null;
+        /**
+         * Phone jump-chip label. Falls back to the title.
+         */
+        shortLabel?: string | null;
+        image?: (number | null) | Media;
+        items?:
+          | {
+              name?: string | null;
+              price?: string | null;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Small print under the cards (leaf icon).
+   */
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cateringMenu';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringUseCasesBlock".
+ */
+export interface CateringUseCasesBlock {
+  /**
+   * Yellow, heavy.
+   */
+  headingBold?: string | null;
+  /**
+   * White, light.
+   */
+  headingLight?: string | null;
+  /**
+   * Handwritten aside on the right (desktop only).
+   */
+  script?: string | null;
+  cases?:
+    | {
+        icon?:
+          | (
+              | 'timer'
+              | 'users'
+              | 'truck'
+              | 'briefcase'
+              | 'party'
+              | 'graduation'
+              | 'coffee'
+              | 'sandwich'
+              | 'croissant'
+              | 'calendar'
+              | 'leaf'
+              | 'heart'
+              | 'star'
+            )
+          | null;
+        title?: string | null;
+        body?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cateringUseCases';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringStepsBlock".
+ */
+export interface CateringStepsBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  /**
+   * Numbered automatically. Tilted cards on desktop, a timeline on phones.
+   */
+  steps?:
+    | {
+        title?: string | null;
+        body?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cateringSteps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringQuoteBlock".
+ */
+export interface CateringQuoteBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  callLabel?: string | null;
+  /**
+   * Falls back to Site settings → phone.
+   */
+  phone?: string | null;
+  /**
+   * Phone call strip.
+   */
+  callPrompt?: string | null;
+  pickupLabel?: string | null;
+  /**
+   * Falls back to Site settings → address.
+   */
+  pickupAddress?: string | null;
+  formTitle?: string | null;
+  /**
+   * Occasion chips. The first one starts selected.
+   */
+  occasions?: string[] | null;
+  submitLabel?: string | null;
+  finePrint?: string | null;
+  successHeading?: string | null;
+  /**
+   * Shown after a request is sent.
+   */
+  successBody?: string | null;
+  faqHeading?: string | null;
+  /**
+   * The first answer starts open.
+   */
+  faqs?:
+    | {
+        question?: string | null;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cateringQuote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardHeroBlock".
+ */
+export interface GiftCardHeroBlock {
+  eyebrow?: string | null;
+  /**
+   * White line.
+   */
+  line1?: string | null;
+  /**
+   * Yellow line.
+   */
+  line2?: string | null;
+  body?: string | null;
+  /**
+   * Amount chips. Picking one updates the card shown on the right. Visitors pay on Toast.
+   */
+  amounts?:
+    | {
+        value: string;
+        selected?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Handwritten note next to the chips.
+   */
+  anyAmount?: string | null;
+  buyLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: (number | null) | Page;
+    url?: string | null;
+    label?: string | null;
+  };
+  balanceLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: (number | null) | Page;
+    url?: string | null;
+    label?: string | null;
+  };
+  /**
+   * Text printed on the illustrated gift cards.
+   */
+  card?: {
+    label?: string | null;
+    address?: string | null;
+    /**
+     * Amount on the back card.
+     */
+    backAmount?: string | null;
+  };
+  tag?: {
+    label?: string | null;
+    value?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'giftCardHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardStepsBlock".
+ */
+export interface GiftCardStepsBlock {
+  eyebrow?: string | null;
+  /**
+   * Line breaks apply on phones only.
+   */
+  heading?: string | null;
+  note?: string | null;
+  steps?:
+    | {
+        icon?: ('card' | 'mail' | 'coffee' | 'gift' | 'search' | 'heart') | null;
+        title?: string | null;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'giftCardSteps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardPanelsBlock".
+ */
+export interface GiftCardPanelsBlock {
+  panels?:
+    | {
+        tone?: ('sunny' | 'paper') | null;
+        icon?: ('card' | 'mail' | 'coffee' | 'gift' | 'search' | 'heart') | null;
+        eyebrow?: string | null;
+        heading?: string | null;
+        body?: string | null;
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: (number | null) | Page;
+          url?: string | null;
+          label?: string | null;
+        };
+        /**
+         * Shown under the button on phones; desktop shows the link address.
+         */
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'giftCardPanels';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardFaqBlock".
+ */
+export interface GiftCardFaqBlock {
+  /**
+   * Line breaks apply on desktop only.
+   */
+  heading?: string | null;
+  items?:
+    | {
+        question?: string | null;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'giftCardFaq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
@@ -878,6 +1268,31 @@ export interface Subscriber {
   createdAt: string;
 }
 /**
+ * Quote requests sent from the catering page form.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "catering-requests".
+ */
+export interface CateringRequest {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  eventDate?: string | null;
+  headcount?: number | null;
+  /**
+   * Per person.
+   */
+  budget?: string | null;
+  occasion?: string | null;
+  fulfillment?: ('pickup' | 'delivery') | null;
+  notes?: string | null;
+  status?: ('new' | 'quoted' | 'booked' | 'closed') | null;
+  locale?: ('en' | 'id') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Admins manage everything. Editors manage pages, menu and media.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -952,6 +1367,10 @@ export interface PayloadLockedDocument {
         value: number | Subscriber;
       } | null)
     | ({
+        relationTo: 'catering-requests';
+        value: number | CateringRequest;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -1020,6 +1439,16 @@ export interface PagesSelect<T extends boolean = true> {
         reviewThread?: T | ReviewThreadBlockSelect<T>;
         visitHours?: T | VisitHoursBlockSelect<T>;
         sunCta?: T | SunCtaBlockSelect<T>;
+        cateringHero?: T | CateringHeroBlockSelect<T>;
+        cateringRibbon?: T | CateringRibbonBlockSelect<T>;
+        cateringMenu?: T | CateringMenuBlockSelect<T>;
+        cateringUseCases?: T | CateringUseCasesBlockSelect<T>;
+        cateringSteps?: T | CateringStepsBlockSelect<T>;
+        cateringQuote?: T | CateringQuoteBlockSelect<T>;
+        giftCardHero?: T | GiftCardHeroBlockSelect<T>;
+        giftCardSteps?: T | GiftCardStepsBlockSelect<T>;
+        giftCardPanels?: T | GiftCardPanelsBlockSelect<T>;
+        giftCardFaq?: T | GiftCardFaqBlockSelect<T>;
         hero?: T | HeroBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaContent?: T | MediaContentBlockSelect<T>;
@@ -1292,6 +1721,271 @@ export interface SunCtaBlockSelect<T extends boolean = true> {
     | {
         label?: T;
         value?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringHeroBlock_select".
+ */
+export interface CateringHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  facts?:
+    | T
+    | {
+        icon?: T;
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  photos?:
+    | T
+    | {
+        main?: T;
+        side?: T;
+        small?: T;
+      };
+  stamp?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+      };
+  note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringRibbonBlock_select".
+ */
+export interface CateringRibbonBlockSelect<T extends boolean = true> {
+  words?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringMenuBlock_select".
+ */
+export interface CateringMenuBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  categories?:
+    | T
+    | {
+        title?: T;
+        shortLabel?: T;
+        image?: T;
+        items?:
+          | T
+          | {
+              name?: T;
+              price?: T;
+              description?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringUseCasesBlock_select".
+ */
+export interface CateringUseCasesBlockSelect<T extends boolean = true> {
+  headingBold?: T;
+  headingLight?: T;
+  script?: T;
+  cases?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringStepsBlock_select".
+ */
+export interface CateringStepsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CateringQuoteBlock_select".
+ */
+export interface CateringQuoteBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  callLabel?: T;
+  phone?: T;
+  callPrompt?: T;
+  pickupLabel?: T;
+  pickupAddress?: T;
+  formTitle?: T;
+  occasions?: T;
+  submitLabel?: T;
+  finePrint?: T;
+  successHeading?: T;
+  successBody?: T;
+  faqHeading?: T;
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardHeroBlock_select".
+ */
+export interface GiftCardHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  line1?: T;
+  line2?: T;
+  body?: T;
+  amounts?:
+    | T
+    | {
+        value?: T;
+        selected?: T;
+        id?: T;
+      };
+  anyAmount?: T;
+  buyLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  balanceLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  card?:
+    | T
+    | {
+        label?: T;
+        address?: T;
+        backAmount?: T;
+      };
+  tag?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardStepsBlock_select".
+ */
+export interface GiftCardStepsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  note?: T;
+  steps?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardPanelsBlock_select".
+ */
+export interface GiftCardPanelsBlockSelect<T extends boolean = true> {
+  panels?:
+    | T
+    | {
+        tone?: T;
+        icon?: T;
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        note?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GiftCardFaqBlock_select".
+ */
+export interface GiftCardFaqBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
       };
   id?: T;
   blockName?: T;
@@ -1585,6 +2279,25 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface SubscribersSelect<T extends boolean = true> {
   email?: T;
+  locale?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "catering-requests_select".
+ */
+export interface CateringRequestsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  eventDate?: T;
+  headcount?: T;
+  budget?: T;
+  occasion?: T;
+  fulfillment?: T;
+  notes?: T;
+  status?: T;
   locale?: T;
   updatedAt?: T;
   createdAt?: T;

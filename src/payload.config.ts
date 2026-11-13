@@ -6,6 +6,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
+import { CateringRequests } from './collections/CateringRequests';
 import { Categories } from './collections/Categories';
 import { Media } from './collections/Media';
 import { MenuItems } from './collections/MenuItems';
@@ -58,7 +59,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, MenuItems, Categories, Media, Subscribers, Users],
+  collections: [Pages, MenuItems, Categories, Media, Subscribers, CateringRequests, Users],
   globals: [SiteSettings, Header, Footer],
   endpoints: [seedEndpoint],
   localization: {

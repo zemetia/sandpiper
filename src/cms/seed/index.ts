@@ -1,8 +1,10 @@
 import path from 'path';
 import type { Endpoint, Payload, PayloadRequest } from 'payload';
 
+import { cateringLayout } from './catering';
 import { categories, menuItems, richText, sitePhotos } from './content';
 import type { SitePhoto } from './content';
+import { giftCardLayout } from './giftCards';
 
 const imagesDir = path.resolve(process.cwd(), 'src/cms/seed/images');
 
@@ -156,20 +158,8 @@ export async function seed(payload: Payload, req: PayloadRequest) {
       { blockType: 'hero', variant: 'minimal', eyebrow, heading, subheading: sub },
       { blockType: 'visitUs', heading: 'Come say hi' },
     ]);
-  const catering = await simplePage(
-    'catering',
-    'Catering',
-    'Catering',
-    'Breakfast for the whole office',
-    'Bagel spreads, sandwich platters and coffee boxes for groups of 10 to 100. Call us to plan your order.',
-  );
-  const giftCards = await simplePage(
-    'gift-cards',
-    'Gift Cards',
-    'Gift cards',
-    'Give someone breakfast',
-    'Sandpiper gift cards work for dine in, takeout and online orders. Ask at the counter.',
-  );
+  const catering = await page('catering', 'Catering', await cateringLayout(upload));
+  const giftCards = await page('gift-cards', 'Gift Cards', giftCardLayout);
   const contact = await simplePage(
     'contact',
     'Contact',

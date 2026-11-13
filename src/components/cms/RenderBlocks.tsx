@@ -3,11 +3,21 @@ import type { Page } from '@/payload-types';
 import { assertNever } from '@/lib/utils';
 
 import { CallToActionBlock } from './blocks/CallToActionBlock';
+import { CateringHeroBlock } from './blocks/CateringHeroBlock';
+import { CateringMenuBlock } from './blocks/CateringMenuBlock';
+import { CateringQuoteBlock } from './blocks/CateringQuoteBlock';
+import { CateringRibbonBlock } from './blocks/CateringRibbonBlock';
+import { CateringStepsBlock } from './blocks/CateringStepsBlock';
+import { CateringUseCasesBlock } from './blocks/CateringUseCasesBlock';
 import { CoffeeOrbitBlock } from './blocks/CoffeeOrbitBlock';
 import { ContentBlock } from './blocks/ContentBlock';
 import { FaqBlock } from './blocks/FaqBlock';
 import { FullMenuBlock } from './blocks/FullMenuBlock';
 import { GalleryBlock } from './blocks/GalleryBlock';
+import { GiftCardFaqBlock } from './blocks/GiftCardFaqBlock';
+import { GiftCardHeroBlock } from './blocks/GiftCardHeroBlock';
+import { GiftCardPanelsBlock } from './blocks/GiftCardPanelsBlock';
+import { GiftCardStepsBlock } from './blocks/GiftCardStepsBlock';
 import { GramWallBlock } from './blocks/GramWallBlock';
 import { HeroBlock } from './blocks/HeroBlock';
 import { HomeHeroBlock } from './blocks/HomeHeroBlock';
@@ -47,6 +57,26 @@ function renderBlock(block: Block, index: number, locale: Locale) {
       return <VisitHoursBlock block={block} locale={locale} />;
     case 'sunCta':
       return <SunCtaBlock block={block} />;
+    case 'cateringHero':
+      return <CateringHeroBlock block={block} isFirst={index === 0} />;
+    case 'cateringRibbon':
+      return <CateringRibbonBlock block={block} />;
+    case 'cateringMenu':
+      return <CateringMenuBlock block={block} />;
+    case 'cateringUseCases':
+      return <CateringUseCasesBlock block={block} />;
+    case 'cateringSteps':
+      return <CateringStepsBlock block={block} />;
+    case 'cateringQuote':
+      return <CateringQuoteBlock block={block} locale={locale} />;
+    case 'giftCardHero':
+      return <GiftCardHeroBlock block={block} isFirst={index === 0} />;
+    case 'giftCardSteps':
+      return <GiftCardStepsBlock block={block} />;
+    case 'giftCardPanels':
+      return <GiftCardPanelsBlock block={block} />;
+    case 'giftCardFaq':
+      return <GiftCardFaqBlock block={block} />;
     case 'hero':
       return <HeroBlock block={block} isFirst={index === 0} />;
     case 'content':
