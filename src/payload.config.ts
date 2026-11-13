@@ -7,6 +7,7 @@ import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
 import { CateringRequests } from './collections/CateringRequests';
+import { ContactMessages } from './collections/ContactMessages';
 import { Categories } from './collections/Categories';
 import { Media } from './collections/Media';
 import { MenuItems } from './collections/MenuItems';
@@ -59,7 +60,16 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, MenuItems, Categories, Media, Subscribers, CateringRequests, Users],
+  collections: [
+    Pages,
+    MenuItems,
+    Categories,
+    Media,
+    Subscribers,
+    CateringRequests,
+    ContactMessages,
+    Users,
+  ],
   globals: [SiteSettings, Header, Footer],
   endpoints: [seedEndpoint],
   localization: {

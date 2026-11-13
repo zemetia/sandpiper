@@ -1,6 +1,12 @@
 import type { Page } from '@/payload-types';
 import { assertNever } from '@/lib/utils';
 
+import { AboutBeliefBlock } from './blocks/AboutBeliefBlock';
+import { AboutClosingBlock } from './blocks/AboutClosingBlock';
+import { AboutGalleryBlock } from './blocks/AboutGalleryBlock';
+import { AboutHeroBlock } from './blocks/AboutHeroBlock';
+import { AboutKitchenBlock } from './blocks/AboutKitchenBlock';
+import { AboutTeamBlock } from './blocks/AboutTeamBlock';
 import { CallToActionBlock } from './blocks/CallToActionBlock';
 import { CateringHeroBlock } from './blocks/CateringHeroBlock';
 import { CateringMenuBlock } from './blocks/CateringMenuBlock';
@@ -9,6 +15,9 @@ import { CateringRibbonBlock } from './blocks/CateringRibbonBlock';
 import { CateringStepsBlock } from './blocks/CateringStepsBlock';
 import { CateringUseCasesBlock } from './blocks/CateringUseCasesBlock';
 import { CoffeeOrbitBlock } from './blocks/CoffeeOrbitBlock';
+import { ContactFindBlock } from './blocks/ContactFindBlock';
+import { ContactFormBlock } from './blocks/ContactFormBlock';
+import { ContactHeroBlock } from './blocks/ContactHeroBlock';
 import { ContentBlock } from './blocks/ContentBlock';
 import { FaqBlock } from './blocks/FaqBlock';
 import { FullMenuBlock } from './blocks/FullMenuBlock';
@@ -76,6 +85,24 @@ function renderBlock(block: Block, index: number) {
       return <GiftCardPanelsBlock block={block} />;
     case 'giftCardFaq':
       return <GiftCardFaqBlock block={block} />;
+    case 'aboutHero':
+      return <AboutHeroBlock block={block} isFirst={index === 0} />;
+    case 'aboutBelief':
+      return <AboutBeliefBlock block={block} />;
+    case 'aboutKitchen':
+      return <AboutKitchenBlock block={block} />;
+    case 'aboutGallery':
+      return <AboutGalleryBlock block={block} />;
+    case 'aboutTeam':
+      return <AboutTeamBlock block={block} />;
+    case 'aboutClosing':
+      return <AboutClosingBlock block={block} />;
+    case 'contactHero':
+      return <ContactHeroBlock block={block} isFirst={index === 0} />;
+    case 'contactForm':
+      return <ContactFormBlock block={block} />;
+    case 'contactFind':
+      return <ContactFindBlock block={block} />;
     case 'hero':
       return <HeroBlock block={block} isFirst={index === 0} />;
     case 'content':

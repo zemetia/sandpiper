@@ -73,6 +73,7 @@ export interface Config {
     media: Media;
     subscribers: Subscriber;
     'catering-requests': CateringRequest;
+    'contact-messages': ContactMessage;
     users: User;
     'payload-kv': PayloadKv;
     'payload-folders': FolderInterface;
@@ -92,6 +93,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'catering-requests': CateringRequestsSelect<false> | CateringRequestsSelect<true>;
+    'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -172,6 +174,15 @@ export interface Page {
         | GiftCardStepsBlock
         | GiftCardPanelsBlock
         | GiftCardFaqBlock
+        | AboutHeroBlock
+        | AboutBeliefBlock
+        | AboutKitchenBlock
+        | AboutGalleryBlock
+        | AboutTeamBlock
+        | AboutClosingBlock
+        | ContactHeroBlock
+        | ContactFormBlock
+        | ContactFindBlock
         | HeroBlock
         | ContentBlock
         | MediaContentBlock
@@ -1050,6 +1061,421 @@ export interface GiftCardFaqBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutHeroBlock".
+ */
+export interface AboutHeroBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  /**
+   * Outlined pills under the intro. Press Enter after each.
+   */
+  tags?: string[] | null;
+  /**
+   * Two tilted polaroids with a handwritten caption.
+   */
+  polaroids?:
+    | {
+        image?: (number | null) | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Round blue stamp between the polaroids.
+   */
+  stamp?: {
+    top?: string | null;
+    value?: string | null;
+    bottom?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBeliefBlock".
+ */
+export interface AboutBeliefBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  /**
+   * Handwritten note under the body.
+   */
+  note?: string | null;
+  /**
+   * Staggered photo strip — four reads best.
+   */
+  plates?:
+    | {
+        image?: (number | null) | Media;
+        name: string;
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutBelief';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutKitchenBlock".
+ */
+export interface AboutKitchenBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  /**
+   * Numbered rows under the body.
+   */
+  pillars?:
+    | {
+        title: string;
+        description?: string | null;
+        icon?:
+          | (
+              | 'sandwich'
+              | 'utensils'
+              | 'coffee'
+              | 'croissant'
+              | 'phone'
+              | 'mail'
+              | 'pin'
+              | 'instagram'
+              | 'sunrise'
+              | 'clock'
+              | 'bike'
+              | 'bag'
+              | 'handHeart'
+              | 'heart'
+              | 'star'
+            )
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A tall photo, a round one and a small tilted one.
+   */
+  photos?: {
+    main?: (number | null) | Media;
+    round?: (number | null) | Media;
+    small?: (number | null) | Media;
+  };
+  /**
+   * Round yellow seal over the photos.
+   */
+  stamp?: {
+    top?: string | null;
+    value?: string | null;
+    bottom?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutKitchen';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutGalleryBlock".
+ */
+export interface AboutGalleryBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  /**
+   * Handwritten note beside the heading.
+   */
+  note?: string | null;
+  /**
+   * First three fill the top row, the rest the bottom row (seven reads best).
+   */
+  photos?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutGallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutTeamBlock".
+ */
+export interface AboutTeamBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  body?: string | null;
+  members?:
+    | {
+        photo?: (number | null) | Media;
+        name: string;
+        role?: string | null;
+        tone?: ('blue' | 'berry') | null;
+        /**
+         * Handwritten line under the name, e.g. "latte art on demand".
+         */
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ink card at the end of the row. Leave the heading empty to hide it.
+   */
+  hiring?: {
+    heading?: string | null;
+    body?: string | null;
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: (number | null) | Page;
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutTeam';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutClosingBlock".
+ */
+export interface AboutClosingBlock {
+  /**
+   * Short paragraph above the statement.
+   */
+  body?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: (number | null) | Page;
+          url?: string | null;
+          label: string;
+          appearance?: ('primary' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Handwritten sign-off at the bottom.
+   */
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutClosing';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactHeroBlock".
+ */
+export interface ContactHeroBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  showCall?: boolean | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: (number | null) | Page;
+          url?: string | null;
+          label: string;
+          appearance?: ('primary' | 'outline' | 'link') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * White card on the right. Leave the big text empty to hide it.
+   */
+  hours?: {
+    eyebrow?: string | null;
+    value?: string | null;
+    rows?:
+      | {
+          label: string;
+          value?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  photo?: (number | null) | Media;
+  /**
+   * Handwritten polaroid caption.
+   */
+  caption?: string | null;
+  /**
+   * Round blue stamp beside the card.
+   */
+  stamp?: {
+    top?: string | null;
+    value?: string | null;
+    bottom?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFormBlock".
+ */
+export interface ContactFormBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  /**
+   * Chips for "What’s it about?". The first is preselected.
+   */
+  topics?: string[] | null;
+  submitLabel?: string | null;
+  /**
+   * Handwritten note beside the button.
+   */
+  note?: string | null;
+  successHeading?: string | null;
+  successBody?: string | null;
+  detailsHeading?: string | null;
+  details?:
+    | {
+        icon?:
+          | (
+              | 'sandwich'
+              | 'utensils'
+              | 'coffee'
+              | 'croissant'
+              | 'phone'
+              | 'mail'
+              | 'pin'
+              | 'instagram'
+              | 'sunrise'
+              | 'clock'
+              | 'bike'
+              | 'bag'
+              | 'handHeart'
+              | 'heart'
+              | 'star'
+            )
+          | null;
+        label?: string | null;
+        value: string;
+        description?: string | null;
+        /**
+         * Optional: tel:, mailto: or https:// link.
+         */
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ink card under the details. Leave the text empty to hide it.
+   */
+  callout?: {
+    eyebrow?: string | null;
+    text?: string | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: (number | null) | Page;
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactForm';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFindBlock".
+ */
+export interface ContactFindBlock {
+  eyebrow?: string | null;
+  /**
+   * Each line break starts a new line. Wrap a line in *asterisks* to colour it as the accent line.
+   */
+  heading?: string | null;
+  body?: string | null;
+  facts?:
+    | {
+        icon?:
+          | (
+              | 'sandwich'
+              | 'utensils'
+              | 'coffee'
+              | 'croissant'
+              | 'phone'
+              | 'mail'
+              | 'pin'
+              | 'instagram'
+              | 'sunrise'
+              | 'clock'
+              | 'bike'
+              | 'bag'
+              | 'handHeart'
+              | 'heart'
+              | 'star'
+            )
+          | null;
+        title: string;
+        detail?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  useMapUrl?: boolean | null;
+  /**
+   * Only the label is used when the box above is ticked.
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: (number | null) | Page;
+    url?: string | null;
+    label?: string | null;
+  };
+  mainPhoto?: (number | null) | Media;
+  sidePhoto?: (number | null) | Media;
+  /**
+   * Round yellow seal over the photos.
+   */
+  stamp?: {
+    top?: string | null;
+    value?: string | null;
+    bottom?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactFind';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
@@ -1293,6 +1719,23 @@ export interface CateringRequest {
   createdAt: string;
 }
 /**
+ * Messages sent from the contact page form.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages".
+ */
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  topic?: string | null;
+  message: string;
+  status?: ('new' | 'replied' | 'closed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Admins manage everything. Editors manage pages, menu and media.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1369,6 +1812,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'catering-requests';
         value: number | CateringRequest;
+      } | null)
+    | ({
+        relationTo: 'contact-messages';
+        value: number | ContactMessage;
       } | null)
     | ({
         relationTo: 'users';
@@ -1449,6 +1896,15 @@ export interface PagesSelect<T extends boolean = true> {
         giftCardSteps?: T | GiftCardStepsBlockSelect<T>;
         giftCardPanels?: T | GiftCardPanelsBlockSelect<T>;
         giftCardFaq?: T | GiftCardFaqBlockSelect<T>;
+        aboutHero?: T | AboutHeroBlockSelect<T>;
+        aboutBelief?: T | AboutBeliefBlockSelect<T>;
+        aboutKitchen?: T | AboutKitchenBlockSelect<T>;
+        aboutGallery?: T | AboutGalleryBlockSelect<T>;
+        aboutTeam?: T | AboutTeamBlockSelect<T>;
+        aboutClosing?: T | AboutClosingBlockSelect<T>;
+        contactHero?: T | ContactHeroBlockSelect<T>;
+        contactForm?: T | ContactFormBlockSelect<T>;
+        contactFind?: T | ContactFindBlockSelect<T>;
         hero?: T | HeroBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaContent?: T | MediaContentBlockSelect<T>;
@@ -1992,6 +2448,294 @@ export interface GiftCardFaqBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutHeroBlock_select".
+ */
+export interface AboutHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  tags?: T;
+  polaroids?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  stamp?:
+    | T
+    | {
+        top?: T;
+        value?: T;
+        bottom?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBeliefBlock_select".
+ */
+export interface AboutBeliefBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  note?: T;
+  plates?:
+    | T
+    | {
+        image?: T;
+        name?: T;
+        tag?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutKitchenBlock_select".
+ */
+export interface AboutKitchenBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  pillars?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
+  photos?:
+    | T
+    | {
+        main?: T;
+        round?: T;
+        small?: T;
+      };
+  stamp?:
+    | T
+    | {
+        top?: T;
+        value?: T;
+        bottom?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutGalleryBlock_select".
+ */
+export interface AboutGalleryBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  note?: T;
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutTeamBlock_select".
+ */
+export interface AboutTeamBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  members?:
+    | T
+    | {
+        photo?: T;
+        name?: T;
+        role?: T;
+        tone?: T;
+        note?: T;
+        id?: T;
+      };
+  hiring?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutClosingBlock_select".
+ */
+export interface AboutClosingBlockSelect<T extends boolean = true> {
+  body?: T;
+  heading?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactHeroBlock_select".
+ */
+export interface ContactHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  showCall?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  hours?:
+    | T
+    | {
+        eyebrow?: T;
+        value?: T;
+        rows?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+      };
+  photo?: T;
+  caption?: T;
+  stamp?:
+    | T
+    | {
+        top?: T;
+        value?: T;
+        bottom?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFormBlock_select".
+ */
+export interface ContactFormBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  topics?: T;
+  submitLabel?: T;
+  note?: T;
+  successHeading?: T;
+  successBody?: T;
+  detailsHeading?: T;
+  details?:
+    | T
+    | {
+        icon?: T;
+        label?: T;
+        value?: T;
+        description?: T;
+        url?: T;
+        id?: T;
+      };
+  callout?:
+    | T
+    | {
+        eyebrow?: T;
+        text?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFindBlock_select".
+ */
+export interface ContactFindBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  facts?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        detail?: T;
+        id?: T;
+      };
+  useMapUrl?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  mainPhoto?: T;
+  sidePhoto?: T;
+  stamp?:
+    | T
+    | {
+        top?: T;
+        value?: T;
+        bottom?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroBlock_select".
  */
 export interface HeroBlockSelect<T extends boolean = true> {
@@ -2299,6 +3043,20 @@ export interface CateringRequestsSelect<T extends boolean = true> {
   notes?: T;
   status?: T;
   locale?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages_select".
+ */
+export interface ContactMessagesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  topic?: T;
+  message?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }

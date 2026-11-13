@@ -3,7 +3,7 @@ import type { Block } from 'payload';
 export const CateringRibbon: Block = {
   slug: 'cateringRibbon',
   interfaceName: 'CateringRibbonBlock',
-  labels: { singular: 'Catering ribbon', plural: 'Catering ribbons' },
+  labels: { singular: 'Ink ribbon', plural: 'Ink ribbons' },
   admin: { group: 'Catering page' },
   fields: [
     {

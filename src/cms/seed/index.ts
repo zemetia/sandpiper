@@ -1,8 +1,10 @@
 import path from 'path';
 import type { Endpoint, Payload, PayloadRequest } from 'payload';
 
+import { aboutLayout } from './about';
 import { cateringLayout } from './catering';
-import { categories, menuItems, richText, sitePhotos } from './content';
+import { contactLayout } from './contact';
+import { categories, menuItems, sitePhotos } from './content';
 import type { SitePhoto } from './content';
 import { giftCardLayout } from './giftCards';
 
@@ -131,41 +133,21 @@ export async function seed(payload: Payload, req: PayloadRequest) {
     { blockType: 'fullMenu', showSoldOut: true },
   ]);
 
-  const about = await page('about', 'About', [
-    {
-      blockType: 'hero',
-      variant: 'minimal',
-      eyebrow: 'Our story',
-      heading: 'A corner café on South Street',
-      subheading:
-        'Sandpiper serves breakfast, lunch and good coffee to the neighborhood, every day from 7 to 4.',
-    },
-    {
-      blockType: 'content',
-      width: 'narrow',
-      body: richText(
-        '## Drawn by hand, made by hand',
-        'The food mural on our wall was drawn by a friend of the shop, and everything on the plates under it is made to order in our kitchen.',
-        '## Proudly pouring Lavazza',
-        'Espresso, cold brew and lattes on Lavazza beans, plus smoothies and juices blended with real fruit.',
-      ),
-    },
-    { blockType: 'visitUs', heading: 'Come say hi' },
-  ]);
+  const about = await page(
+    'about',
+    'About',
+    await aboutLayout(upload, {
+      orderOnline: pageLink(menu.id, 'Order online', 'primary'),
+      menu: pageLink(menu.id, 'See the menu', 'outline'),
+    }),
+  );
 
-  const simplePage = (slug: string, title: string, eyebrow: string, heading: string, sub: string) =>
-    page(slug, title, [
-      { blockType: 'hero', variant: 'minimal', eyebrow, heading, subheading: sub },
-      { blockType: 'visitUs', heading: 'Come say hi' },
-    ]);
   const catering = await page('catering', 'Catering', await cateringLayout(upload));
   const giftCards = await page('gift-cards', 'Gift Cards', giftCardLayout);
-  const contact = await simplePage(
+  const contact = await page(
     'contact',
     'Contact',
-    'Contact us',
-    'Questions, catering, or just hi',
-    'Call the shop or stop by — we are open every day from 7am to 4pm.',
+    await contactLayout(upload, { catering: pageLink(catering.id, 'Request a catering quote') }),
   );
 
   const orderNow = pageLink(menu.id, 'Order now');

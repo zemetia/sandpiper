@@ -1,3 +1,9 @@
+import { AboutBelief } from './AboutBelief';
+import { AboutClosing } from './AboutClosing';
+import { AboutGallery } from './AboutGallery';
+import { AboutHero } from './AboutHero';
+import { AboutKitchen } from './AboutKitchen';
+import { AboutTeam } from './AboutTeam';
 import { CallToAction } from './CallToAction';
 import { CateringHero } from './CateringHero';
 import { CateringMenu } from './CateringMenu';
@@ -6,6 +12,9 @@ import { CateringRibbon } from './CateringRibbon';
 import { CateringSteps } from './CateringSteps';
 import { CateringUseCases } from './CateringUseCases';
 import { CoffeeOrbit } from './CoffeeOrbit';
+import { ContactFind } from './ContactFind';
+import { ContactForm } from './ContactForm';
+import { ContactHero } from './ContactHero';
 import { Content } from './Content';
 import { Faq } from './Faq';
 import { FullMenu } from './FullMenu';
@@ -50,6 +59,15 @@ export const pageBlocks = [
   GiftCardSteps,
   GiftCardPanels,
   GiftCardFaq,
+  AboutHero,
+  AboutBelief,
+  AboutKitchen,
+  AboutGallery,
+  AboutTeam,
+  AboutClosing,
+  ContactHero,
+  ContactForm,
+  ContactFind,
   Hero,
   Content,
   MediaContent,

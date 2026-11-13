@@ -11,7 +11,7 @@ Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQ
 | Path | Purpose |
 |---|---|
 | `src/payload.config.ts` | Collections, globals, localization (`en`, `id`, fallback on), SEO plugin, admin branding + components, live preview breakpoints, `/api/seed` endpoint. Imported elsewhere as `@payload-config` |
-| `src/collections/` | `Pages` (`pages`), `MenuItems` (`menu-items`), `Categories` (`categories`, optional plate `image`), `Media` (`media`), `Subscribers` (`subscribers` — footer newsletter; public `POST /api/subscribers/subscribe`, idempotent, Zod-validated), `CateringRequests` (`catering-requests` — catering quote form; public `POST /api/catering-requests/submit`, Zod schema shared with the form in `src/lib/validations/catering.ts`, honeypot `website`), `Users` (`users`, roles `admin` / `editor`; first user becomes admin) |
+| `src/collections/` | `Pages` (`pages`), `MenuItems` (`menu-items`), `Categories` (`categories`, optional plate `image`), `Media` (`media`), `Subscribers` (`subscribers` — footer newsletter; public `POST /api/subscribers/subscribe`, idempotent, Zod-validated), `CateringRequests` (`catering-requests` — catering quote form; public `POST /api/catering-requests/submit`, Zod schema shared with the form in `src/lib/validations/catering.ts`, honeypot `website`), `ContactMessages` (`contact-messages` — contact page form; public `POST /api/contact-messages/submit`, schema in `src/lib/validations/contact.ts`, same honeypot), `Users` (`users`, roles `admin` / `editor`; first user becomes admin) |
 | `src/cms/access/` | `isAdmin`, `isAdminField`, `isAuthenticated`, `anyone`, `publishedOrAuthenticated`, `isAdminOrSelf` |
 | `src/cms/fields/` | `slugField()` / `formatSlug`, `link()` / `linkGroup()`, `seoTab` |
 | `src/cms/blocks/` | Page-builder block configs, collected in `pageBlocks` |
@@ -49,11 +49,20 @@ The first ten are the homepage design (admin group **Landing page**); the rest a
 | `VisitHours` | `visitHours` | `VisitHoursBlock` (address/map link fall back to Site settings) |
 | `SunCta` | `sunCta` | `SunCtaBlock` |
 | `CateringHero` | `cateringHero` | `CateringHeroBlock` (admin group **Catering page**; photo collage + stamp, icon facts) |
-| `CateringRibbon` | `cateringRibbon` | `CateringRibbonBlock` (straight ink marquee) |
+| `CateringRibbon` | `cateringRibbon` | `CateringRibbonBlock` (straight ink marquee; admin label "Ink ribbon", also used on About/Contact) |
 | `CateringMenu` | `cateringMenu` | `CateringMenuBlock` + client `catering/CateringMenuChips` (phone jump chips, scroll-spy); trays are plain array rows, not menu items |
 | `CateringUseCases` | `cateringUseCases` | `CateringUseCasesBlock` |
 | `CateringSteps` | `cateringSteps` | `CateringStepsBlock` (tilted cards on desktop, timeline on phones) |
 | `CateringQuote` | `cateringQuote` | `CateringQuoteBlock` + client `catering/CateringQuoteForm` → `cateringService.requestQuote` → `POST /api/catering-requests/submit` |
+| `AboutHero` | `aboutHero` | `AboutHeroBlock` (admin group **About page**; two polaroids + stamp, outlined tags) |
+| `AboutBelief` | `aboutBelief` | `AboutBeliefBlock` (statement + staggered plate strip; swipe row on phones) |
+| `AboutKitchen` | `aboutKitchen` | `AboutKitchenBlock` (photo collage + seal, numbered pillars) |
+| `AboutGallery` | `aboutGallery` | `AboutGalleryBlock` (3 + 4 photo rows) |
+| `AboutTeam` | `aboutTeam` | `AboutTeamBlock` (member cards + optional hiring card) |
+| `AboutClosing` | `aboutClosing` | `AboutClosingBlock` |
+| `ContactHero` | `contactHero` | `ContactHeroBlock` (admin group **Contact page**; call button from Site settings phone, hours card, polaroid, stamp) |
+| `ContactForm` | `contactForm` | `ContactFormBlock` + client `contact/ContactMessageForm` → `contactService.send` → `POST /api/contact-messages/submit` |
+| `ContactFind` | `contactFind` | `ContactFindBlock` (button can use the Site settings map URL) |
 | `Hero` | `hero` | `HeroBlock` |
 | `Content` | `content` | `ContentBlock` |
 | `MediaContent` | `mediaContent` | `MediaContentBlock` |
