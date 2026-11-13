@@ -10,19 +10,19 @@ Defined in `src/app/globals.css` `@theme {}`. Allow shadcn-generated components 
 
 | shadcn class | Maps to | CSS variable value |
 |---|---|---|
-| `bg-popover` | `bg-surface` | `oklch(0.1 0.018 264)` |
-| `text-popover-foreground` | `text-foreground` | `oklch(0.962 0.006 264)` |
-| `bg-secondary` | `bg-surface-raised` | `oklch(0.13 0.016 264)` |
-| `text-secondary-foreground` | `text-foreground` | `oklch(0.962 0.006 264)` |
-| `bg-muted` | `bg-surface-raised` | `oklch(0.13 0.016 264)` |
-| `text-muted-foreground` | `text-foreground-muted` | `oklch(0.62 0.018 264)` |
-| `bg-accent` | `bg-primary-subtle` | `oklch(0.623 0.214 259.8 / 0.12)` |
-| `text-accent-foreground` | `text-foreground` | `oklch(0.962 0.006 264)` |
-| `bg-sidebar` | `bg-surface` | `oklch(0.1 0.018 264)` |
-| `bg-sidebar-primary` | `bg-primary` | `oklch(0.623 0.214 259.8)` |
-| `bg-sidebar-accent` | `bg-surface-raised` | `oklch(0.13 0.016 264)` |
-| `border-sidebar-border` | `border-border` | `oklch(0.22 0.016 264)` |
-| `ring-sidebar-ring` | `ring-ring` | `oklch(0.623 0.214 259.8)` |
+| `bg-popover` | `bg-surface` | `oklch(0.19 0.009 60)` |
+| `text-popover-foreground` | `text-foreground` | `oklch(0.955 0.012 85)` |
+| `bg-secondary` | `bg-surface-raised` | `oklch(0.225 0.01 60)` |
+| `text-secondary-foreground` | `text-foreground` | `oklch(0.955 0.012 85)` |
+| `bg-muted` | `bg-surface-raised` | `oklch(0.225 0.01 60)` |
+| `text-muted-foreground` | `text-foreground-muted` | `oklch(0.76 0.015 75)` |
+| `bg-accent` | `bg-primary-subtle` | `oklch(0.8 0.105 75 / 0.14)` |
+| `text-accent-foreground` | `text-foreground` | `oklch(0.955 0.012 85)` |
+| `bg-sidebar` | `bg-surface` | `oklch(0.19 0.009 60)` |
+| `bg-sidebar-primary` | `bg-primary` | `oklch(0.8 0.105 75)` |
+| `bg-sidebar-accent` | `bg-surface-raised` | `oklch(0.225 0.01 60)` |
+| `border-sidebar-border` | `border-border` | `oklch(0.29 0.011 60)` |
+| `ring-sidebar-ring` | `ring-ring` | `oklch(0.8 0.105 75)` |
 
 ---
 
@@ -32,12 +32,14 @@ Fonts loaded via `next/font/google` in `src/app/[locale]/layout.tsx`, injected a
 
 | CSS variable | Font family | Weights | Utility |
 |---|---|---|---|
-| `--font-outfit` | Outfit | 300–800 | `font-sans` — all body + UI text |
+| `--font-outfit` | Outfit | 300–700 | `font-sans` — all body + UI text |
+| `--font-fraunces` | Fraunces (variable, `opsz` + `SOFT` axes) | variable | `font-display` — headings, section titles, quotes |
 | `--font-jetbrains-mono` | JetBrains Mono | 400–600 | `font-mono` — code, monospace data |
 
 `@theme` mapping:
 ```css
 --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+--font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 --font-mono: var(--font-jetbrains-mono), ui-monospace, "Cascadia Code", monospace;
 ```
 
@@ -83,7 +85,11 @@ Defined in `@layer utilities {}` in `src/app/globals.css`:
 | `.container-page` | `max-width: 1280px`, centered, `1.5rem` horizontal padding |
 | `.text-balance` | `text-wrap: balance` — even line breaks for headings |
 | `.glow-primary` | Triple box-shadow glow in primary color |
-| `.border-gradient` | Transparent border filled with primary→teal 135° gradient |
+| `.border-gradient` | Transparent border filled with primary→sea 135° gradient |
+
+## CMS Rich Text
+
+`.prose-cms` (in `@layer components`) styles Lexical output rendered by `src/components/cms/RichText.tsx` — muted body, `font-display` headings, primary underlined links, primary left-border blockquotes. Style CMS rich text through this class only; don't add `@tailwindcss/typography`.
 
 ---
 

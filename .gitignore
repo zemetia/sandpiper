@@ -11,6 +11,7 @@
 # Production
 /build
 /storybook-static
+/media
 
 # Env files
 .env

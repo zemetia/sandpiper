@@ -10,7 +10,8 @@
 |---|---|---|
 | `ui/` | [src/components/ui/](../../../src/components/ui/) | No domain logic, no i18n, no stores |
 | `shared/` | [src/components/shared/](../../../src/components/shared/) | May use i18n hooks, no domain data-fetch |
-| `layout/` | [src/components/layout/](../../../src/components/layout/) | Page scaffolding — Header, Footer, PageWrapper |
+| `layout/` | [src/components/layout/](../../../src/components/layout/) | Page scaffolding — AnnouncementBar, Header (+ client `HeaderNav`), Footer, PageWrapper. Receive CMS data + translated labels as props |
+| `cms/` | [src/components/cms/](../../../src/components/cms/) | Server renderers for Payload content (`CmsPage`, `RenderBlocks`, `blocks/*Block.tsx`). Flat files, no barrel → [CMS.md](../CMS.md) |
 | feature | `src/app/[locale]/<feature>/` | Co-located with page, domain-specific |
 
 ---

@@ -35,10 +35,15 @@ src/config/site.ts          ← single source of truth
     │
     ├── src/lib/seo.ts           → buildMetadata() → every page's generateMetadata()
     ├── src/lib/structured-data.ts → JSON-LD schemas → <StructuredData> in pages
-    ├── src/app/sitemap.ts       → /sitemap.xml
+    ├── src/app/sitemap.ts       → /sitemap.xml  (+ published CMS pages)
     ├── src/app/robots.ts        → /robots.txt
     └── src/app/llms.txt/route.ts → /llms.txt
+
+Payload CMS (per-page SEO tab, SiteSettings)
+    └── src/components/cms/CmsPage.tsx → cmsMetadata() + JSON-LD for every CMS page
 ```
+
+Precedence for a CMS page's title/description: **CMS SEO tab → `siteConfig.pages` entry with the same path → page title / `siteConfig` defaults**. Business facts (address, hours, phone, socials) come from the CMS `SiteSettings` global, not `site.ts`.
 
 ---
 
@@ -48,7 +53,7 @@ Before writing any metadata or content, ask:
 
 1. **What search query would bring the right visitor here?** — write the title and description to match that query.
 2. **What factual statement would an AI overview cite?** — put it in the first paragraph, use numbers and specifics.
-3. **Would an LLM know what this page is for?** — the description in `siteConfig.pages` is what appears in `/llms.txt`.
+3. **Would an LLM know what this page is for?** — the description in `siteConfig.pages` is what appears in `/llms.txt` (CMS-only pages are not listed there).
 
 ---
 

@@ -23,17 +23,16 @@ export interface BuildMetadataOptions {
   noIndex?: boolean;
 }
 
+/** Absolute URL for a locale-stripped path. Routing uses `localePrefix: 'always'`, so every locale is prefixed. */
+export function localizedUrl(path: string, locale: string): string {
+  return `${siteConfig.url}/${locale}${path === '/' ? '' : path}`;
+}
+
 /** Build hreflang alternate map for all supported locales. */
-function buildAlternates(
-  path: string,
-): Record<string, string> {
+function buildAlternates(path: string): Record<string, string> {
   const alts: Record<string, string> = {};
-  for (const locale of routing.locales) {
-    const prefix =
-      locale === routing.defaultLocale ? '' : `/${locale}`;
-    alts[locale] = `${siteConfig.url}${prefix}${path === '/' ? '' : path}`;
-  }
-  alts['x-default'] = `${siteConfig.url}${path === '/' ? '' : path}`;
+  for (const locale of routing.locales) alts[locale] = localizedUrl(path, locale);
+  alts['x-default'] = localizedUrl(path, routing.defaultLocale);
   return alts;
 }
 
@@ -61,10 +60,7 @@ export function buildMetadata({
   const resolvedDescription = description ?? siteConfig.description;
   const resolvedOgImage = ogImage ?? siteConfig.ogImage;
 
-  const localePrefix =
-    locale === routing.defaultLocale ? '' : `/${locale}`;
-  const canonicalPath = path === '/' ? '' : path;
-  const canonicalUrl = `${siteConfig.url}${localePrefix}${canonicalPath}`;
+  const canonicalUrl = localizedUrl(path, locale);
 
   return {
     title: title

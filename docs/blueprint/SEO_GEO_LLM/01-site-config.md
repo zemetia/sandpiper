@@ -6,7 +6,9 @@
 
 ## File: `src/config/site.ts`
 
-This is the **company brain** — the single file that an AI agent must read and understand before generating any SEO content. Every other layer (metadata, structured data, sitemap, LLMs.txt) derives from it.
+This is the **company brain** for SEO/GEO/LLMs.txt — brand identity, fallback metadata and the core page registry. Read it before generating any SEO content.
+
+> **Scope (Sandpiper):** visitor-facing content — pages, menu, hours, address, nav, footer — lives in Payload (see [CMS.md](../CMS.md)). `site.ts` keeps only brand copy used by metadata, JSON-LD and `/llms.txt`. Don't duplicate CMS facts here.
 
 ---
 
@@ -14,10 +16,10 @@ This is the **company brain** — the single file that an AI agent must read and
 
 ### Core identity
 ```ts
-name: 'My Product',
-tagline: 'One sentence that nails the value proposition.',
+name: 'Sandpiper',
+tagline: 'Specialty coffee and all-day kitchen by the shore.',
 description: 'Two-sentence pitch: what, for whom, and how it differs.',
-url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://example.com',
+url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://sandpiper.cafe',
 ```
 - `name` → Organization schema, OG `site_name`, LLMs.txt heading
 - `tagline` → LLMs.txt blockquote, og:title fallback
@@ -41,9 +43,9 @@ These fields drive the Organization JSON-LD schema and the LLMs.txt "About" sect
 ### SEO settings
 ```ts
 seo: {
-  titleTemplate: '%s | My Product',   // Next.js title template
-  defaultTitle: 'My Product — ...',   // used when no page title is given
-  twitterHandle: '@handle',
+  titleTemplate: '%s · Sandpiper',    // Next.js title template (home uses an absolute title)
+  defaultTitle: 'Sandpiper — ...',    // used when no page title is given
+  twitterHandle?: '@handle',          // optional
   locale: 'en_US',                    // OG locale default
 }
 ```
@@ -58,21 +60,25 @@ pages: {
     changeFreq: 'weekly',
     priority: 1.0,
   },
+  menu: { ... },
   about: { ... },
-  // Add one entry per public page
 }
 ```
 
-**Rule: every public page must have an entry here** before it goes live. The `description` must answer "what does a visitor gain from this page?" in one specific sentence.
+These are the **core pages** (home, menu, about). Their `title`/`description` are the fallback SEO copy for the CMS page with the same path and the list shown in `/llms.txt`. Any other page published in the CMS is added to the sitemap automatically and takes its SEO from the CMS SEO tab — no entry needed. The `description` must answer "what does a visitor gain from this page?" in one specific sentence.
 
 ---
 
 ## Adding a New Page — Required Steps
 
+**CMS page (default):** create it in `/admin` → Pages and fill the SEO tab. Metadata, JSON-LD and sitemap are handled by `CmsPage`. Add a `siteConfig.pages` entry only if it is a core page that should appear in `/llms.txt`.
+
+**Hand-coded page:**
+
 1. Add an entry to `siteConfig.pages` in `src/config/site.ts`
 2. Write `title` and `description` from the visitor's intent, not from what the page contains
 3. Call `buildMetadata()` in the page's `generateMetadata()` — see [02 — SEO](./02-seo.md)
-4. Add a `<StructuredData>` `webPageSchema()` call in the page — see [03 — GEO](./03-geo.md)
+4. Render `<StructuredData id="webpage" schema={webPageSchema(...)} />` — see [03 — GEO](./03-geo.md)
 
 ---
 
@@ -80,8 +86,8 @@ pages: {
 
 | Bad | Good |
 |---|---|
-| "About page for My Product" | "Learn how My Product cuts Next.js setup from weeks to hours — our story, team, and open-source commitments." |
-| "Home" | "My Product is a production-ready Next.js 16 template. Ship features from day one with TypeScript, Tailwind v4, next-intl, and full SEO / GEO support." |
+| "About page for Sandpiper" | "How Sandpiper sources and roasts its coffee, what the kitchen cooks, answers to common questions, and our opening hours and address." |
+| "Our menu" | "The full Sandpiper menu with prices: espresso and pour-over coffee, teas, all-day breakfast, Indonesian mains and house-baked pastry. Vegan and gluten-free options marked." |
 
 Rules:
 - Include the primary keyword in the first 11 words

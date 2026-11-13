@@ -38,6 +38,31 @@ Export from [src/services/index.ts](../../../src/services/index.ts) barrel.
 
 ---
 
+## CMS Service (Payload Local API)
+
+[`src/services/cms.service.ts`](../../../src/services/cms.service.ts) reads Payload in-process — no HTTP, no `apiClient`. It is **server-only** and deliberately **not** exported from the `@/services` barrel (that barrel is imported by client code and would bundle Payload).
+
+```ts
+import { cmsService } from '@/services/cms.service';
+
+await cmsService.getPage(slug, locale);        // Page | null — draft-aware
+await cmsService.getPageSlugs();               // sitemap
+await cmsService.getSiteSettings(locale);      // SiteSettingsVO
+await cmsService.getNavigation(locale);        // NavigationVO (header + footer)
+await cmsService.getMenu(locale);              // MenuCategoryVO[]
+await cmsService.getMenuHighlights(locale, …); // MenuItemVO[]
+await cmsService.isDraft();
+```
+
+| Rule | Detail |
+|---|---|
+| Access | Public reads pass `overrideAccess: false` → published docs only. Draft mode switches to `draft: true, overrideAccess: true` |
+| Dedupe | Per-request `React.cache()` on page/settings/nav/menu reads |
+| Mapping | Pure functions in `cms.mappers.ts` turn Payload docs into VOs (`cms.vo.ts`); unit-test them there |
+| Client data | Client components never call Payload — pass VOs down as props, or expose a Route Handler + TanStack Query if interactivity needs it |
+
+---
+
 ## Zod Validation (src/lib/validations/)
 
 Package: zod v4.4.3

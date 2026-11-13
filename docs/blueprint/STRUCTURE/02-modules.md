@@ -8,10 +8,10 @@
 
 | Path | Export | Purpose |
 |---|---|---|
-| [`src/proxy/rate-limit.ts`](../../../src/proxy/rate-limit.ts) | `applyRateLimit` | `next-limitr` sliding window rate limiter for `/api/*`; returns `Promise<429 response \| null>` |
+| [`src/proxy/rate-limit.ts`](../../../src/proxy/rate-limit.ts) | `applyRateLimit` | In-memory fixed-window limiter for `/api/*` (60/min; 600/min with a `payload-token` cookie); returns `Promise<429 response \| null>` |
 | [`src/proxy/security-headers.ts`](../../../src/proxy/security-headers.ts) | `applySecurityHeaders` | Attaches security headers to every `NextResponse` |
 
-No barrel — these are consumed only by `proxy.ts`.
+No barrel — these are consumed only by `src/middleware.ts`.
 
 ---
 
@@ -44,9 +44,9 @@ toast.error('msg');      // direct sonner fn — outside components
 
 | Path | Purpose |
 |---|---|
-| [src/i18n/routing.ts](../../../src/i18n/routing.ts) | `defineRouting` — locales `['en','id']`, `localePrefix: 'as-needed'` |
+| [src/i18n/routing.ts](../../../src/i18n/routing.ts) | `defineRouting` — locales `['en','id']`, `localePrefix: 'always'` |
 | [src/i18n/navigation.ts](../../../src/i18n/navigation.ts) | `Link`, `redirect`, `usePathname`, `useRouter`, `getPathname` |
-| [src/i18n/request.ts](../../../src/i18n/request.ts) | `getRequestConfig` — loads message JSON per locale per RSC render |
+| [src/i18n/request.ts](../../../src/i18n/request.ts) | `getRequestConfig` — loads `common`, `navigation`, `site` per locale per RSC render |
 
 ---
 
@@ -54,7 +54,7 @@ toast.error('msg');      // direct sonner fn — outside components
 
 | Path | Export | Purpose |
 |---|---|---|
-| [src/config/site.ts](../../../src/config/site.ts) | `siteConfig`, `SiteConfig`, `PageConfig` | Company brain — drives SEO, GEO, sitemap, LLMs.txt → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
+| [src/config/site.ts](../../../src/config/site.ts) | `siteConfig`, `SiteConfig`, `PageConfig` | Brand copy for SEO, GEO, sitemap, LLMs.txt only — visitor-facing content lives in the CMS → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
 
 ---
 
@@ -65,9 +65,11 @@ toast.error('msg');      // direct sonner fn — outside components
 | [src/lib/cn.ts](../../../src/lib/cn.ts) | `cn` | `cn(...inputs: ClassValue[]): string` — `twMerge(clsx(...))` |
 | [src/lib/cookies.ts](../../../src/lib/cookies.ts) | `getCookie` / `setCookie` / `deleteCookie` / `getAllCookies` / `parseCookieHeader` | Cookie helpers |
 | [src/lib/sentry.ts](../../../src/lib/sentry.ts) | `captureError` / `captureMessage` | Sentry wrappers |
-| [src/lib/seo.ts](../../../src/lib/seo.ts) | `buildMetadata` | Builds full `Metadata` object for every public page → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
-| [src/lib/structured-data.ts](../../../src/lib/structured-data.ts) | `organizationSchema`, `webPageSchema`, `faqSchema`, `breadcrumbSchema`, `articleSchema`, `serializeSchema` | JSON-LD schema builders + serializer → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
+| [src/lib/seo.ts](../../../src/lib/seo.ts) | `buildMetadata`, `localizedUrl` | Full `Metadata` for every public page; `localizedUrl(path, locale)` = absolute, always-prefixed URL → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
+| [src/lib/structured-data.ts](../../../src/lib/structured-data.ts) | `organizationSchema`, `webPageSchema`, `localBusinessSchema`, `faqSchema`, `breadcrumbSchema`, `articleSchema`, `serializeSchema` | JSON-LD schema builders + serializer → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
 | [src/lib/utils.ts](../../../src/lib/utils.ts) | `formatDate` / `truncate` / `slugify` / `assertNever` | General utilities |
+| [src/lib/format.ts](../../../src/lib/format.ts) | `formatPrice` | `formatPrice(value, 'IDR' \| 'USD', locale)` — IDR uses `<locale>-ID` grouping (`Rp 38.000`) in both locales |
+| [src/lib/safe-path.ts](../../../src/lib/safe-path.ts) | `isSafePath` | Same-origin path check for redirects — rejects `//host` and `/\host` |
 | [src/lib/validations/common.ts](../../../src/lib/validations/common.ts) | `emailSchema`, `passwordSchema`, `nameSchema`, `urlSchema`, `uuidSchema`, `paginationSchema` | Zod primitives |
 | [src/lib/validations/index.ts](../../../src/lib/validations/index.ts) | barrel | re-exports all from `common.ts` |
 
@@ -78,7 +80,8 @@ toast.error('msg');      // direct sonner fn — outside components
 | Path | Export | Purpose |
 |---|---|---|
 | [src/providers/PostHogProvider.tsx](../../../src/providers/PostHogProvider.tsx) | `PostHogProvider` | posthog-js init + `$pageview` tracking |
-| [src/providers/index.tsx](../../../src/providers/index.tsx) | barrel | `export { PostHogProvider }` |
+| [src/providers/QueryProvider.tsx](../../../src/providers/QueryProvider.tsx) | `QueryProvider` | TanStack Query client — not mounted yet; wrap the tree when the first client query lands |
+| [src/providers/index.tsx](../../../src/providers/index.tsx) | barrel | `PostHogProvider`, `QueryProvider` |
 
 ---
 
@@ -89,7 +92,10 @@ toast.error('msg');      // direct sonner fn — outside components
 | [src/services/types.ts](../../../src/services/types.ts) | `ApiError`, `RequestConfig`, interceptor types | All shared service types |
 | [src/services/client.ts](../../../src/services/client.ts) | `apiClient` | Singleton `ApiClientInstance` |
 | [src/services/health.service.ts](../../../src/services/health.service.ts) | `healthService` | Example domain service |
-| [src/services/index.ts](../../../src/services/index.ts) | barrel | `apiClient`, `ApiError`, all services |
+| [src/services/example.service.ts](../../../src/services/example.service.ts) | `ExampleService` | DTO → VO reference service |
+| [src/services/index.ts](../../../src/services/index.ts) | barrel | `apiClient`, `ApiError`, external-API services (client-safe) |
+| [src/services/cms.service.ts](../../../src/services/cms.service.ts) | `cmsService` | **Server-only** Payload Local API reads — import directly, never via the barrel → [CMS.md](../CMS.md) |
+| [src/services/cms.mappers.ts](../../../src/services/cms.mappers.ts) | `toImage`, `toLink`, `toLinks`, `toMenuItem`, `populated` | Pure Payload doc → VO mappers (unit-tested) |
 
 ---
 
@@ -126,9 +132,12 @@ Client-ready, display-optimized shapes. Produced by services after transforming 
 | Path | Export |
 |---|---|
 | [src/types/value-objects/admin.vo.ts](../../../src/types/value-objects/admin.vo.ts) | `AdminVO`, `AdminListVO` |
+| [src/types/value-objects/cms.vo.ts](../../../src/types/value-objects/cms.vo.ts) | `ImageVO`, `LinkVO`, `MenuTag`, `MenuItemVO`, `MenuCategoryVO`, `SiteSettingsVO`, `NavigationVO` |
 | [src/types/value-objects/index.ts](../../../src/types/value-objects/index.ts) | barrel |
 
 See [ARCHITECTURE/05-dto-vo.md](../ARCHITECTURE/05-dto-vo.md) for the full data-flow and transformation pattern.
+
+Payload has no DTO layer: the generated types in `src/payload-types.ts` play that role and `cms.mappers.ts` turns them into VOs.
 
 ---
 
@@ -138,12 +147,12 @@ See [ARCHITECTURE/05-dto-vo.md](../ARCHITECTURE/05-dto-vo.md) for the full data-
 |---|---|---|
 | [messages/en/common.json](../../../messages/en/common.json) | `common` | Shared labels, buttons, errors |
 | [messages/en/navigation.json](../../../messages/en/navigation.json) | `navigation` | Nav labels |
-| [messages/en/home.json](../../../messages/en/home.json) | `home` | Home page + meta |
+| [messages/en/site.json](../../../messages/en/site.json) | `site` | Site chrome: skip link, menu toggles, footer labels, preview banner, empty-site state |
 | [messages/id/common.json](../../../messages/id/common.json) | `common` | Indonesian |
 | [messages/id/navigation.json](../../../messages/id/navigation.json) | `navigation` | Indonesian |
-| [messages/id/home.json](../../../messages/id/home.json) | `home` | Indonesian |
+| [messages/id/site.json](../../../messages/id/site.json) | `site` | Indonesian |
 
-Namespace key = JSON filename without extension. Loaded in [src/i18n/request.ts](../../../src/i18n/request.ts).
+Namespace key = JSON filename without extension. Loaded in [src/i18n/request.ts](../../../src/i18n/request.ts). `messages/` is for UI chrome only — page content, nav labels and menu copy are localized fields in Payload.
 
 ---
 
@@ -155,6 +164,8 @@ Reference: [.env.example](../../../.env.example)
 |---|---|---|---|
 | `NEXT_PUBLIC_APP_URL` | Yes | client+server | Metadata base URL |
 | `NEXT_PUBLIC_API_URL` | Yes | client+server | `src/services/client.ts` `baseUrl` |
+| `DATABASE_URI` | Yes | server | Payload Postgres adapter |
+| `PAYLOAD_SECRET` | Yes | server | Payload auth/JWT signing — ≥32 chars, unique per environment |
 | `NEXT_PUBLIC_SENTRY_DSN` | Prod | client+server | Sentry configs |
 | `SENTRY_ORG` | Prod/CI | build | `next.config.ts` `withSentryConfig` |
 | `SENTRY_PROJECT` | Prod/CI | build | `next.config.ts` `withSentryConfig` |

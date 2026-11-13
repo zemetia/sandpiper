@@ -39,6 +39,8 @@ Card.displayName = 'Card';
 | `rightIcon` | ReactNode | icon slot after label |
 | `fullWidth` | boolean | `w-full` |
 
+`buttonVariants` is also exported — use it to style a `Link`/`CmsLink` as a button (`className={buttonVariants({ variant: 'primary' })}`) instead of nesting `<button>` in `<a>`.
+
 ---
 
 ## Input — [src/components/ui/Input/](../../../src/components/ui/Input/)

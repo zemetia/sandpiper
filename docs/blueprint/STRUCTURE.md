@@ -4,5 +4,5 @@
 
 | Part | Coverage |
 |---|---|
-| [01 — App directories](./STRUCTURE/01-app-dirs.md) | Root, `src/`, `src/app/`, `src/components/` |
-| [02 — Module directories](./STRUCTURE/02-modules.md) | hooks, i18n, lib, providers, services, stores, types, messages, env vars |
+| [01 — App directories](./STRUCTURE/01-app-dirs.md) | Root, `src/` (incl. Payload dirs), `src/app/` (locale, CMS catch-all, `(payload)`, preview), `src/components/` |
+| [02 — Module directories](./STRUCTURE/02-modules.md) | proxy, hooks, i18n, config, lib, providers, services (incl. `cmsService`), stores, types, messages, env vars |

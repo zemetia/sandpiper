@@ -10,32 +10,38 @@
 Browser Request
     │
     ▼
-proxy.ts  (Next.js 16 — replaces middleware.ts)
-    ├── applyRateLimit     → 429 if /api/* exceeds 60 req/min per IP
-    ├── /api/* routes      → applySecurityHeaders → Route Handler
+src/middleware.ts  (never root proxy.ts — see 04)
+    ├── applyRateLimit     → 429 if /api/* exceeds 60 req/min per IP (600 with CMS session)
+    ├── /admin, /api, /preview → applySecurityHeaders → Payload / Route Handler
     └── page routes        → intlMiddleware (next-intl) → applySecurityHeaders
             next-intl: reads Accept-Language, sets locale cookie,
-                       redirects /path → /id/path
+                       redirects /path → /en/path (localePrefix: 'always')
     │
     ▼
 src/app/[locale]/layout.tsx  ← RSC
     ├── validates locale param
-    ├── loads Outfit + JetBrains Mono via next/font
-    ├── calls getTranslations() for generateMetadata
-    ├── calls getRequestConfig() → loads messages JSON
+    ├── loads Outfit + Fraunces + JetBrains Mono via next/font
+    ├── getMessages() + getTranslations('site')
+    ├── cmsService.getSiteSettings() + getNavigation()  ← Payload Local API
     └── renders provider tree:
         <html lang={locale}>
           <NextIntlClientProvider messages={messages}>
             <PostHogProvider>
-              {children}         ← pages (RSC by default)
+              skip link · <AnnouncementBar> · <Header>
+              <main id="main">{children}</main>   ← pages (RSC by default)
+              <Footer>
             </PostHogProvider>
             <Toaster />          ← Sonner portal, ONE instance only
           </NextIntlClientProvider>
         </html>
     │
     ▼
-src/app/[locale]/page.tsx  ← Server Component
-    └── no 'use client', no hooks, no event handlers
+src/app/[locale]/page.tsx | [...slug]/page.tsx  ← Server Components
+    └── <CmsPage slug locale>
+            cmsService.getPage()   (published, or draft when draft mode is on)
+            JSON-LD + <RenderBlocks> → one renderer per block
+
+/admin, /api/*  → src/app/(payload)/  (separate root layout, Payload owns it) → CMS.md
 ```
 
 ---
@@ -61,12 +67,12 @@ src/i18n/routing.ts
     defineRouting({
       locales: ['en', 'id'],
       defaultLocale: 'en',
-      localePrefix: 'as-needed'   // /about (en), /id/about (id)
+      localePrefix: 'always'      // /en/about, /id/about — /about redirects
     })
         │
-        ├── proxy.ts
+        ├── src/middleware.ts
         │       createMiddleware(routing) + rate limit + security headers
-        │       matcher: excludes _next/*, static assets (includes /api)
+        │       matcher: excludes _next/*, static assets, sitemap.xml/robots.txt/llms.txt (includes /api)
         │
         ├── src/i18n/request.ts
         │       getRequestConfig() → loads messages per locale per RSC render

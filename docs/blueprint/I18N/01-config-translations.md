@@ -11,7 +11,8 @@
 | [src/i18n/routing.ts](../../../src/i18n/routing.ts) | `routing` — `defineRouting({ locales, defaultLocale, localePrefix })` |
 | [src/i18n/navigation.ts](../../../src/i18n/navigation.ts) | `Link`, `redirect`, `usePathname`, `useRouter`, `getPathname` |
 | [src/i18n/request.ts](../../../src/i18n/request.ts) | `getRequestConfig` — loads message JSON per locale per RSC render |
-| [proxy.ts](../../../proxy.ts) | `intlMiddleware(request)` — locale detection + redirect (via `proxy.ts`, NOT `middleware.ts`) |
+| [src/middleware.ts](../../../src/middleware.ts) | `intlMiddleware(request)` — locale detection + redirect (never root `proxy.ts`) |
+| [src/payload.config.ts](../../../src/payload.config.ts) | `localization` — same `en`/`id` locales for CMS content, `fallback: true` |
 | [messages/](../../../messages/) | JSON translation files per locale |
 
 ---
@@ -42,16 +43,16 @@ export type Locale = (typeof routing.locales)[number];  // 'en' | 'id'
 
 ---
 
-## Proxy Integration (proxy.ts)
+## Middleware Integration (src/middleware.ts)
 
-`intlMiddleware` (created from `createMiddleware(routing)`) runs inside `proxy.ts` — **not** in a `middleware.ts` file (that convention is deprecated in Next.js 16).
+`intlMiddleware` (created from `createMiddleware(routing)`) runs inside `src/middleware.ts` — **never** a root `proxy.ts` (known Next.js 16 production/Windows bugs).
 
 ```ts
-// proxy.ts — relevant excerpt
+// src/middleware.ts — relevant excerpt
 const intlMiddleware = createMiddleware(routing);
 
-export async function proxy(request: NextRequest) {
-  // ...rate limit, api guard...
+export async function middleware(request: NextRequest) {
+  // ...rate limit, /admin + /api + /preview bypass...
   return applySecurityHeaders(intlMiddleware(request));
 }
 ```
@@ -61,7 +62,7 @@ export async function proxy(request: NextRequest) {
 2. Redirects un-prefixed paths to `/{locale}/*` (because `localePrefix: 'always'`).
 3. Prevents double-locale — `/en/en/about` can never be reached.
 
-See [04-proxy.md](../ARCHITECTURE/04-proxy.md) for the full proxy flow.
+`/admin`, `/api`, `/preview`, `sitemap.xml`, `robots.txt` and `llms.txt` are never locale-routed. See [04-proxy.md](../ARCHITECTURE/04-proxy.md) for the full flow.
 
 ---
 
@@ -71,10 +72,10 @@ See [04-proxy.md](../ARCHITECTURE/04-proxy.md) for the full proxy flow.
 |---|---|
 | [messages/en/common.json](../../../messages/en/common.json) | `common` |
 | [messages/en/navigation.json](../../../messages/en/navigation.json) | `navigation` |
-| [messages/en/home.json](../../../messages/en/home.json) | `home` |
+| [messages/en/site.json](../../../messages/en/site.json) | `site` |
 | [messages/id/common.json](../../../messages/id/common.json) | `common` |
 | [messages/id/navigation.json](../../../messages/id/navigation.json) | `navigation` |
-| [messages/id/home.json](../../../messages/id/home.json) | `home` |
+| [messages/id/site.json](../../../messages/id/site.json) | `site` |
 
 Namespace key = JSON filename without extension. Loaded in `src/i18n/request.ts`:
 
@@ -84,10 +85,20 @@ return {
   messages: {
     common:     (await import(`../../messages/${locale}/common.json`)).default,
     navigation: (await import(`../../messages/${locale}/navigation.json`)).default,
-    home:       (await import(`../../messages/${locale}/home.json`)).default,
+    site:       (await import(`../../messages/${locale}/site.json`)).default,
   },
 };
 ```
+
+### What goes where
+
+| Content | Lives in |
+|---|---|
+| UI chrome — skip link, menu toggle labels, footer headings, preview banner, empty states | `messages/<locale>/site.json` |
+| Page content, nav labels, menu items, hours, announcement | Payload — `localized: true` fields, fetched with `locale` → [CMS.md](../CMS.md) |
+| SEO brand copy | `src/config/site.ts` |
+
+Server components that receive CMS data pass translated labels down as props (e.g. `Header labels={{ openMenu: t('openMenu') }}`) rather than calling `useTranslations` deep in client components.
 
 ---
 
