@@ -25,7 +25,8 @@ Browser Request
 src/middleware.ts  (Node.js — runs before route rendering)
     │
     ├── applyRateLimit(request)
-    │       /api/* only — 60 req/min per IP (600 with payload-token cookie)
+    │       /api/* only — auth endpoints 10 / 15 min per IP, anonymous 60/min per IP,
+    │       verified CMS session 600/min per user
     │       → 429 Too Many Requests (early return)        if exceeded
     │       → null                                        if ok
     │
@@ -45,6 +46,8 @@ src/middleware.ts  (Node.js — runs before route rendering)
 |---|---|
 | [`src/middleware.ts`](../../../src/middleware.ts) | Root entry — composes all intercept logic, exports `config.matcher` |
 | [`src/proxy/rate-limit.ts`](../../../src/proxy/rate-limit.ts) | In-memory rate limiter for `/api/*` routes |
+| [`src/proxy/client-ip.ts`](../../../src/proxy/client-ip.ts) | Spoof-resistant client IP (trusted header / proxy hops, IPv6 /64) |
+| [`src/proxy/cms-session.ts`](../../../src/proxy/cms-session.ts) | Verifies the `payload-token` JWT (HS256, WebCrypto) without importing Payload |
 | [`src/proxy/security-headers.ts`](../../../src/proxy/security-headers.ts) | Attaches security headers to every response |
 
 ---
@@ -57,25 +60,28 @@ src/middleware.ts  (Node.js — runs before route rendering)
 applyRateLimit(request: NextRequest): Promise<NextResponse | null>
 ```
 
-Self-contained, Edge-safe in-memory limiter (a `Map` keyed by IP). No external dependency.
+Self-contained in-memory limiter (a bounded `Map`, max 20k keys). No external dependency.
 
-| Detail | Value |
+| Tier | Limit | Key | Applies to |
+|---|---|---|---|
+| Auth | 10 / 15 min | `auth:<ip>` | non-GET `/api/users/{login,forgot-password,reset-password,unlock,first-register,verify/*}` and anonymous `POST /api/graphql` (GraphQL can `loginUser`) |
+| CMS session | 600 / 60 s | `user:<id>` | `/api/*` with a `payload-token` whose HS256 signature + `exp` verify — a forged cookie gets the anonymous tier |
+| Anonymous | 60 / 60 s | `ip:<ip>` | every other `/api/*` request |
+
+An auth request must pass both the auth tier and its API tier. Algorithm: fixed window (`count` + `resetAt`). Response: `429` JSON `{ errors: [{ message }] }` (Payload's admin shows it) with `Retry-After` + `X-RateLimit-*`.
+
+**Client IP (`client-ip.ts`).** Next.js keeps a client-sent `X-Forwarded-For` verbatim (it only fills it from the socket when missing), so its leftmost entry is attacker-controlled and is never used.
+
+| Env | Meaning |
 |---|---|
-| Algorithm | Fixed window per key (`count` + `resetAt`) |
-| Default limit | 60 requests / 60 s per IP |
-| CMS session limit | 600 requests / 60 s when a `payload-token` cookie is present (key `cms:<ip>`) — the admin fires dozens of `/api` calls per screen. The cookie is **not verified** here, so it only raises the ceiling, never removes it |
-| Key | `x-forwarded-for[0]` → `x-real-ip` → `'anonymous'` |
-| Applies to | `/api/*` only (includes Payload REST/GraphQL) |
-| Response | `429` with `Retry-After`, `X-RateLimit-*` headers |
-| Storage | Per-instance memory — replace with a shared KV (Redis/Upstash) for multi-instance |
+| `TRUSTED_IP_HEADER` | A header the edge **overwrites** on every request — `cf-connecting-ip` (Cloudflare), `x-vercel-forwarded-for` (Vercel), `x-real-ip` (nginx `proxy_set_header X-Real-IP $remote_addr`). When set, nothing else is read |
+| `TRUSTED_PROXY_HOPS` | Default `1`. Number of proxies that append to `X-Forwarded-For`; the client is that many entries from the right |
 
-To change the limit, edit the constants at the top of `rate-limit.ts`:
+IPv6 is bucketed by `/64`; unparsable values share the `unknown` bucket. With no proxy in front (local `next dev`), the socket IP is lost as soon as a caller sends `X-Forwarded-For`, so the per-IP limit is best-effort there — production must run behind a proxy configured as above.
 
-```ts
-const LIMIT = 60;               // anonymous requests per window
-const CMS_SESSION_LIMIT = 600;  // with payload-token cookie
-const WINDOW_MS = 60_000;       // window duration in ms
-```
+**Per-account lockout.** `Users` sets `auth.maxLoginAttempts: 5` + `lockTime: 15 min`. Payload stores it on the user row, so it caps brute force on an account no matter which IP or header the attempts use. Trade-off: someone who knows an admin's email can keep that account locked; the per-IP auth tier slows that down. An admin can unlock a user from the admin panel.
+
+To change limits, edit `AUTH`, `API` and `CMS_SESSION` at the top of `rate-limit.ts`.
 
 For multi-instance deployments, swap the `ipMap` reads/writes for an Edge-compatible KV client (e.g. `@upstash/ratelimit`), keeping the `applyRateLimit` signature.
 
@@ -144,7 +150,7 @@ export async function middleware(request: NextRequest) {
 |---|---|
 | 1 | Never import React, components, or `'use client'` modules in middleware/proxy files |
 | 2 | Never call `apiClient` or `fetch` for slow data — middleware must be fast |
-| 3 | Rate limiter is in-memory — not suitable for multi-instance without KV replacement |
+| 3 | Rate limiter is in-memory — not suitable for multi-instance without KV replacement. Never key it on the leftmost `X-Forwarded-For` entry — use `clientIp()` |
 | 4 | Auth logic in middleware is a first-line filter only — always re-verify inside Server Functions |
 | 5 | Use `src/middleware.ts` — never root `proxy.ts` (known production/Windows bugs in Next.js 16) |
 | 6 | Never import Payload (`payload`, `@payload-config`) in middleware — verify CMS sessions in Route Handlers via `payload.auth()` |

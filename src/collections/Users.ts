@@ -5,7 +5,8 @@ import { isAdmin, isAdminField, isAdminOrSelf } from '../cms/access';
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: { singular: 'Team member', plural: 'Team' },
-  auth: { tokenExpiration: 60 * 60 * 24 * 7 },
+  // Lockout is per account in the DB, so it holds even when the per-IP limit is dodged.
+  auth: { tokenExpiration: 60 * 60 * 24 * 7, maxLoginAttempts: 5, lockTime: 15 * 60 * 1000 },
   admin: {
     group: 'Admin',
     useAsTitle: 'name',

@@ -18,6 +18,7 @@ import { Footer } from './cms/globals/Footer';
 import { Header } from './cms/globals/Header';
 import { SiteSettings } from './cms/globals/SiteSettings';
 import { pagePath } from './cms/preview';
+import { payloadSecret } from './cms/secret';
 import { seedEndpoint } from './cms/seed';
 
 const filename = fileURLToPath(import.meta.url);
@@ -99,7 +100,7 @@ export default buildConfig({
   ],
   sharp,
   editor: lexicalEditor(),
-  secret: process.env['PAYLOAD_SECRET'] || 'super-secret-payload-key-change-in-production',
+  secret: payloadSecret,
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
     pool: { connectionString: process.env['DATABASE_URI'] || '' },

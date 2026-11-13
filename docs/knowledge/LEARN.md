@@ -8,6 +8,8 @@
 
 <!-- Entries below, newest first -->
 
+[2026-11-13] - The `/api` rate limiter keyed on the leftmost `X-Forwarded-For` entry and gave 600/min to any request carrying a `payload-token` cookie without checking it, so rotating a header or sending a fake cookie bypassed it; login had no stricter tier and no account lockout - Added `clientIp()` (trusted header / rightmost hop, IPv6 /64), HS256 verification of the session cookie, a 10 per 15 min auth tier, a bounded store, and `maxLoginAttempts` on Users - Never key a security control on a header the client can set, and never let an unverified cookie raise a limit
+
 [2026-11-13] - Syncing the new menu into the dev DB, a generic page-layout remap rewrote every block key named `items`/`categories`, which also emptied the Gift Cards FAQ and Catering menu (arrays of objects, not relationship ids) - Restored both pages from the on-disk backup taken before the sync and verified they matched exactly - When remapping relationship ids in page layouts, match on blockType + field, never on a field name alone
 
 [2026-11-13] - Asked to remove i18n "for this branch landing-page", I first created a new branch `chore/remove-i18n` before noticing the instruction - Switched back to `feat/landing-page` and deleted the empty branch before any commit - When the user names the branch to work on, work on that branch; don't branch off by reflex
