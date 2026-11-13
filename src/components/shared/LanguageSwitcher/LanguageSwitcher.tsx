@@ -7,6 +7,8 @@ import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/cn';
 
 export interface LanguageSwitcherProps {
+  /** `onDark` for blue/ink backgrounds such as the footer. */
+  tone?: 'default' | 'onDark';
   className?: string;
 }
 
@@ -15,7 +17,8 @@ const LOCALE_LABELS: Record<string, string> = {
   id: 'ID',
 };
 
-export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ tone = 'default', className }: LanguageSwitcherProps) {
+  const dark = tone === 'onDark';
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -28,7 +31,11 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
     <div
       role="group"
       aria-label="Language switcher"
-      className={cn('flex items-center rounded-md border border-border bg-surface p-0.5', className)}
+      className={cn(
+        'flex items-center rounded-full border p-0.5',
+        dark ? 'border-sunny-soft/25' : 'border-border bg-surface',
+        className,
+      )}
     >
       {routing.locales.map((loc) => (
         <button
@@ -37,10 +44,14 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
           aria-current={locale === loc ? 'true' : undefined}
           aria-label={`Switch to ${loc}`}
           className={cn(
-            'rounded px-2.5 py-1 text-xs font-semibold tracking-wide transition-all duration-150',
+            'rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide transition-all duration-150',
             locale === loc
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground-subtle hover:text-foreground',
+              ? dark
+                ? 'bg-sunny text-ink'
+                : 'bg-primary text-primary-foreground shadow-sm'
+              : dark
+                ? 'text-sunny-soft/75 hover:text-sunny'
+                : 'text-foreground-subtle hover:text-foreground',
           )}
         >
           {LOCALE_LABELS[loc] ?? loc.toUpperCase()}

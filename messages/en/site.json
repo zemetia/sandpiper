@@ -28,5 +28,31 @@
     "dairyFree": "Dairy-free",
     "spicy": "Spicy",
     "nuts": "Contains nuts"
-  }
+  },
+  "mainMenu": "Menu",
+  "home": "Home",
+  "call": "Call us",
+  "map": "Find us on the map",
+  "instagram": "Instagram",
+  "ticker": "Café facts",
+  "explore": "Explore",
+  "visit": "Visit",
+  "newsletter": {
+    "email": "Email address",
+    "thanks": "You're on the list — see you Sunday.",
+    "invalid": "That email doesn't look right.",
+    "error": "Couldn't sign you up. Please try again."
+  },
+  "hero": {
+    "next": "Next",
+    "slides": "Featured",
+    "goToSlide": "Show slide {n}",
+    "pause": "Pause slideshow",
+    "play": "Play slideshow"
+  },
+  "plates": "Fan favorites — scroll sideways",
+  "orbit": "Coffee menu",
+  "ratings": "Ratings",
+  "mapAlt": "Map of the café on {street}",
+  "swipe": "Swipe"
 }

@@ -24,8 +24,9 @@ export function SeedButton() {
       <div>
         <h2 className="sp-panel__title">Start with Sandpiper starter content</h2>
         <p className="sp-empty">
-          Creates the Home, Menu and About pages, 5 categories, 12 menu items and the header, footer
-          and site settings — all editable. Only runs on an empty site.
+          Creates the landing page, Menu, About, Catering, Gift Cards and Contact pages, 6
+          categories, 28 menu items with photos and the header, footer and site settings — all
+          editable. Only runs on an empty site.
         </p>
         {state === 'error' && <p className="sp-seed__error">{message}</p>}
       </div>

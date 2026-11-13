@@ -17,14 +17,14 @@ export function AnnouncementBar({ text, link }: AnnouncementBarProps) {
             {link.href.startsWith('/') ? (
               <Link
                 href={link.href}
-                className="text-sea font-semibold underline-offset-4 hover:underline"
+                className="text-primary font-semibold underline-offset-4 hover:underline"
               >
                 {link.label} →
               </Link>
             ) : (
               <a
                 href={link.href}
-                className="text-sea font-semibold underline-offset-4 hover:underline"
+                className="text-primary font-semibold underline-offset-4 hover:underline"
               >
                 {link.label} →
               </a>

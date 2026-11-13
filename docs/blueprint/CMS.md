@@ -11,14 +11,14 @@ Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQ
 | Path | Purpose |
 |---|---|
 | `src/payload.config.ts` | Collections, globals, localization (`en`, `id`, fallback on), SEO plugin, admin branding + components, live preview breakpoints, `/api/seed` endpoint. Imported elsewhere as `@payload-config` |
-| `src/collections/` | `Pages` (`pages`), `MenuItems` (`menu-items`), `Categories` (`categories`), `Media` (`media`), `Users` (`users`, roles `admin` / `editor`; first user becomes admin) |
+| `src/collections/` | `Pages` (`pages`), `MenuItems` (`menu-items`), `Categories` (`categories`, optional plate `image`), `Media` (`media`), `Subscribers` (`subscribers` — footer newsletter; public `POST /api/subscribers/subscribe`, idempotent, Zod-validated), `Users` (`users`, roles `admin` / `editor`; first user becomes admin) |
 | `src/cms/access/` | `isAdmin`, `isAdminField`, `isAuthenticated`, `anyone`, `publishedOrAuthenticated`, `isAdminOrSelf` |
 | `src/cms/fields/` | `slugField()` / `formatSlug`, `link()` / `linkGroup()`, `seoTab` |
 | `src/cms/blocks/` | Page-builder block configs, collected in `pageBlocks` |
-| `src/cms/globals/` | `SiteSettings` (`site-settings` — brand, contact, hours, socials, announcement), `Header`, `Footer` |
+| `src/cms/globals/` | `SiteSettings` (`site-settings` — brand, contact, hours, socials, announcement), `Header` (nav items with drawer icon/badge, CTA + `ctaBadge`, blue info bar, ticker, mobile-drawer contact heading + promo card), `Footer` (blurb, Explore links, column headings, copyright, note, giant `wordmark`, newsletter copy) |
 | `src/cms/preview.ts` | `pagePath(slug)` (`home` → `''`) and `previewUrl(path, locale)` → `/preview?path=/<locale><path>` |
 | `src/cms/admin/` | Admin React components: `Brand` (logo/icon), `NavBrand` (sidebar header), `HeaderActions` (top-bar "View site"), `Avatar` (initials avatar), `Dashboard`, `RowLabel`s, `FieldNote`, `SeedButton`, `ViewSiteLink` |
-| `src/cms/seed/` | Starter content + `seedEndpoint` (`POST /api/seed`, signed-in only, refuses with 409 if any page exists) |
+| `src/cms/seed/` | Starter content (Philadelphia café: landing page, 6 pages, 6 categories, 28 menu items) + `images/` (webp photos uploaded to Media on seed) + `seedEndpoint` (`POST /api/seed`, signed-in only, refuses with 409 if any page exists) |
 | `src/app/(payload)/` | Payload's own root layout, `admin/[[...segments]]`, `api/[...slug]`, `api/graphql` |
 | `src/app/(payload)/custom.css` | Admin theme (overrides Payload's `--color-base-*` / `--color-success-*` scales) + sidebar, top bar (app header) styling and nav icons |
 | `src/app/(payload)/admin/importMap.js` | **Generated** — never hand-edit or replace with a `.ts` file |
@@ -26,15 +26,28 @@ Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQ
 | `src/services/cms.service.ts` | Server-only Local API reads → value objects → [SERVICES/02](./SERVICES/02-services-zod-health.md) |
 | `src/services/cms.mappers.ts` | Pure doc → VO mappers (`toImage`, `toLink`, `toMenuItem`, …), unit-tested |
 | `src/types/value-objects/cms.vo.ts` | `ImageVO`, `LinkVO`, `MenuItemVO`, `MenuCategoryVO`, `SiteSettingsVO`, `NavigationVO` |
-| `src/components/cms/` | `CmsPage` (+ `cmsMetadata`), `RenderBlocks`, one renderer per block in `blocks/`, `CmsLink`, `CmsImage`, `RichText`, `MenuItemCard`, `SectionHeading`, `LivePreviewListener` |
+| `src/components/cms/` | `CmsPage` (+ `cmsMetadata`), `RenderBlocks`, one renderer per block in `blocks/`, `CmsLink` (button), `LinkTo` (unstyled internal/external link), `CmsImage`, `RichText`, `MenuItemCard`, `SectionHeading`, `LivePreviewListener` |
+| `src/components/cms/landing/` | Landing-page pieces: `primitives` (`pillVariants`/`PillLink`, `Sticker`, `Eyebrow` — CVA), client `HeroSlider`, `MenuBoardTabs`, `PlateScroller` |
 | `src/app/[locale]/page.tsx` | Home → `CmsPage slug="home"` (shows an empty-site state with an `/admin` link if not seeded) |
 | `src/app/[locale]/[...slug]/page.tsx` | All other pages, nested slugs supported; `/home` redirects to `/` |
 | `src/app/preview/` | `route.ts` enables draft mode (requires CMS login via `payload.auth`); `exit/route.ts` disables it. Both validate `path` with `isSafePath` |
 
 ## Blocks
 
+The first ten are the homepage design (admin group **Landing page**); the rest are general-purpose.
+
 | Block config | `slug` | Renderer |
 |---|---|---|
+| `HomeHero` | `homeHero` | `HomeHeroBlock` + client `HeroSlider` (headline slide + up to 3 dish slides, autoplay with pause) |
+| `Ribbons` | `ribbons` | `RibbonsBlock` (two crossing marquees; overlaps the blocks above/below via negative margins) |
+| `MenuBoard` | `menuBoard` | `MenuBoardBlock` + client `MenuBoardTabs` (`cmsService.getMenuBoard`) |
+| `PlateParade` | `plateParade` | `PlateParadeBlock` + client `PlateScroller` (drag/swipe) |
+| `CoffeeOrbit` | `coffeeOrbit` | `CoffeeOrbitBlock` (drinks = picked menu items) |
+| `MuralStory` | `muralStory` | `MuralStoryBlock` |
+| `ReviewThread` | `reviewThread` | `ReviewThreadBlock` |
+| `GramWall` | `gramWall` | `GramWallBlock` |
+| `VisitHours` | `visitHours` | `VisitHoursBlock` (address/map link fall back to Site settings) |
+| `SunCta` | `sunCta` | `SunCtaBlock` |
 | `Hero` | `hero` | `HeroBlock` |
 | `Content` | `content` | `ContentBlock` |
 | `MediaContent` | `mediaContent` | `MediaContentBlock` |
@@ -69,7 +82,8 @@ Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getS
 - `cmsService` is **not** exported from `@/services` — that barrel is used client-side. Never import `payload` or `@payload-config` in client components or middleware.
 - Public reads pass `overrideAccess: false` (published only). Draft mode → `draft: true, overrideAccess: true`.
 - Internal links from the CMS are locale-less (`/menu`); render them with `CmsLink` / `Link` from `@/i18n/navigation`.
-- Any new field with copy visitors read → `localized: true`.
+- Any new field with copy visitors read → `localized: true`. Avoid `required: true` on localized block fields: saving a page in a second locale validates every one of them, so a page can't be saved in `id` until all are translated.
+- Media URLs go through `toImage()`, which strips the `serverURL` origin Payload adds to size variants — `next/image` only accepts relative (local) URLs here.
 - CMS strings in JSON-LD are safe only through `<StructuredData>` / `serializeSchema` (escapes `<`). Redirect targets from query params must pass `isSafePath`.
 - Page SEO: CMS SEO tab wins; `siteConfig.pages` entry with the same path is the fallback.
 - Admin sidebar: style Payload's default Nav, don't replace it. Nav icons are keyed by `#nav-<collection-slug>` / `#nav-global-<global-slug>` in `custom.css` — add a rule when adding a collection or global.

@@ -10,6 +10,7 @@ import { Categories } from './collections/Categories';
 import { Media } from './collections/Media';
 import { MenuItems } from './collections/MenuItems';
 import { Pages } from './collections/Pages';
+import { Subscribers } from './collections/Subscribers';
 import { Users } from './collections/Users';
 import { Footer } from './cms/globals/Footer';
 import { Header } from './cms/globals/Header';
@@ -57,7 +58,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, MenuItems, Categories, Media, Users],
+  collections: [Pages, MenuItems, Categories, Media, Subscribers, Users],
   globals: [SiteSettings, Header, Footer],
   endpoints: [seedEndpoint],
   localization: {

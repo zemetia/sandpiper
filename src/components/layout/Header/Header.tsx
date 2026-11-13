@@ -1,58 +1,52 @@
-import { Link } from '@/i18n/navigation';
+import { Fragment } from 'react';
+import { Sparkle } from 'lucide-react';
+
 import { cn } from '@/lib/cn';
-import { CmsLink } from '@/components/cms/CmsLink';
-import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
-import type { LinkVO } from '@/types/value-objects';
+import { Marquee } from '@/components/shared/Marquee';
+import type { NavigationVO, SiteSettingsVO } from '@/types/value-objects';
 
 import { HeaderNav } from './HeaderNav';
+import type { HeaderNavLabels } from './HeaderNav';
 
 export interface HeaderProps {
   siteName: string;
-  items: LinkVO[];
-  cta: LinkVO | null;
-  labels: { openMenu: string; closeMenu: string };
+  nav: NavigationVO['header'];
+  settings: Pick<SiteSettingsVO, 'address' | 'phone' | 'hours' | 'mapUrl' | 'socials'>;
+  labels: HeaderNavLabels & { ticker: string };
   className?: string;
 }
 
-export function BrandMark({ className }: { className?: string }) {
+/** Blue info strip (desktop) → yellow bar with the logo in the middle → ink ticker. */
+export function Header({ siteName, nav, settings, labels, className }: HeaderProps) {
   return (
-    <svg viewBox="0 0 32 32" aria-hidden="true" className={cn('size-8', className)}>
-      <rect width="32" height="32" rx="9" className="fill-primary" />
-      <path
-        d="M7 19.5c2.6 0 4-1.6 5.5-3.4C14.4 13.8 16.4 11 21 11c2 0 3.4.6 4.5 1.4-1.6-.2-3 .4-3.9 1.6l-2.4 3.2c-1.6 2.1-3.7 3.3-6.7 3.3H7Z"
-        className="fill-primary-foreground"
-      />
-      <path
-        d="M8 23.5h16"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        className="stroke-primary-foreground/50"
-      />
-    </svg>
-  );
-}
-
-export function Header({ siteName, items, cta, labels, className }: HeaderProps) {
-  return (
-    <header
-      className={cn(
-        'border-border/60 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-md',
-        className,
-      )}
-    >
-      <div className="container-page flex h-16 items-center justify-between gap-6 md:h-18">
-        <Link href="/" className="text-foreground flex items-center gap-2.5">
-          <BrandMark />
-          <span className="font-display text-xl font-semibold tracking-tight">{siteName}</span>
-        </Link>
-
-        <HeaderNav items={items} cta={cta} labels={labels} />
-
-        <div className="hidden items-center gap-3 md:flex">
-          <LanguageSwitcher />
-          {cta && <CmsLink link={cta} size="sm" />}
+    <header className={cn('relative z-40', className)}>
+      {nav.infoBar.length > 0 && (
+        <div className="bg-blue hidden lg:block">
+          <ul className="container-wide font-ui flex h-[38px] items-center justify-center gap-5 text-xs font-bold tracking-[0.13em] uppercase">
+            {nav.infoBar.map((text, i) => (
+              <Fragment key={text}>
+                {i > 0 && <li aria-hidden="true" className="bg-sunny size-1.5 rounded-full" />}
+                <li className={i % 2 === 0 ? 'text-sunny' : 'text-paper'}>{text}</li>
+              </Fragment>
+            ))}
+          </ul>
         </div>
-      </div>
+      )}
+
+      <HeaderNav siteName={siteName} nav={nav} settings={settings} labels={labels} />
+
+      {nav.ticker.length > 0 && (
+        <Marquee
+          items={nav.ticker}
+          label={labels.ticker}
+          duration={45}
+          className="bg-ink border-ink border-y py-3 lg:py-3.5"
+          itemClassName="text-sunny text-[13px] lg:text-sm font-semibold uppercase tracking-[0.14em]"
+          separator={
+            <Sparkle aria-hidden="true" className="text-berry mx-6 size-3.5 shrink-0 lg:mx-9" />
+          }
+        />
+      )}
     </header>
   );
 }

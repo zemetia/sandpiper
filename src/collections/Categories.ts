@@ -22,6 +22,12 @@ export const Categories: CollectionConfig = {
   fields: [
     { name: 'name', type: 'text', required: true, localized: true },
     { name: 'description', type: 'textarea', localized: true },
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'Plate photo for this category on the homepage menu board.' },
+    },
     slugField('name'),
   ],
 };

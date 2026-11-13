@@ -28,5 +28,31 @@
     "dairyFree": "Bebas susu",
     "spicy": "Pedas",
     "nuts": "Mengandung kacang"
-  }
+  },
+  "mainMenu": "Menu",
+  "home": "Beranda",
+  "call": "Telepon kami",
+  "map": "Lihat di peta",
+  "instagram": "Instagram",
+  "ticker": "Info kafe",
+  "explore": "Jelajahi",
+  "visit": "Kunjungi",
+  "newsletter": {
+    "email": "Alamat email",
+    "thanks": "Kamu sudah terdaftar — sampai jumpa!",
+    "invalid": "Format email belum benar.",
+    "error": "Gagal mendaftar. Coba lagi ya."
+  },
+  "hero": {
+    "next": "Berikutnya",
+    "slides": "Unggulan",
+    "goToSlide": "Tampilkan slide {n}",
+    "pause": "Jeda slideshow",
+    "play": "Putar slideshow"
+  },
+  "plates": "Menu favorit — geser ke samping",
+  "orbit": "Menu kopi",
+  "ratings": "Penilaian",
+  "mapAlt": "Peta kafe di {street}",
+  "swipe": "Geser"
 }

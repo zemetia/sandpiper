@@ -8,6 +8,10 @@
 
 <!-- Entries below, newest first -->
 
+[2026-11-13] - Reseeding the dev DB for the landing page: a temp route deleted pages/menu/categories, then the seed failed validation, and the "backup" of the old pages was only in the HTTP response (an error page), so the old starter pages and one user edit to Home were lost; each failed run also re-uploaded every seed image - Reseeded, deleted the 66 orphaned media docs, reported the loss - Write any backup to disk BEFORE the destructive step, and dry-run a seed (or wrap it in a transaction) before deleting what it replaces
+
+[2026-11-13] - Seed's `locale: 'id'` page-title updates failed: Payload validates every required localized block field in that locale, and they are empty until translated - Dropped page-title translations from the seed and made new landing-block text fields optional - Avoid `required: true` on localized fields in blocks; never update a block page in a second locale from a seed
+
 [2026-11-09] - Seed wrote all English content under the `id` locale: Payload Local API writes `locale` back onto the shared `req`, so one `update({ locale: "id", req })` flipped every later call - Pinned `locale: "en"` in the seed base options; backfilled missing `en` rows in every `*_locales` table in one transaction (dry run first) - When sharing `req` across Local API calls, always pass `locale` explicitly; verify the admin list view, not just the storefront
 
 [2026-11-09] - Deleting an admin component file that was in the generated import map crashed the whole admin (Module not found) before the map could regenerate - Removed the stale lines from importMap.js by hand - Remove the config reference and let `next dev` regenerate the map BEFORE deleting the component file

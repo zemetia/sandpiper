@@ -89,7 +89,7 @@ export function localBusinessSchema(opts: LocalBusinessOptions): WithContext<unk
     name: opts.name,
     url: opts.url,
     menu: opts.menuUrl,
-    servesCuisine: ['Coffee', 'Indonesian', 'Brunch'],
+    servesCuisine: ['Coffee', 'Breakfast', 'Sandwiches'],
     ...(opts.description ? { description: opts.description } : {}),
     ...(opts.image ? { image: opts.image } : {}),
     ...(opts.telephone ? { telephone: opts.telephone } : {}),
