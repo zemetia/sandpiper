@@ -106,7 +106,7 @@ Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getS
 - Page SEO: CMS SEO tab wins; `siteConfig.pages` entry with the same path is the fallback.
 - Admin sidebar: style Payload's default Nav, don't replace it. Nav icons are keyed by `#nav-<collection-slug>` / `#nav-global-<global-slug>` in `custom.css` — add a rule when adding a collection or global.
 - Rich text renders through `RichText` with the `.prose-cms` class → [DESIGN_SYSTEM/02](./DESIGN_SYSTEM/02-typography-utilities.md).
-- Prices are formatted with `formatPrice()` from `@/lib/format` (USD as `en-US`; IDR still supported as `id-ID`).
+- Prices are formatted with `formatPrice()` from `@/lib/format` — always USD, `en-US` (no currency setting).
 
 ## Adding a block
 

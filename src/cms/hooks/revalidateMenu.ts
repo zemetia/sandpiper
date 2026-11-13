@@ -1,9 +1,5 @@
 import { revalidateTag } from 'next/cache';
-import type {
-  CollectionAfterChangeHook,
-  CollectionAfterDeleteHook,
-  GlobalAfterChangeHook,
-} from 'payload';
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload';
 
 /** Cache tag of the published menu (`cmsService.getMenu`). */
 export const MENU_TAG = 'menu';
@@ -23,11 +19,6 @@ const afterChange: CollectionAfterChangeHook = ({ doc }) => {
 };
 
 const afterDelete: CollectionAfterDeleteHook = ({ doc }) => {
-  expireMenu();
-  return doc;
-};
-
-export const revalidateMenuGlobal: GlobalAfterChangeHook = ({ doc }) => {
   expireMenu();
   return doc;
 };

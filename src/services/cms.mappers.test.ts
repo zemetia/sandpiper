@@ -35,9 +35,9 @@ describe('toMenuItem', () => {
     id: 7,
     name: 'Flat White',
     slug: 'flat-white',
-    price: 35000,
-    compareAtPrice: 30000,
-    variants: [{ label: 'Iced', price: 37000 }],
+    price: 6.5,
+    compareAtPrice: 6,
+    variants: [{ label: 'Iced', price: 7 }],
     category: 1,
     availability: 'available',
     updatedAt: '',
@@ -45,16 +45,16 @@ describe('toMenuItem', () => {
   } as MenuItem;
 
   it('formats prices and ignores a compare-at price that is not higher', () => {
-    const vo = toMenuItem(item, 'IDR');
-    expect(vo.price).toMatch(/^Rp\s?35\.000$/);
+    const vo = toMenuItem(item);
+    expect(vo.price).toBe('$6.50');
     expect(vo.compareAtPrice).toBeNull();
     expect(vo.variants[0]?.label).toBe('Iced');
     expect(vo.badge).toBeNull();
   });
 
   it('trims the badge and treats a blank one as none', () => {
-    expect(toMenuItem({ ...item, badge: ' FAVE ' }, 'USD').badge).toBe('FAVE');
-    expect(toMenuItem({ ...item, badge: '  ' }, 'USD').badge).toBeNull();
+    expect(toMenuItem({ ...item, badge: ' FAVE ' }).badge).toBe('FAVE');
+    expect(toMenuItem({ ...item, badge: '  ' }).badge).toBeNull();
   });
 });
 

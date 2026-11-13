@@ -13,7 +13,6 @@ const settings: SiteSettingsVO = {
   siteName: 'Sandpiper',
   tagline: 'Breakfast on South Street',
   logo: null,
-  currency: 'USD',
   email: null,
   phone: '(267) 858-6183',
   whatsappUrl: null,

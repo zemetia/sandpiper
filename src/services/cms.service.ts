@@ -78,7 +78,6 @@ const getSiteSettings = cache(async (): Promise<SiteSettingsVO> => {
     siteName: s.siteName || 'Sandpiper',
     tagline: s.tagline ?? null,
     logo: toImage(s.logo),
-    currency: s.currency ?? 'IDR',
     email: s.email ?? null,
     phone: s.phone ?? null,
     whatsappUrl: digits ? `https://wa.me/${digits}` : null,
@@ -141,7 +140,7 @@ const getNavigation = cache(async (): Promise<NavigationVO> => {
 /** Public reads keep access control on (published only); draft mode bypasses it for editors. */
 const queryMenuItems = async (where: Where | undefined, limit: number, draft?: boolean) => {
   draft ??= await isDraft();
-  const [payload, settings] = await Promise.all([client(), getSiteSettings()]);
+  const payload = await client();
   const { docs } = await payload.find({
     collection: 'menu-items',
     ...(where ? { where } : {}),
@@ -154,7 +153,7 @@ const queryMenuItems = async (where: Where | undefined, limit: number, draft?: b
   });
   return docs.map((d) => ({
     categoryId: populated<Category>(d.category)?.id ?? (d.category as number),
-    item: toMenuItem(d, settings.currency),
+    item: toMenuItem(d),
   }));
 };
 
@@ -185,8 +184,8 @@ const loadMenu = async (draft: boolean): Promise<MenuCategoryVO[]> => {
 
 /**
  * The published menu changes rarely, so it is kept in the Next.js data cache across requests and
- * deploy-wide; `MENU_TAG` is expired by Payload hooks the moment an item, category, photo or
- * the site currency changes (`src/cms/hooks/revalidateMenu.ts`). The day-long `revalidate` is only
+ * deploy-wide; `MENU_TAG` is expired by Payload hooks the moment an item, category or photo
+ * changes (`src/cms/hooks/revalidateMenu.ts`). The day-long `revalidate` is only
  * a safety net. Draft previews always read live.
  */
 const getPublishedMenu = unstable_cache(() => loadMenu(false), ['cms-menu'], {

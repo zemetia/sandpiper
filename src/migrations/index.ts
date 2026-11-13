@@ -1,5 +1,6 @@
 import * as migration_20261113_083859_initial from './20261113_083859_initial';
 import * as migration_20261113_100800_blob_storage_fields from './20261113_100800_blob_storage_fields';
+import * as migration_20261113_101414_remove_currency from './20261113_101414_remove_currency';
 
 export const migrations = [
   {
@@ -10,6 +11,11 @@ export const migrations = [
   {
     up: migration_20261113_100800_blob_storage_fields.up,
     down: migration_20261113_100800_blob_storage_fields.down,
-    name: '20261113_100800_blob_storage_fields'
+    name: '20261113_100800_blob_storage_fields',
+  },
+  {
+    up: migration_20261113_101414_remove_currency.up,
+    down: migration_20261113_101414_remove_currency.down,
+    name: '20261113_101414_remove_currency'
   },
 ];

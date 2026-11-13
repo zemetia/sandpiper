@@ -301,6 +301,8 @@ export interface Media {
    */
   alt: string;
   caption?: string | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -3246,6 +3248,8 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  prefix?: T;
+  _objectKey?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -3432,10 +3436,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface SiteSetting {
   id: number;
   siteName: string;
-  /**
-   * Used to format every menu price.
-   */
-  currency: 'IDR' | 'USD';
   tagline?: string | null;
   /**
    * Optional. The wordmark is used when empty.
@@ -3602,7 +3602,6 @@ export interface Footer {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
-  currency?: T;
   tagline?: T;
   logo?: T;
   email?: T;

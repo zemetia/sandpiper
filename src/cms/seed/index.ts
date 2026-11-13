@@ -328,7 +328,6 @@ export async function seed(payload: Payload, req: PayloadRequest) {
     slug: 'site-settings',
     data: {
       siteName: 'Sandpiper',
-      currency: 'USD',
       tagline: 'Breakfast, lunch & Lavazza coffee on South Street',
       email: 'hello@sandpiper.cafe',
       phone: '(267) 858-6183',

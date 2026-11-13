@@ -5,7 +5,6 @@ import { copy } from '@/config/copy';
 import { cn } from '@/lib/cn';
 import type { HomeHeroBlock as HomeHeroBlockData, MenuItem } from '@/payload-types';
 import { populated, toImage, toLink, toLinks, toMenuItem } from '@/services/cms.mappers';
-import { cmsService } from '@/services/cms.service';
 import type { ImageVO, LinkVO, MenuItemVO } from '@/types/value-objects';
 
 import { CmsImage } from '../CmsImage';
@@ -170,13 +169,12 @@ export async function HomeHeroBlock({
   block: HomeHeroBlockData;
   isFirst: boolean;
 }) {
-  const settings = await cmsService.getSiteSettings();
   const links = toLinks(block.links);
   const orderLink = toLink(block.orderLink) ?? links[0] ?? null;
   const dishes = (block.slides ?? []).flatMap((s) => {
     const doc = populated<MenuItem>(s.menuItem);
     if (!doc) return [];
-    const item = toMenuItem(doc, settings.currency);
+    const item = toMenuItem(doc);
     return [{ item, pitch: s.pitch ?? null, image: toImage(s.image, 'card') ?? item.image }];
   });
 

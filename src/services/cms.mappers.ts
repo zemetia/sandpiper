@@ -66,8 +66,8 @@ export function toLink(link: CmsLink | null | undefined): LinkVO | null {
 export const toLinks = (rows: { link: CmsLink }[] | null | undefined): LinkVO[] =>
   (rows ?? []).map((r) => toLink(r.link)).filter((l): l is LinkVO => l !== null);
 
-export function toMenuItem(item: MenuItem, currency: 'IDR' | 'USD'): MenuItemVO {
-  const price = (v: number) => formatPrice(v, currency);
+export function toMenuItem(item: MenuItem): MenuItemVO {
+  const price = formatPrice;
   return {
     id: item.id,
     slug: item.slug ?? String(item.id),

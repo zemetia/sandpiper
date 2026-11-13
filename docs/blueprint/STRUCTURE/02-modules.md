@@ -59,7 +59,7 @@ toast.error('msg');      // direct sonner fn — outside components
 | [src/lib/seo.ts](../../../src/lib/seo.ts) | `buildMetadata`, `absoluteUrl` | Full `Metadata` for every public page; `absoluteUrl(path)` = absolute, always-prefixed URL → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
 | [src/lib/structured-data.ts](../../../src/lib/structured-data.ts) | `organizationSchema`, `webPageSchema`, `localBusinessSchema`, `faqSchema`, `breadcrumbSchema`, `articleSchema`, `serializeSchema` | JSON-LD schema builders + serializer → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
 | [src/lib/utils.ts](../../../src/lib/utils.ts) | `formatDate` / `truncate` / `slugify` / `assertNever` | General utilities |
-| [src/lib/format.ts](../../../src/lib/format.ts) | `formatPrice` | `formatPrice(value, 'IDR' | 'USD')` — USD as `en-US` (`$4.50`), IDR as `id-ID` (`Rp 38.000`)| 'USD', locale)` — IDR uses `<locale>-ID` grouping (`Rp 38.000`) in both locales |
+| [src/lib/format.ts](../../../src/lib/format.ts) | `formatPrice` | `formatPrice(value)` — always USD, `en-US` (`$4.50`, whole dollars as `$11`) |
 | [src/lib/safe-path.ts](../../../src/lib/safe-path.ts) | `isSafePath` | Same-origin path check for redirects — rejects `//host` and `/\host` |
 | [src/lib/validations/common.ts](../../../src/lib/validations/common.ts) | `emailSchema`, `passwordSchema`, `nameSchema`, `urlSchema`, `uuidSchema`, `paginationSchema` | Zod primitives |
 | [src/lib/validations/index.ts](../../../src/lib/validations/index.ts) | barrel | re-exports all from `common.ts` |

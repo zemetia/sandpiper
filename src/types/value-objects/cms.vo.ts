@@ -52,7 +52,6 @@ export interface SiteSettingsVO {
   siteName: string;
   tagline: string | null;
   logo: ImageVO | null;
-  currency: 'IDR' | 'USD';
   email: string | null;
   phone: string | null;
   whatsappUrl: string | null;
