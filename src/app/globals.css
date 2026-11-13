@@ -173,6 +173,12 @@
   html {
     color-scheme: light;
     scroll-behavior: smooth;
+    /* Keep #anchor targets clear of the sticky header bar (72px / 80px on lg). */
+    scroll-padding-top: 72px;
+
+    @media (width >= 64rem) {
+      scroll-padding-top: 80px;
+    }
   }
 
   body {

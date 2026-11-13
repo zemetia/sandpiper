@@ -28,7 +28,7 @@ export async function FullMenuBlock({ block }: { block: FullMenuBlockData }) {
         </p>
       ) : (
         <div className="grid gap-12 lg:grid-cols-[200px_1fr] lg:gap-16">
-          <nav aria-label={copy.jumpToSection} className="lg:sticky lg:top-24 lg:self-start">
+          <nav aria-label={copy.jumpToSection} className="lg:sticky lg:top-28 lg:self-start">
             <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-0">
               {categories.map((c) => (
                 <li key={c.id} className="shrink-0">
@@ -52,7 +52,7 @@ export async function FullMenuBlock({ block }: { block: FullMenuBlockData }) {
                 key={c.id}
                 id={c.slug}
                 aria-labelledby={`${c.slug}-title`}
-                className="scroll-mt-24"
+                className="scroll-mt-6"
               >
                 <header className="border-border mb-2 border-b pb-4">
                   <h2

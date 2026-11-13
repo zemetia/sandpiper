@@ -116,8 +116,8 @@ export function HeaderNav({ siteName, nav, settings, labels }: HeaderNavProps) {
   const instagram = settings.socials.find((s) => s.platform === 'instagram');
 
   return (
-    <div className="bg-sunny">
-      <div className="container-wide grid h-[72px] grid-cols-[1fr_auto] items-center gap-4 lg:h-[112px] lg:grid-cols-[1fr_auto_1fr] lg:gap-8">
+    <div className="bg-sunny border-ink border-b-2">
+      <div className="container-wide grid h-[70px] grid-cols-[1fr_auto] items-center gap-4 lg:h-[78px] lg:grid-cols-[1fr_auto_1fr] lg:gap-8">
         <nav aria-label={labels.menu} className="hidden items-center gap-10 lg:flex">
           {left.map((l) => (
             <DesktopLink key={l.href + l.label} link={l} active={isActive(l.href)} />
@@ -129,7 +129,7 @@ export function HeaderNav({ siteName, nav, settings, labels }: HeaderNavProps) {
           aria-label={`${siteName} — ${labels.home}`}
           className="-ml-1 justify-self-start lg:ml-0 lg:justify-self-center"
         >
-          <Logo className="h-[56px] w-auto lg:h-[100px]" />
+          <Logo className="h-[56px] w-auto lg:h-[62px]" />
         </Link>
 
         <div className="flex items-center justify-end gap-3 lg:gap-10">
@@ -143,7 +143,7 @@ export function HeaderNav({ siteName, nav, settings, labels }: HeaderNavProps) {
           {nav.cta && (
             <LinkTo
               link={nav.cta}
-              className="bg-blue text-sunny font-ui hover:bg-blue-deep inline-flex h-11 items-center gap-2.5 rounded-full px-5 text-[13px] font-extrabold tracking-[0.1em] whitespace-nowrap uppercase transition-colors lg:h-[46px] lg:px-7 lg:text-sm"
+              className="bg-blue text-sunny font-ui hover:bg-blue-deep inline-flex h-11 items-center gap-2.5 rounded-full px-5 text-[13px] font-extrabold tracking-[0.1em] whitespace-nowrap uppercase transition-colors lg:h-[42px] lg:px-6 lg:text-sm"
             >
               {nav.cta.label}
               <ArrowUpRight aria-hidden="true" className="size-4" />

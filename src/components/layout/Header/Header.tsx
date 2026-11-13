@@ -16,10 +16,13 @@ export interface HeaderProps {
   className?: string;
 }
 
-/** Blue info strip (desktop) → yellow bar with the logo in the middle → ink ticker. */
+/**
+ * Blue info strip (desktop) → yellow bar with the logo in the middle → ink ticker.
+ * Only the yellow bar is sticky; the strip and ticker scroll away so the pinned part stays slim.
+ */
 export function Header({ siteName, nav, settings, labels, className }: HeaderProps) {
   return (
-    <header className={cn('relative z-40', className)}>
+    <>
       {nav.infoBar.length > 0 && (
         <div className="bg-blue hidden lg:block">
           <ul className="container-wide font-ui flex h-[38px] items-center justify-center gap-5 text-xs font-bold tracking-[0.13em] uppercase">
@@ -33,7 +36,9 @@ export function Header({ siteName, nav, settings, labels, className }: HeaderPro
         </div>
       )}
 
-      <HeaderNav siteName={siteName} nav={nav} settings={settings} labels={labels} />
+      <header className={cn('sticky top-0 z-40', className)}>
+        <HeaderNav siteName={siteName} nav={nav} settings={settings} labels={labels} />
+      </header>
 
       {nav.ticker.length > 0 && (
         <Marquee
@@ -47,7 +52,7 @@ export function Header({ siteName, nav, settings, labels, className }: HeaderPro
           }
         />
       )}
-    </header>
+    </>
   );
 }
 
