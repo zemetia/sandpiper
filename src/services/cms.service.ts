@@ -1,4 +1,5 @@
 import config from '@payload-config';
+import { unstable_cache } from 'next/cache';
 import { draftMode } from 'next/headers';
 import { getPayload } from 'payload';
 import type { Where } from 'payload';
@@ -19,6 +20,8 @@ import type {
   NavigationVO,
   SiteSettingsVO,
 } from '@/types/value-objects';
+
+import { MENU_TAG } from '@/cms/hooks/revalidateMenu';
 
 import {
   populated,
@@ -136,8 +139,8 @@ const getNavigation = cache(async (): Promise<NavigationVO> => {
 });
 
 /** Public reads keep access control on (published only); draft mode bypasses it for editors. */
-const queryMenuItems = async (where: Where | undefined, limit: number) => {
-  const draft = await isDraft();
+const queryMenuItems = async (where: Where | undefined, limit: number, draft?: boolean) => {
+  draft ??= await isDraft();
   const [payload, settings] = await Promise.all([client(), getSiteSettings()]);
   const { docs } = await payload.find({
     collection: 'menu-items',
@@ -158,7 +161,7 @@ const queryMenuItems = async (where: Where | undefined, limit: number) => {
 const findMenuItems = async (where: Where, limit = 200): Promise<MenuItemVO[]> =>
   (await queryMenuItems(where, limit)).map((r) => r.item);
 
-const getMenu = cache(async (): Promise<MenuCategoryVO[]> => {
+const loadMenu = async (draft: boolean): Promise<MenuCategoryVO[]> => {
   const payload = await client();
   const [{ docs: categories }, rows] = await Promise.all([
     payload.find({
@@ -168,7 +171,7 @@ const getMenu = cache(async (): Promise<MenuCategoryVO[]> => {
       limit: 100,
       pagination: false,
     }),
-    queryMenuItems(undefined, 500),
+    queryMenuItems(undefined, 500, draft),
   ]);
 
   return categories.map((c) => ({
@@ -178,7 +181,22 @@ const getMenu = cache(async (): Promise<MenuCategoryVO[]> => {
     description: c.description ?? null,
     items: rows.filter((r) => r.categoryId === c.id).map((r) => r.item),
   }));
+};
+
+/**
+ * The published menu changes rarely, so it is kept in the Next.js data cache across requests and
+ * deploy-wide; `MENU_TAG` is expired by Payload hooks the moment an item, category, photo or
+ * the site currency changes (`src/cms/hooks/revalidateMenu.ts`). The day-long `revalidate` is only
+ * a safety net. Draft previews always read live.
+ */
+const getPublishedMenu = unstable_cache(() => loadMenu(false), ['cms-menu'], {
+  tags: [MENU_TAG],
+  revalidate: 86_400,
 });
+
+const getMenu = cache(
+  async (): Promise<MenuCategoryVO[]> => ((await isDraft()) ? loadMenu(true) : getPublishedMenu()),
+);
 
 const getMenuHighlights = async (block: MenuHighlightsBlock): Promise<MenuItemVO[]> => {
   const limit = block.limit ?? 6;

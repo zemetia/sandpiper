@@ -65,6 +65,7 @@ The first ten are the homepage design (admin group **Landing page**); the rest a
 | `ContactFind` | `contactFind` | `ContactFindBlock` (button can use the Site settings map URL) |
 | `OrderHero` | `orderHero` | `OrderHeroBlock` (admin group **Order page**; centred on desktop; phones get client `order/OrderToggle`, a Pickup/Delivery switch that sets `data-order-view` on `<html>`) |
 | `OrderChoices` | `orderChoices` | `OrderChoicesBlock` (both cards side by side on desktop; below `lg` only the card picked in `OrderToggle` shows, via `in-data-[order-view=…]`; pickup card → Toast link + numbered steps; delivery card → one row per app with `order/AppTile` brand tile, optional client `order/PromoCode` copy chip) |
+| `MenuBrowser` | `menuBrowser` | `MenuBrowserBlock` (admin group **Menu page**; yellow header with client `menu/OpenPill` (café-time OPEN NOW / CLOSED from `opensAt`/`closesAt`), client `menu/MenuBrowser` = Pickup/Delivery switch (picks where every dish's + button links; remembered in `localStorage`), live search, desktop sticky category sidebar / phone sticky ink chip bar with scroll-spy; dishes render through `menu/MenuCard` — card on desktop, ruled row on phones; item `badge` and sold-out label) |
 | `Hero` | `hero` | `HeroBlock` |
 | `Content` | `content` | `ContentBlock` |
 | `MediaContent` | `mediaContent` | `MediaContentBlock` |
@@ -125,6 +126,10 @@ Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getS
 ## Editing flow
 
 Pages and menu items have drafts + versions. Pages autosave (400 ms) and show a **Live Preview** pane (mobile/tablet/desktop); the site refreshes on each autosave via `LivePreviewListener`. **Preview** opens `/preview?path=…`, which turns on draft mode and shows a banner with an exit link. Menu item preview opens `/menu`.
+
+## Menu cache
+
+`cmsService.getMenu()` serves the published menu from the Next.js data cache (`unstable_cache`, tag `menu`, 1-day safety `revalidate`). Payload `afterChange`/`afterDelete` hooks on `menu-items`, `categories`, `media` and the `site-settings` global call `revalidateTag('menu', { expire: 0 })` (`src/cms/hooks/revalidateMenu.ts`), so an edit shows on the next visit. Draft mode bypasses the cache. Add `hooks: menuHooks` to any new collection the menu renders.
 
 ## Rate limiting
 

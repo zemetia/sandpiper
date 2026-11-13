@@ -36,6 +36,8 @@ export interface MenuItemVO {
   image: ImageVO | null;
   availability: 'available' | 'soldOut' | 'seasonal';
   featured: boolean;
+  /** Short editor label shown next to the price (FAVE, NEW, …). */
+  badge: string | null;
 }
 
 export interface MenuCategoryVO {

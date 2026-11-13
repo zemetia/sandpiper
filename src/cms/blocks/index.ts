@@ -28,6 +28,7 @@ import { Hero } from './Hero';
 import { HomeHero } from './HomeHero';
 import { MediaContent } from './MediaContent';
 import { MenuBoard } from './MenuBoard';
+import { MenuBrowser } from './MenuBrowser';
 import { MenuHighlights } from './MenuHighlights';
 import { MuralStory } from './MuralStory';
 import { OrderChoices } from './OrderChoices';
@@ -72,6 +73,7 @@ export const pageBlocks = [
   ContactFind,
   OrderHero,
   OrderChoices,
+  MenuBrowser,
   Hero,
   Content,
   MediaContent,

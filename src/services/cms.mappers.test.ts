@@ -49,6 +49,12 @@ describe('toMenuItem', () => {
     expect(vo.price).toMatch(/^Rp\s?35\.000$/);
     expect(vo.compareAtPrice).toBeNull();
     expect(vo.variants[0]?.label).toBe('Iced');
+    expect(vo.badge).toBeNull();
+  });
+
+  it('trims the badge and treats a blank one as none', () => {
+    expect(toMenuItem({ ...item, badge: ' FAVE ' }, 'USD').badge).toBe('FAVE');
+    expect(toMenuItem({ ...item, badge: '  ' }, 'USD').badge).toBeNull();
   });
 });
 

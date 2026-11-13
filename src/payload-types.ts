@@ -185,6 +185,7 @@ export interface Page {
         | ContactFindBlock
         | OrderHeroBlock
         | OrderChoicesBlock
+        | MenuBrowserBlock
         | HeroBlock
         | ContentBlock
         | MediaContentBlock
@@ -419,6 +420,10 @@ export interface MenuItem {
   slug?: string | null;
   category: number | Category;
   availability: 'available' | 'soldOut' | 'seasonal';
+  /**
+   * Short pink label next to the price on the menu, e.g. FAVE, NEW, HOT, LOCAL.
+   */
+  badge?: string | null;
   featured?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -1577,6 +1582,61 @@ export interface OrderChoicesBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBrowserBlock".
+ */
+export interface MenuBrowserBlock {
+  title?: string | null;
+  /**
+   * Philadelphia time. Drives the OPEN NOW / CLOSED pill.
+   */
+  opensAt?: string | null;
+  /**
+   * Leave both empty to hide the pill.
+   */
+  closesAt?: string | null;
+  hoursLabel?: string | null;
+  /**
+   * Falls back to the Site settings address.
+   */
+  address?: string | null;
+  /**
+   * Phone version of hours + address on one line.
+   */
+  metaShort?: string | null;
+  searchPlaceholder?: string | null;
+  pickup?: {
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: (number | null) | Page;
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  delivery?: {
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: (number | null) | Page;
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  /**
+   * Sidebar heading (desktop).
+   */
+  categoriesLabel?: string | null;
+  /**
+   * Leave empty to show every category in its configured order.
+   */
+  categories?: (number | Category)[] | null;
+  showSoldOut?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'menuBrowser';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
@@ -2008,6 +2068,7 @@ export interface PagesSelect<T extends boolean = true> {
         contactFind?: T | ContactFindBlockSelect<T>;
         orderHero?: T | OrderHeroBlockSelect<T>;
         orderChoices?: T | OrderChoicesBlockSelect<T>;
+        menuBrowser?: T | MenuBrowserBlockSelect<T>;
         hero?: T | HeroBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaContent?: T | MediaContentBlockSelect<T>;
@@ -2916,6 +2977,50 @@ export interface OrderChoicesBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MenuBrowserBlock_select".
+ */
+export interface MenuBrowserBlockSelect<T extends boolean = true> {
+  title?: T;
+  opensAt?: T;
+  closesAt?: T;
+  hoursLabel?: T;
+  address?: T;
+  metaShort?: T;
+  searchPlaceholder?: T;
+  pickup?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  delivery?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  categoriesLabel?: T;
+  categories?: T;
+  showSoldOut?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroBlock_select".
  */
 export interface HeroBlockSelect<T extends boolean = true> {
@@ -3115,6 +3220,7 @@ export interface MenuItemsSelect<T extends boolean = true> {
   slug?: T;
   category?: T;
   availability?: T;
+  badge?: T;
   featured?: T;
   updatedAt?: T;
   createdAt?: T;

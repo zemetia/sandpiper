@@ -81,6 +81,7 @@ export function toMenuItem(item: MenuItem, currency: 'IDR' | 'USD'): MenuItemVO 
     image: toImage(item.image, 'card'),
     availability: item.availability,
     featured: Boolean(item.featured),
+    badge: item.badge?.trim() || null,
   };
 }
 

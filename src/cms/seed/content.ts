@@ -123,6 +123,8 @@ export type SeedItem = {
   variants?: { label: string; price: number }[];
   tags?: string[];
   featured?: boolean;
+  /** Pink label next to the price on the menu page. */
+  badge?: string;
   availability?: 'available' | 'soldOut' | 'seasonal';
   /** File name in ./images */
   image?: string;
@@ -132,6 +134,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'breakfast',
     name: 'Classic Breakfast',
+    badge: 'FAVE',
     description: 'Two eggs your way with choice of meat and side',
     price: 13,
     tags: ['signature'],
@@ -226,6 +229,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'breakfast',
     name: 'Creamed Chipped Beef on Waffles',
+    badge: 'LOCAL',
     description:
       'a savory comfort breakfast pairing salty dried beef in a creamy white gravy with crispy waffles',
     price: 14,
@@ -302,6 +306,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'breakfast-sandwiches',
     name: 'The BEC',
+    badge: 'FAVE',
     description: 'Bacon, two fried eggs, hash brown, chipotle gouda cheese, chipotle mayo',
     price: 11,
     featured: true,
@@ -338,6 +343,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'breakfast-sandwiches',
     name: 'Milano Sunrise',
+    badge: 'NEW',
     description:
       'Breakfast panini with prosciutto, two fried eggs, avocado, fresh mozzarella, basil pesto, arugula',
     price: 13,
@@ -368,6 +374,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'sandwiches',
     name: 'The Thanksgiving',
+    badge: 'FAVE',
     description: 'Roasted turkey, mayo, cranberry sauce, arugula, provolone, fuji apple',
     price: 12,
     image: 'the-thanksgiving.webp',
@@ -408,6 +415,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'sandwiches',
     name: 'Blazing Chicken',
+    badge: 'HOT',
     description:
       'Spicy blackened chicken sandwich with grilled blackened chicken, bacon, cheddar cheese, avocado, spinach, spicy chipotle mayo',
     price: 12,
@@ -450,7 +458,13 @@ export const menuItems: SeedItem[] = [
   { category: 'sides', name: 'Side Salad', price: 5 },
   { category: 'sides', name: 'Watermelon', price: 5, image: 'watermelon.webp' },
   { category: 'sides', name: 'Side Sauce', price: 2 },
-  { category: 'merch', name: 'Sandpiper Tote Bag', price: 5, image: 'sandpiper-tote-bag.webp' },
+  {
+    category: 'merch',
+    name: 'Sandpiper Tote Bag',
+    price: 5,
+    badge: 'NEW',
+    image: 'sandpiper-tote-bag.webp',
+  },
   { category: 'coffee', name: 'Hot Tea', price: 3 },
   {
     category: 'coffee',
@@ -533,6 +547,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'smoothies',
     name: 'CYO Smoothie',
+    badge: 'DIY',
     description: 'Create your own smoothie',
     price: 9,
     image: 'cyo-smoothie.webp',
@@ -540,6 +555,7 @@ export const menuItems: SeedItem[] = [
   {
     category: 'smoothies',
     name: 'Go Birds',
+    badge: 'FAVE',
     description: 'Spinach, apple, pineapple, cucumber, banana, lemon, coconut',
     price: 9.5,
     tags: ['vegan'],

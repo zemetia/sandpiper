@@ -7,6 +7,7 @@ import { contactLayout } from './contact';
 import { categories, menuItems, sitePhotos } from './content';
 import type { SitePhoto } from './content';
 import { giftCardLayout } from './giftCards';
+import { menuLayout } from './menu';
 import { orderLayout } from './order';
 
 const imagesDir = path.resolve(process.cwd(), 'src/cms/seed/images');
@@ -123,16 +124,7 @@ export async function seed(payload: Payload, req: PayloadRequest) {
       data: { title, slug, layout: layout as never, _status: 'published' },
     });
 
-  const menu = await page('menu', 'Menu', [
-    {
-      blockType: 'hero',
-      variant: 'minimal',
-      eyebrow: 'Open daily · 7am – 4pm',
-      heading: 'The whole menu',
-      subheading: 'Breakfast all day, lunch from 11, Lavazza coffee and fresh smoothies.',
-    },
-    { blockType: 'fullMenu', showSoldOut: true },
-  ]);
+  const menu = await page('menu', 'Menu', menuLayout());
 
   const order = await page(
     'order',

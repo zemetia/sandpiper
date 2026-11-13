@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload';
 
 import { isAdmin } from '../access';
 import { link } from '../fields/link';
+import { revalidateMenuGlobal } from '../hooks/revalidateMenu';
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -10,6 +11,7 @@ export const SiteSettings: GlobalConfig = {
     group: 'Site',
     description: 'Brand, contact details, opening hours and the announcement bar.',
   },
+  hooks: { afterChange: [revalidateMenuGlobal] },
   access: { read: () => true, update: isAdmin },
   fields: [
     {

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 
 import { anyone, isAuthenticated } from '../cms/access';
+import { menuHooks } from '../cms/hooks/revalidateMenu';
 import { slugField } from '../cms/fields/slug';
 
 export const Categories: CollectionConfig = {
@@ -13,6 +14,7 @@ export const Categories: CollectionConfig = {
     defaultColumns: ['name', 'slug', 'updatedAt'],
     description: 'Menu sections. Drag rows in the list view to change the order on the website.',
   },
+  hooks: menuHooks,
   access: {
     read: anyone,
     create: isAuthenticated,

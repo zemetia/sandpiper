@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 
 import { anyone, isAuthenticated } from '../cms/access';
+import { menuHooks } from '../cms/hooks/revalidateMenu';
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -11,6 +12,7 @@ export const Media: CollectionConfig = {
     defaultColumns: ['filename', 'alt', 'filesize', 'updatedAt'],
     description: 'Photos used across pages and the menu. Set a focal point so crops look right.',
   },
+  hooks: menuHooks,
   access: {
     read: anyone,
     create: isAuthenticated,
