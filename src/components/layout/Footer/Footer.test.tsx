@@ -1,4 +1,3 @@
-import type React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -6,10 +5,6 @@ import type { NavigationVO, SiteSettingsVO } from '@/types/value-objects';
 
 import { Footer } from './Footer';
 
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: React.ComponentProps<'a'>) => <a {...props} />,
-}));
-vi.mock('@/components/shared/LanguageSwitcher', () => ({ LanguageSwitcher: () => <div /> }));
 vi.mock('./NewsletterForm', () => ({
   NewsletterForm: (props: { buttonLabel: string }) => <button>{props.buttonLabel}</button>,
 }));

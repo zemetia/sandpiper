@@ -6,7 +6,7 @@
 
 ## Overview
 
-`src/middleware.ts` is the Next.js server-side intercept layer that runs **before** any route is rendered. It sits at the network boundary in front of the app — handling rate limiting, security headers, and i18n locale routing.
+`src/middleware.ts` is the Next.js server-side intercept layer that runs **before** any route is rendered. It sits at the network boundary in front of the app — handling rate limiting, security headers, and the legacy `/en` · `/id` redirect.
 
 **Runtime:** Node.js (stable). Exports a named `middleware` function.
 
@@ -29,16 +29,12 @@ src/middleware.ts  (Node.js — runs before route rendering)
     │       → 429 Too Many Requests (early return)        if exceeded
     │       → null                                        if ok
     │
-    ├── /admin, /api/*, /preview
-    │       applySecurityHeaders(NextResponse.next())   ← no locale routing
-    │       → Payload admin / REST / GraphQL, Route Handlers, draft-mode toggle
+    ├── /en/*, /id/*  (legacy locale-prefixed URLs)
+    │       308 → same path without the prefix
     │
-    └── page routes
-            intlMiddleware(request)   ← createMiddleware(routing) from next-intl
-                reads Accept-Language, sets locale cookie,
-                redirects /path → /en/path (localePrefix: 'always')
-            applySecurityHeaders(intlResponse)
-            → continue to src/app/[locale]/layout.tsx
+    └── everything else
+            applySecurityHeaders(NextResponse.next())
+            → src/app/(site)/ pages, Payload admin / REST / GraphQL, Route Handlers, /preview
 ```
 
 ---
@@ -111,17 +107,11 @@ export const config = {
 };
 ```
 
-Static assets (`_next/static`, `_next/image`, `favicon.ico`, images) are excluded. `sitemap.xml`, `robots.txt` and `llms.txt` are excluded so next-intl never locale-redirects them. `/api` routes are **included** so rate limiting applies.
+Static assets (`_next/static`, `_next/image`, `favicon.ico`, images) are excluded. `sitemap.xml`, `robots.txt` and `llms.txt` are excluded — they need no headers or rate limiting. `/api` routes are **included** so rate limiting applies.
 
-## CMS Route Bypass
+## Legacy Locale Redirect
 
-`/admin`, `/api` and `/preview` skip `intlMiddleware` — otherwise next-intl redirects `/admin` to `/en/admin` and Payload 404s. Any new non-localized top-level route (webhooks, feeds) must be added to this check:
-
-```ts
-if (pathname.startsWith('/admin') || pathname.startsWith('/api') || pathname.startsWith('/preview')) {
-  return applySecurityHeaders(NextResponse.next());
-}
-```
+The site used to be served under `/en/*` and `/id/*`. `LEGACY_LOCALE` in `src/middleware.ts` 308-redirects those to the unprefixed path so old links and bookmarks keep working.
 
 ---
 
@@ -129,7 +119,7 @@ if (pathname.startsWith('/admin') || pathname.startsWith('/api') || pathname.sta
 
 1. Create `src/proxy/<concern>.ts`
 2. Export a pure function: `apply<Concern>(request: NextRequest): Promise<NextResponse | null>` (async early-exit) or `apply<Concern>(response: NextResponse): NextResponse` (sync response mutation)
-3. Call it in `src/middleware.ts` — before `intlMiddleware` if it may short-circuit (return early), after if it only mutates headers
+3. Call it in `src/middleware.ts` — early-exit handlers go before the final `NextResponse.next()`, header mutations wrap it
 
 ```ts
 // src/middleware.ts — example adding auth guard
@@ -142,12 +132,7 @@ export async function middleware(request: NextRequest) {
   const authBlocked = await applyAuthGuard(request);  // ← new early-exit handler
   if (authBlocked) return authBlocked;
 
-  const { pathname } = request.nextUrl;
-  if (pathname.startsWith('/admin') || pathname.startsWith('/api') || pathname.startsWith('/preview')) {
-    return applySecurityHeaders(NextResponse.next());
-  }
-
-  return applySecurityHeaders(intlMiddleware(request));
+  return applySecurityHeaders(NextResponse.next());
 }
 ```
 

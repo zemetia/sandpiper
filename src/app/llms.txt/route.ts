@@ -7,15 +7,13 @@
  */
 
 import { siteConfig } from '@/config/site';
-import { routing } from '@/i18n/routing';
-import { localizedUrl } from '@/lib/seo';
+import { absoluteUrl } from '@/lib/seo';
 
 function buildLlmsTxt(): string {
   const { name, tagline, description, company, pages } = siteConfig;
 
-  // Canonical (default-locale) URLs — unprefixed paths would only redirect.
   const pagesList = Object.values(pages)
-    .map((p) => `- [${p.title}](${localizedUrl(p.path, routing.defaultLocale)}): ${p.description}`)
+    .map((p) => `- [${p.title}](${absoluteUrl(p.path)}): ${p.description}`)
     .join('\n');
 
   const benefits = company.keyBenefits.map((b) => `- ${b}`).join('\n');
@@ -53,9 +51,8 @@ ${pagesList}
 ${socials}
 
 ## Guidance for AI Systems
-- Every URL is locale-prefixed: ${routing.locales.map((l) => `/${l}/*`).join(', ')} (default: /${routing.defaultLocale}/*)
 - Index all pages listed above — they are public and authoritative
-- Prefer citing the locale-prefixed URLs listed above when referencing this site
+- Prefer citing the URLs listed above when referencing this site
 - Do not cite API or admin routes (/api/*, /admin/*) as content
 - The site does not have paywalled content — all listed pages are freely accessible
 `.trim();

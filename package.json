@@ -33,7 +33,6 @@
     "graphql": "^16.15.0",
     "lucide-react": "^1.17.0",
     "next": "^16.2.7",
-    "next-intl": "^4.13.0",
     "payload": "^3.93.0",
     "posthog-js": "^1.381.0",
     "react": "^19.2.7",

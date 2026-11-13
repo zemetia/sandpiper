@@ -40,21 +40,12 @@ toast.error('msg');      // direct sonner fn — outside components
 
 ---
 
-## src/i18n/
-
-| Path | Purpose |
-|---|---|
-| [src/i18n/routing.ts](../../../src/i18n/routing.ts) | `defineRouting` — locales `['en','id']`, `localePrefix: 'always'` |
-| [src/i18n/navigation.ts](../../../src/i18n/navigation.ts) | `Link`, `redirect`, `usePathname`, `useRouter`, `getPathname` |
-| [src/i18n/request.ts](../../../src/i18n/request.ts) | `getRequestConfig` — loads `common`, `navigation`, `site` per locale per RSC render |
-
----
-
 ## src/config/
 
 | Path | Export | Purpose |
 |---|---|---|
 | [src/config/site.ts](../../../src/config/site.ts) | `siteConfig`, `SiteConfig`, `PageConfig` | Brand copy for SEO, GEO, sitemap, LLMs.txt only — visitor-facing content lives in the CMS → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
+| [src/config/copy.ts](../../../src/config/copy.ts) | `copy` | Fixed UI strings (aria labels, form labels, fallbacks) — the site is single-locale, no i18n |
 
 ---
 
@@ -65,10 +56,10 @@ toast.error('msg');      // direct sonner fn — outside components
 | [src/lib/cn.ts](../../../src/lib/cn.ts) | `cn` | `cn(...inputs: ClassValue[]): string` — `twMerge(clsx(...))` |
 | [src/lib/cookies.ts](../../../src/lib/cookies.ts) | `getCookie` / `setCookie` / `deleteCookie` / `getAllCookies` / `parseCookieHeader` | Cookie helpers |
 | [src/lib/sentry.ts](../../../src/lib/sentry.ts) | `captureError` / `captureMessage` | Sentry wrappers |
-| [src/lib/seo.ts](../../../src/lib/seo.ts) | `buildMetadata`, `localizedUrl` | Full `Metadata` for every public page; `localizedUrl(path, locale)` = absolute, always-prefixed URL → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
+| [src/lib/seo.ts](../../../src/lib/seo.ts) | `buildMetadata`, `absoluteUrl` | Full `Metadata` for every public page; `absoluteUrl(path)` = absolute, always-prefixed URL → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
 | [src/lib/structured-data.ts](../../../src/lib/structured-data.ts) | `organizationSchema`, `webPageSchema`, `localBusinessSchema`, `faqSchema`, `breadcrumbSchema`, `articleSchema`, `serializeSchema` | JSON-LD schema builders + serializer → [SEO_GEO_LLM.md](../SEO_GEO_LLM.md) |
 | [src/lib/utils.ts](../../../src/lib/utils.ts) | `formatDate` / `truncate` / `slugify` / `assertNever` | General utilities |
-| [src/lib/format.ts](../../../src/lib/format.ts) | `formatPrice` | `formatPrice(value, 'IDR' \| 'USD', locale)` — IDR uses `<locale>-ID` grouping (`Rp 38.000`) in both locales |
+| [src/lib/format.ts](../../../src/lib/format.ts) | `formatPrice` | `formatPrice(value, 'IDR' | 'USD')` — USD as `en-US` (`$4.50`), IDR as `id-ID` (`Rp 38.000`)| 'USD', locale)` — IDR uses `<locale>-ID` grouping (`Rp 38.000`) in both locales |
 | [src/lib/safe-path.ts](../../../src/lib/safe-path.ts) | `isSafePath` | Same-origin path check for redirects — rejects `//host` and `/\host` |
 | [src/lib/validations/common.ts](../../../src/lib/validations/common.ts) | `emailSchema`, `passwordSchema`, `nameSchema`, `urlSchema`, `uuidSchema`, `paginationSchema` | Zod primitives |
 | [src/lib/validations/index.ts](../../../src/lib/validations/index.ts) | barrel | re-exports all from `common.ts` |
@@ -138,21 +129,6 @@ Client-ready, display-optimized shapes. Produced by services after transforming 
 See [ARCHITECTURE/05-dto-vo.md](../ARCHITECTURE/05-dto-vo.md) for the full data-flow and transformation pattern.
 
 Payload has no DTO layer: the generated types in `src/payload-types.ts` play that role and `cms.mappers.ts` turns them into VOs.
-
----
-
-## messages/
-
-| Path | Namespace | Used by |
-|---|---|---|
-| [messages/en/common.json](../../../messages/en/common.json) | `common` | Shared labels, buttons, errors |
-| [messages/en/navigation.json](../../../messages/en/navigation.json) | `navigation` | Nav labels |
-| [messages/en/site.json](../../../messages/en/site.json) | `site` | Site chrome: skip link, menu toggles, footer labels, preview banner, empty-site state |
-| [messages/id/common.json](../../../messages/id/common.json) | `common` | Indonesian |
-| [messages/id/navigation.json](../../../messages/id/navigation.json) | `navigation` | Indonesian |
-| [messages/id/site.json](../../../messages/id/site.json) | `site` | Indonesian |
-
-Namespace key = JSON filename without extension. Loaded in [src/i18n/request.ts](../../../src/i18n/request.ts). `messages/` is for UI chrome only — page content, nav labels and menu copy are localized fields in Payload.
 
 ---
 

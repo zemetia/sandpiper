@@ -1,20 +1,13 @@
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import type { Locale } from '@/i18n/routing';
 import type { FullMenuBlock as FullMenuBlockData } from '@/payload-types';
 import { cmsService } from '@/services/cms.service';
 
 import { MenuItemCard } from '../MenuItemCard';
 import { SectionHeading } from '../SectionHeading';
 
-export async function FullMenuBlock({
-  block,
-  locale,
-}: {
-  block: FullMenuBlockData;
-  locale: Locale;
-}) {
-  const [menu, t] = await Promise.all([cmsService.getMenu(locale), getTranslations('site')]);
+export async function FullMenuBlock({ block }: { block: FullMenuBlockData }) {
+  const menu = await cmsService.getMenu();
 
   const picked = (block.categories ?? []).map((c) => (typeof c === 'object' ? c.id : c));
   const categories = menu
@@ -31,11 +24,11 @@ export async function FullMenuBlock({
 
       {categories.length === 0 ? (
         <p className="border-border text-foreground-muted rounded-2xl border border-dashed p-10 text-center">
-          {t('menuEmpty')}
+          {copy.menuEmpty}
         </p>
       ) : (
         <div className="grid gap-12 lg:grid-cols-[200px_1fr] lg:gap-16">
-          <nav aria-label={t('jumpToSection')} className="lg:sticky lg:top-24 lg:self-start">
+          <nav aria-label={copy.jumpToSection} className="lg:sticky lg:top-24 lg:self-start">
             <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-0">
               {categories.map((c) => (
                 <li key={c.id} className="shrink-0">

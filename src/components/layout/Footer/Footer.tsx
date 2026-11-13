@@ -1,10 +1,9 @@
 import { MapPin, Phone } from 'lucide-react';
 
-import { Link } from '@/i18n/navigation';
+import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { LinkTo } from '@/components/cms/LinkTo';
 import { InstagramIcon } from '@/components/shared/Icons';
-import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 import { Logo } from '@/components/shared/Logo';
 import type { NavigationVO, SiteSettingsVO } from '@/types/value-objects';
 
@@ -138,10 +137,7 @@ export function Footer({ settings, footer, labels, className }: FooterProps) {
           <p>
             © {year} {footer.copyright ?? settings.siteName}
           </p>
-          <div className="flex items-center gap-5">
-            {footer.note && <p>{footer.note}</p>}
-            <LanguageSwitcher tone="onDark" />
-          </div>
+          {footer.note && <p>{footer.note}</p>}
         </div>
         {footer.wordmark && (
           <p

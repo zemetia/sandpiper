@@ -6,12 +6,12 @@
 
 ## Anti-Patterns
 
-### next/navigation direct import
+### Adding i18n back piecemeal
 ```ts
-// ❌ breaks locale context
-import { useRouter } from 'next/navigation';
-// ✅
-import { useRouter } from '@/i18n/navigation';
+// ❌ single-locale site — no next-intl, no [locale] segment, no translation lookups
+const t = await getTranslations('site');
+// ✅ fixed UI strings come from one typed object
+import { copy } from '@/config/copy';
 ```
 
 ### Hard-coded colors
@@ -26,7 +26,7 @@ import { useRouter } from '@/i18n/navigation';
 ```tsx
 // ❌ already mounted in layout.tsx
 export default function Page() { return <><Toaster /><PageContent /></>; }
-// ✅ one mount only in src/app/[locale]/layout.tsx
+// ✅ one mount only in src/app/(site)/layout.tsx
 ```
 
 ### Client fetch when server fetch is possible
@@ -118,7 +118,6 @@ export async function loginAction(formData: FormData) {
 | Item | How |
 |---|---|
 | Server Components for data-fetch paths | No `useEffect` + `fetch` |
-| `generateStaticParams` on locale layouts | Already in `src/app/[locale]/layout.tsx` |
 | Image formats | `image/avif` + `image/webp` in `next.config.ts` |
 | Custom fonts via next/font | Never `<link>` to Google Fonts |
 | `'use client'` at leaf nodes | Push boundary as deep as possible |

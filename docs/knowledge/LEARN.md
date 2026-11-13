@@ -8,6 +8,8 @@
 
 <!-- Entries below, newest first -->
 
+[2026-11-13] - Asked to remove i18n "for this branch landing-page", I first created a new branch `chore/remove-i18n` before noticing the instruction - Switched back to `feat/landing-page` and deleted the empty branch before any commit - When the user names the branch to work on, work on that branch; don't branch off by reflex
+
 [2026-11-13] - Catering mobile hero headline wrapped to 3 lines at 412px although the design fits 2: sizing it `15vw` matched the Pencil px value, but the web font renders a little wider than Pencil's - Dropped to `min(14.5vw,62px)` and re-checked the screenshot - Don't trust a 1:1 px→vw conversion for giant display type; leave ~5% headroom and verify at the exact frame width
 
 [2026-11-13] - Reseeding the dev DB for the landing page: a temp route deleted pages/menu/categories, then the seed failed validation, and the "backup" of the old pages was only in the HTTP response (an error page), so the old starter pages and one user edit to Home were lost; each failed run also re-uploaded every seed image - Reseeded, deleted the 66 orphaned media docs, reported the loss - Write any backup to disk BEFORE the destructive step, and dry-run a seed (or wrap it in a transaction) before deleting what it replaces

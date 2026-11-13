@@ -1,14 +1,13 @@
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import type { Locale } from '@/i18n/routing';
 import type { VisitUsBlock as VisitUsBlockData } from '@/payload-types';
 import { cmsService } from '@/services/cms.service';
 
 import { CmsLink } from '../CmsLink';
 import { SectionHeading } from '../SectionHeading';
 
-export async function VisitUsBlock({ block, locale }: { block: VisitUsBlockData; locale: Locale }) {
-  const [s, t] = await Promise.all([cmsService.getSiteSettings(locale), getTranslations('site')]);
+export async function VisitUsBlock({ block }: { block: VisitUsBlockData }) {
+  const s = await cmsService.getSiteSettings();
 
   return (
     <section className="container-page py-16 md:py-24">
@@ -20,7 +19,7 @@ export async function VisitUsBlock({ block, locale }: { block: VisitUsBlockData;
               <CmsLink
                 link={{
                   href: s.mapUrl,
-                  label: t('directions'),
+                  label: copy.directions,
                   newTab: true,
                   appearance: 'primary',
                 }}
@@ -30,7 +29,7 @@ export async function VisitUsBlock({ block, locale }: { block: VisitUsBlockData;
               <CmsLink
                 link={{
                   href: s.whatsappUrl,
-                  label: t('whatsapp'),
+                  label: copy.whatsapp,
                   newTab: true,
                   appearance: 'outline',
                 }}
@@ -43,7 +42,7 @@ export async function VisitUsBlock({ block, locale }: { block: VisitUsBlockData;
           {s.hours.length > 0 && (
             <div>
               <dt className="text-primary mb-3 text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('hours')}
+                {copy.hours}
               </dt>
               <dd>
                 <ul className="space-y-2">
@@ -60,7 +59,7 @@ export async function VisitUsBlock({ block, locale }: { block: VisitUsBlockData;
           {s.address && (
             <div>
               <dt className="text-primary mb-3 text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('address')}
+                {copy.address}
               </dt>
               <dd className="text-foreground leading-relaxed whitespace-pre-line">{s.address}</dd>
             </div>
@@ -68,7 +67,7 @@ export async function VisitUsBlock({ block, locale }: { block: VisitUsBlockData;
           {(s.phone || s.email) && (
             <div>
               <dt className="text-primary mb-3 text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('contact')}
+                {copy.contact}
               </dt>
               <dd className="space-y-1">
                 {s.phone && (

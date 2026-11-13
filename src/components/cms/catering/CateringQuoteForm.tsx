@@ -3,7 +3,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Calendar, Check, Mail, Phone, Send, Users } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { useLocale } from 'next-intl';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 
@@ -92,7 +91,6 @@ export function CateringQuoteForm({
   success,
   labels,
 }: CateringQuoteFormProps) {
-  const locale = useLocale();
   const [invalid, setInvalid] = useState(false);
   const mutation = useMutation({ mutationFn: cateringService.requestQuote });
 
@@ -122,7 +120,7 @@ export function CateringQuoteForm({
         const data = Object.fromEntries(
           [...new FormData(e.currentTarget)].filter(([, v]) => typeof v === 'string' && v.trim()),
         );
-        const parsed = cateringRequestSchema.safeParse({ ...data, locale });
+        const parsed = cateringRequestSchema.safeParse(data);
         setInvalid(!parsed.success);
         if (parsed.success) {
           mutation.mutate({ ...parsed.data, website: (data['website'] as string) ?? '' });

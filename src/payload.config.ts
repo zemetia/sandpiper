@@ -80,8 +80,7 @@ export default buildConfig({
         if (typeof img === 'object' && img && 'id' in img) return img.id as number;
         return typeof img === 'number' ? img : '';
       },
-      generateURL: ({ doc, locale }: { doc: SeoDoc; locale?: string }) =>
-        `${siteUrl}/${locale ?? 'en'}${pagePath(doc.slug)}`,
+      generateURL: ({ doc }: { doc: SeoDoc }) => `${siteUrl}${pagePath(doc.slug) || '/'}`,
     }),
   ],
   sharp,

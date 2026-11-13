@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 import type { CSSProperties } from 'react';
 
 import { cn } from '@/lib/cn';
@@ -21,7 +21,6 @@ const TONES = {
 } as const;
 
 export async function ReviewThreadBlock({ block }: { block: ReviewThreadBlockData }) {
-  const t = await getTranslations('site');
   const reviews = (block.reviews ?? []).filter((r) => r.quote);
   const ratings = block.ratings ?? [];
   const tall = reviews.length > 4;
@@ -47,7 +46,7 @@ export async function ReviewThreadBlock({ block }: { block: ReviewThreadBlockDat
           </h2>
           {ratings.length > 0 && (
             <ul
-              aria-label={t('ratings')}
+              aria-label={copy.ratings}
               className="mt-5 flex flex-wrap gap-2 lg:mt-[min(2.6vw,38px)] lg:gap-3"
             >
               {ratings.map((r) => (

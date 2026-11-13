@@ -1,4 +1,3 @@
-import type React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -21,10 +20,6 @@ import { ReviewThreadBlock } from './ReviewThreadBlock';
 import { RibbonsBlock } from './RibbonsBlock';
 import { SunCtaBlock } from './SunCtaBlock';
 
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: React.ComponentProps<'a'>) => <a {...props} />,
-}));
-vi.mock('next-intl/server', () => ({ getTranslations: async () => (key: string) => key }));
 vi.mock('../CmsImage', () => ({
   CmsImage: ({ image }: { image: { url: string; alt: string } | null }) =>
     image ? <span role="img" aria-label={image.alt} /> : null,

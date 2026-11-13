@@ -8,7 +8,7 @@ import { toImage, toLink, toMenuBoardCategory, toMenuItem, toNavItems } from './
 const page = (slug: string) => ({ id: 1, slug, title: slug }) as Page;
 
 describe('toLink', () => {
-  it('maps internal pages to locale-less paths, home to root', () => {
+  it('maps internal pages to site paths, home to root', () => {
     expect(toLink({ type: 'reference', reference: page('menu'), label: 'Menu' })?.href).toBe(
       '/menu',
     );
@@ -45,7 +45,7 @@ describe('toMenuItem', () => {
   } as MenuItem;
 
   it('formats prices and ignores a compare-at price that is not higher', () => {
-    const vo = toMenuItem(item, 'IDR', 'id');
+    const vo = toMenuItem(item, 'IDR');
     expect(vo.price).toMatch(/^Rp\s?35\.000$/);
     expect(vo.compareAtPrice).toBeNull();
     expect(vo.variants[0]?.label).toBe('Iced');

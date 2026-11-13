@@ -1,4 +1,3 @@
-import type React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -7,11 +6,7 @@ import type { NavigationVO } from '@/types/value-objects';
 
 import { HeaderNav } from './HeaderNav';
 
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: React.ComponentProps<'a'>) => <a {...props} />,
-  usePathname: () => '/catering',
-}));
-vi.mock('@/components/shared/LanguageSwitcher', () => ({ LanguageSwitcher: () => <div /> }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/catering' }));
 
 const nav: NavigationVO['header'] = {
   items: [

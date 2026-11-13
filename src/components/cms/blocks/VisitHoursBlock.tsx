@@ -1,7 +1,6 @@
 import { ArrowRight, Navigation } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import type { Locale } from '@/i18n/routing';
 import type { VisitHoursBlock as VisitHoursBlockData } from '@/payload-types';
 import { toImage } from '@/services/cms.mappers';
 import { cmsService } from '@/services/cms.service';
@@ -42,20 +41,11 @@ function StreetMap({ street, label }: { street: string | null; label: string }) 
   );
 }
 
-export async function VisitHoursBlock({
-  block,
-  locale,
-}: {
-  block: VisitHoursBlockData;
-  locale: Locale;
-}) {
-  const [settings, t] = await Promise.all([
-    cmsService.getSiteSettings(locale),
-    getTranslations('site'),
-  ]);
+export async function VisitHoursBlock({ block }: { block: VisitHoursBlockData }) {
+  const settings = await cmsService.getSiteSettings();
   const address = block.address || settings.address?.split('\n')[0] || null;
   const mapImage = toImage(block.mapImage, 'card');
-  const directions = block.directionsLabel || t('directions');
+  const directions = block.directionsLabel || copy.directions;
 
   return (
     <section className="bg-blue relative overflow-hidden py-12 lg:min-h-[min(52.7vw,759px)] lg:py-0">
@@ -102,7 +92,7 @@ export async function VisitHoursBlock({
           ) : (
             <StreetMap
               street={block.streetLabel ?? null}
-              label={t('mapAlt', { street: block.streetLabel ?? address ?? '' })}
+              label={copy.mapAlt(block.streetLabel ?? address ?? '')}
             />
           )}
         </div>

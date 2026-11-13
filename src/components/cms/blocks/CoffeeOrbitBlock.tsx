@@ -1,6 +1,5 @@
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import type { Locale } from '@/i18n/routing';
 import type { CoffeeOrbitBlock as CoffeeOrbitBlockData } from '@/payload-types';
 import { toImage, toLink } from '@/services/cms.mappers';
 import { cmsService } from '@/services/cms.service';
@@ -18,17 +17,8 @@ const ringPoint = (i: number, count: number) => {
   return { left: at(Math.cos(angle)), top: at(Math.sin(angle)) };
 };
 
-export async function CoffeeOrbitBlock({
-  block,
-  locale,
-}: {
-  block: CoffeeOrbitBlockData;
-  locale: Locale;
-}) {
-  const [drinks, t] = await Promise.all([
-    cmsService.getMenuItemsByIds(block.drinks, locale),
-    getTranslations('site'),
-  ]);
+export async function CoffeeOrbitBlock({ block }: { block: CoffeeOrbitBlockData }) {
+  const drinks = await cmsService.getMenuItemsByIds(block.drinks);
   const cup = toImage(block.image, 'card');
   const noteLink = toLink(block.note?.link);
   const seal = block.seal;
@@ -60,7 +50,7 @@ export async function CoffeeOrbitBlock({
 
           {drinks.length > 0 && (
             <ul
-              aria-label={t('orbit')}
+              aria-label={copy.orbit}
               className="orbit-ring animate-orbit absolute inset-0 [--orbit-r:40%] lg:[--orbit-r:50%]"
             >
               {drinks.map((d, i) => (

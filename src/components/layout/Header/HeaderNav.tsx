@@ -20,11 +20,11 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-import { Link, usePathname } from '@/i18n/navigation';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { LinkTo } from '@/components/cms/LinkTo';
 import { InstagramIcon } from '@/components/shared/Icons';
-import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 import { Logo } from '@/components/shared/Logo';
 import type { NavIcon, NavigationVO, NavItemVO, SiteSettingsVO } from '@/types/value-objects';
 
@@ -325,7 +325,6 @@ export function HeaderNav({ siteName, nav, settings, labels }: HeaderNavProps) {
                 <Phone aria-hidden="true" className="size-5" />
               </a>
             )}
-            <LanguageSwitcher className="ml-auto" />
           </div>
         </div>
       </div>

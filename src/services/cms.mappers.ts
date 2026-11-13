@@ -44,7 +44,7 @@ export type CmsLink = {
   appearance?: 'primary' | 'outline' | 'link' | null;
 };
 
-/** Internal hrefs are locale-less (`/menu`) — `@/i18n/navigation` Link adds the prefix. */
+/** Internal hrefs are site paths (`/menu`), with the homepage at `/`. */
 export function toLink(link: CmsLink | null | undefined): LinkVO | null {
   if (!link?.label) return null;
   let href: string | null = null;
@@ -66,8 +66,8 @@ export function toLink(link: CmsLink | null | undefined): LinkVO | null {
 export const toLinks = (rows: { link: CmsLink }[] | null | undefined): LinkVO[] =>
   (rows ?? []).map((r) => toLink(r.link)).filter((l): l is LinkVO => l !== null);
 
-export function toMenuItem(item: MenuItem, currency: 'IDR' | 'USD', locale: string): MenuItemVO {
-  const price = (v: number) => formatPrice(v, currency, locale);
+export function toMenuItem(item: MenuItem, currency: 'IDR' | 'USD'): MenuItemVO {
+  const price = (v: number) => formatPrice(v, currency);
   return {
     id: item.id,
     slug: item.slug ?? String(item.id),

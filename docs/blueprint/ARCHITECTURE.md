@@ -4,7 +4,7 @@
 
 | Part | Coverage |
 |---|---|
-| [01 — Request, providers, i18n, state, toast](./ARCHITECTURE/01-request-state-toast.md) | Request lifecycle, provider tree, i18n wiring, Zustand, Sonner |
+| [01 — Request, providers, state, toast](./ARCHITECTURE/01-request-state-toast.md) | Request lifecycle, provider tree, Zustand, Sonner |
 | [02 — ApiClient, Sentry, PostHog](./ARCHITECTURE/02-apiclient-sentry-posthog.md) | ApiClient pipeline, error classification, Sentry init, PostHog tracking |
 | [03 — Zod, shadcn, build pipeline](./ARCHITECTURE/03-zod-shadcn-build.md) | Validation placement, shadcn integration, build commands |
 | [04 — Middleware](./ARCHITECTURE/04-proxy.md) | `src/middleware.ts`, rate limiting, security headers, CMS route bypass, adding new intercept logic |

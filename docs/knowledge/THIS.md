@@ -24,7 +24,7 @@
 ## Do's
 
 - Always read relevant blueprint section before planning any change
-- Use `@/i18n/navigation` for all routing — never `next/navigation`
+- ~~Use `@/i18n/navigation` for all routing — never `next/navigation`~~ (i18n removed 2026-11-13 — use `next/link` + `next/navigation`)
 - Keep components Server Components by default; add `'use client'` only when required
 - Use design tokens exclusively for color — no raw hex/oklch/Tailwind palette utilities
 - Every public page needs `buildMetadata()` + `<StructuredData>` — check `SEO_GEO_LLM.md`
@@ -54,12 +54,12 @@
 
 - [2026-06-06] Developer explicitly designed a two-tier learning system: THIS.md for general knowledge, LEARN.md for corrections — treat both as first-class project docs
 
-- [2026-11-08] Payload CMS 3.0 routes (/admin and /api) must bypass next-intl middleware to prevent /en/admin locale redirects. ~~Using importMap.ts preserves strict TypeScript typing and passes ESLint with 0 warnings.~~ (wrong — see LEARN.md)
+- [2026-11-08] ~~Payload CMS 3.0 routes (/admin and /api) must bypass next-intl middleware to prevent /en/admin locale redirects.~~ (next-intl removed) ~~Using importMap.ts preserves strict TypeScript typing and passes ESLint with 0 warnings.~~ (wrong — see LEARN.md)
 - [2026-11-08] Sandpiper is a café site. All visitor-facing content (pages, menu, hours, nav, footer) lives in Payload; `src/config/site.ts` keeps only SEO/GEO/LLMs.txt brand copy. Pages render through `src/app/[locale]/[...slug]` + `CmsPage`; homepage = page slug `home`.
 - [2026-11-08] Payload code layout: collections in `src/collections/`, everything else in `src/cms/` (access, fields, blocks, globals, admin components, seed). Admin component paths are baseDir-relative strings like `/cms/admin/Dashboard#Dashboard`; config files use relative imports (not `@/`) so the Payload CLI can load them.
 - [2026-11-08] Server reads go through `cmsService` (`src/services/cms.service.ts`, Local API). It is deliberately NOT in the `@/services` barrel — that barrel is imported by client code and would bundle Payload. Public reads use `overrideAccess: false` so drafts never leak; draft mode flips it.
 - [2026-11-08] `npx payload <cmd>` crashes on this machine (undici `Illegal constructor` under tsx, Node 22.18). Import map + DB schema regenerate automatically in `next dev`; for `payload-types.ts` call `generateTypes(config)` from `payload/node` inside a throwaway dev route, then delete it.
-- [2026-11-08] Prices: IDR formatted with the `<locale>-ID` Intl locale, so both en and id show `Rp 38.000` (Indonesian grouping) — intentional.
+- [2026-11-08] ~~Prices: IDR formatted with the `<locale>-ID` Intl locale, so both en and id show `Rp 38.000` (Indonesian grouping) — intentional.~~ (now USD `en-US`; IDR `id-ID`)
 - [2026-11-08] Developer wants Payload's headless-ecommerce patterns applied: menu items are modelled as products (variants, compare-at price, availability, featured, gallery, SEO tab). Full `@payloadcms/plugin-ecommerce` (carts/orders/Stripe) is the natural next step if online ordering is wanted.
 - [2026-11-08] Delegating to agy (Gemini Flash) on this repo underperformed: run 1 tried a shell command, was denied (only `write_file` granted) and exited "SUCCESS" with zero files; run 2 (told "no commands") hit the 5-min print timeout after 2 of ~12 files. Small test/story batches here are cheaper done directly; if delegating, verify with `git status -uall` (plain `git status` collapses untracked dirs) and keep each batch to ~2–3 files.
 - [2026-11-08] Blueprint resynced with the Payload/café build (STRUCTURE, ARCHITECTURE, I18N, SEO, DESIGN_SYSTEM, SERVICES, COMPONENTS, CMS). Follow-up cleanup: removed unused `next-limitr` + `messages/*/home.json`; `/llms.txt` now lists default-locale prefixed URLs via `localizedUrl()`.
@@ -75,3 +75,4 @@
 - [2026-11-13] Catering page (`catering`) = blocks `cateringHero` / `cateringRibbon` / `cateringMenu` / `cateringUseCases` / `cateringSteps` / `cateringQuote` (admin group **Catering page**), renderers `src/components/cms/blocks/Catering*Block.tsx` + helpers in `src/components/cms/catering/`, seed layout `src/cms/seed/catering.ts`. Hero CTAs are `#menu` / `#quote` anchors — they work because `RenderBlocks` turns a block's `blockName` into its wrapper id, so the seed names those blocks "Menu" and "Quote".
 - [2026-11-13] Quote requests are stored in the `catering-requests` collection (no email notification yet). Date-only form values are saved as `<date>T12:00:00Z` — a bare `2026-12-01` is parsed as local midnight and lands on the previous day in UTC.
 - [2026-11-13] Page-specific CSS utilities in `globals.css` are prefixed per page (`gc-*` gift cards, `ct-*` catering) so concurrent page work can't collide. Scroll reveals use `animation-timeline: view()` inside `@supports` so browsers without it just show the content.
+- [2026-11-13] i18n removed on `feat/landing-page`: Sandpiper only serves Philadelphia, so the developer doesn't want translations. Routes live in `src/app/(site)/` (no `[locale]`), fixed UI strings in `src/config/copy.ts`, links via `next/link` with `href as Route` (typedRoutes is on). Old `/en/*` and `/id/*` URLs 308-redirect in `src/middleware.ts`. Payload `localization` (en + id) is deliberately kept: dropping it changes the DB schema (`*_locales` tables) and would lose content without a migration.

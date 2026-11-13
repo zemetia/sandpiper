@@ -24,11 +24,6 @@ import { CateringUseCasesBlock } from './CateringUseCasesBlock';
 
 const requestQuote = vi.fn();
 
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: React.ComponentProps<'a'>) => <a {...props} />,
-}));
-vi.mock('next-intl', () => ({ useLocale: () => 'en' }));
-vi.mock('next-intl/server', () => ({ getTranslations: async () => (key: string) => key }));
 vi.mock('@/services/cms.service', () => ({
   cmsService: {
     getSiteSettings: async () => ({
@@ -169,7 +164,7 @@ describe('CateringQuoteBlock', () => {
         { question: 'Do you deliver?', answer: 'Yes.' },
       ],
     };
-    withQuery(await CateringQuoteBlock({ block, locale: 'en' }));
+    withQuery(await CateringQuoteBlock({ block }));
     const calls = screen.getAllByRole('link', { name: /267/ });
     expect(calls[0]).toHaveAttribute('href', 'tel:2678586183');
     expect(screen.getByText('1640 South St')).toBeInTheDocument();
@@ -212,7 +207,6 @@ describe('CateringQuoteForm', () => {
         headcount: 25,
         occasion: 'Party',
         fulfillment: 'delivery',
-        locale: 'en',
       }),
     );
   });

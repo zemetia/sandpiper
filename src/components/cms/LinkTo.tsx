@@ -1,18 +1,19 @@
 import type { ComponentPropsWithoutRef } from 'react';
 
-import { Link } from '@/i18n/navigation';
+import type { Route } from 'next';
+import Link from 'next/link';
 import type { LinkVO } from '@/types/value-objects';
 
 export interface LinkToProps extends Omit<ComponentPropsWithoutRef<'a'>, 'href'> {
   link: Pick<LinkVO, 'href' | 'newTab'>;
 }
 
-/** Unstyled CMS link: locale-aware `Link` for internal paths, plain `<a>` for everything else. */
+/** Unstyled CMS link: Next `Link` for internal paths, plain `<a>` for everything else. */
 export function LinkTo({ link, children, ...props }: LinkToProps) {
   const target = link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {};
   if (link.href.startsWith('/')) {
     return (
-      <Link href={link.href} {...target} {...props}>
+      <Link href={link.href as Route} {...target} {...props}>
         {children}
       </Link>
     );

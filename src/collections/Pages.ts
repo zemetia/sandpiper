@@ -17,9 +17,9 @@ export const Pages: CollectionConfig = {
     description:
       'Every public page on the site. Build pages from blocks, preview live, then publish.',
     livePreview: {
-      url: ({ data, locale }) => previewUrl(pagePath(data?.['slug'] as string), locale.code),
+      url: ({ data }) => previewUrl(pagePath(data?.['slug'] as string)),
     },
-    preview: (data, { locale }) => previewUrl(pagePath(data?.['slug'] as string), locale),
+    preview: (data) => previewUrl(pagePath(data?.['slug'] as string)),
   },
   access: {
     read: publishedOrAuthenticated,

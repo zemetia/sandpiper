@@ -1,8 +1,7 @@
 import { Bird, Coffee, Croissant, CupSoda, Sandwich, Sun, Utensils } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import type { Locale } from '@/i18n/routing';
 import { cn } from '@/lib/cn';
 import type { HomeHeroBlock as HomeHeroBlockData, MenuItem } from '@/payload-types';
 import { populated, toImage, toLink, toLinks, toMenuItem } from '@/services/cms.mappers';
@@ -166,23 +165,18 @@ function DishSlide({
 
 export async function HomeHeroBlock({
   block,
-  locale,
   isFirst,
 }: {
   block: HomeHeroBlockData;
-  locale: Locale;
   isFirst: boolean;
 }) {
-  const [settings, t] = await Promise.all([
-    cmsService.getSiteSettings(locale),
-    getTranslations('site.hero'),
-  ]);
+  const settings = await cmsService.getSiteSettings();
   const links = toLinks(block.links);
   const orderLink = toLink(block.orderLink) ?? links[0] ?? null;
   const dishes = (block.slides ?? []).flatMap((s) => {
     const doc = populated<MenuItem>(s.menuItem);
     if (!doc) return [];
-    const item = toMenuItem(doc, settings.currency, locale);
+    const item = toMenuItem(doc, settings.currency);
     return [{ item, pitch: s.pitch ?? null, image: toImage(s.image, 'card') ?? item.image }];
   });
 
@@ -193,7 +187,7 @@ export async function HomeHeroBlock({
         key={d.item.id}
         {...d}
         orderLink={orderLink}
-        eyebrow={`${t('slides')} · ${String(i + 2).padStart(2, '0')}`}
+        eyebrow={`${copy.hero.slides} · ${String(i + 2).padStart(2, '0')}`}
       />
     )),
   ];
@@ -221,11 +215,11 @@ export async function HomeHeroBlock({
         titles={titles}
         interval={block.autoplay ?? 7}
         labels={{
-          next: t('next'),
-          region: t('slides'),
-          goToSlide: t('goToSlide', { n: '{n}' }),
-          pause: t('pause'),
-          play: t('play'),
+          next: copy.hero.next,
+          region: copy.hero.slides,
+          goToSlide: copy.hero.goToSlide,
+          pause: copy.hero.pause,
+          play: copy.hero.play,
         }}
       />
     </div>

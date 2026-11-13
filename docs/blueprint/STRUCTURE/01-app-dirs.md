@@ -9,13 +9,12 @@
 | Path | Type | Purpose |
 |---|---|---|
 | [src/](../../../src/) | dir | All application source |
-| [messages/](../../../messages/) | dir | i18n JSON files → [I18N.md](../I18N.md) |
 | [docs/blueprint/](../../../docs/blueprint/) | dir | AI reference docs (this dir) |
 | [public/](../../../public/) | dir | Static assets (`sandpiper-mark.svg` favicon/admin icon, `og.png`) |
 | `media/` | dir | Payload upload storage — git-ignored, created at runtime |
 | [.env.example](../../../.env.example) | file | Env var template → copy to `.env.local` |
 | [components.json](../../../components.json) | file | shadcn/ui CLI config → [COMPONENTS.md](../COMPONENTS.md) |
-| [next.config.ts](../../../next.config.ts) | file | `withSentryConfig(withPayload(withNextIntl(config)))` |
+| [next.config.ts](../../../next.config.ts) | file | `withSentryConfig(withPayload(config))` |
 | [AGENTS.md](../../../AGENTS.md) | file | Agent entry point for non-Claude agents |
 | [sentry.client.config.ts](../../../sentry.client.config.ts) | file | Sentry browser init |
 | [sentry.server.config.ts](../../../sentry.server.config.ts) | file | Sentry Node.js init |
@@ -35,9 +34,8 @@
 | [src/app/](../../../src/app/) | dir | App Router pages + API routes |
 | [src/components/](../../../src/components/) | dir | All React components → [COMPONENTS.md](../COMPONENTS.md) |
 | [src/hooks/](../../../src/hooks/) | dir | Client-side hooks |
-| [src/i18n/](../../../src/i18n/) | dir | next-intl config → [I18N.md](../I18N.md) |
 | [src/instrumentation.ts](../../../src/instrumentation.ts) | file | Next.js instrumentation — Sentry server/edge init |
-| [src/middleware.ts](../../../src/middleware.ts) | file | Request intercept: rate limit + security headers + next-intl routing → [ARCHITECTURE/04-proxy.md](../ARCHITECTURE/04-proxy.md) |
+| [src/middleware.ts](../../../src/middleware.ts) | file | Request intercept: rate limit + security headers + legacy `/en` · `/id` redirect → [ARCHITECTURE/04-proxy.md](../ARCHITECTURE/04-proxy.md) |
 | [src/proxy/](../../../src/proxy/) | dir | Middleware modules (rate limit, security headers) |
 | [src/config/](../../../src/config/) | dir | `site.ts` — SEO/GEO/LLMs.txt brand copy |
 | [src/payload.config.ts](../../../src/payload.config.ts) | file | Payload CMS config → [CMS.md](../CMS.md) |
@@ -58,30 +56,30 @@
 |---|---|---|
 | [src/app/globals.css](../../../src/app/globals.css) | file | Tailwind v4 `@theme {}` tokens + base → [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) |
 | [src/app/layout.tsx](../../../src/app/layout.tsx) | file | Root layout — minimal HTML shell only |
-| [src/app/[locale]/layout.tsx](../../../src/app/%5Blocale%5D/layout.tsx) | file | Locale layout: fonts (Outfit, Fraunces, JetBrains Mono), providers, skip link, `AnnouncementBar` / `Header` / `Footer` fed from CMS globals, `<Toaster />` |
-| [src/app/[locale]/page.tsx](../../../src/app/%5Blocale%5D/page.tsx) | file | Home — renders CMS page slug `home` via `CmsPage` |
-| [src/app/[locale]/[...slug]/page.tsx](../../../src/app/%5Blocale%5D/%5B...slug%5D/page.tsx) | file | Every other CMS page (`/en/menu`, `/id/about`, nested slugs); slug `home` redirects to `/` |
+| [src/app/(site)/layout.tsx](../../../src/app/(site)/layout.tsx) | file | Site root layout (`<html lang="en-US">`): fonts (Outfit, Fraunces, JetBrains Mono), providers, skip link, `AnnouncementBar` / `Header` / `Footer` fed from CMS globals, `<Toaster />` |
+| [src/app/(site)/page.tsx](../../../src/app/(site)/page.tsx) | file | Home — renders CMS page slug `home` via `CmsPage` |
+| [src/app/(site)/[...slug]/page.tsx](../../../src/app/(site)/%5B...slug%5D/page.tsx) | file | Every other CMS page (`/en/menu`, `/id/about`, nested slugs); slug `home` redirects to `/` |
 | [src/app/(payload)/](../../../src/app/%28payload%29/) | dir | Payload admin (`/admin`), REST (`/api/[...slug]`), GraphQL, own root layout + `custom.css` → [CMS.md](../CMS.md) |
 | [src/app/preview/route.ts](../../../src/app/preview/route.ts) | file | Enables draft mode (CMS login required), redirects to `?path=` |
 | [src/app/preview/exit/route.ts](../../../src/app/preview/exit/route.ts) | file | Disables draft mode |
 | [src/app/api/health/route.ts](../../../src/app/api/health/route.ts) | file | Health check endpoint — Edge runtime |
-| [src/app/sitemap.ts](../../../src/app/sitemap.ts) | file | `/sitemap.xml` — `siteConfig.pages` + every published CMS page, per locale |
+| [src/app/sitemap.ts](../../../src/app/sitemap.ts) | file | `/sitemap.xml` — `siteConfig.pages` + every published CMS page |
 | [src/app/robots.ts](../../../src/app/robots.ts) | file | Auto-generated `/robots.txt` |
 | [src/app/llms.txt/route.ts](../../../src/app/llms.txt/route.ts) | file | `/llms.txt` — LLM guidance file, generated from `siteConfig` |
 
-### Provider tree in src/app/[locale]/layout.tsx
+### Provider tree in src/app/(site)/layout.tsx
 
 ```tsx
-<NextIntlClientProvider messages={messages}>
-  <PostHogProvider>          // src/providers/PostHogProvider.tsx
-    <a href="#main" />       // skip link
-    <AnnouncementBar />      // only when SiteSettings.announcement is set
-    <Header />               // CMS Header global
-    <main id="main">{children}</main>
-    <Footer />               // CMS Footer global + SiteSettings
-  </PostHogProvider>
-  <Toaster />                // src/components/ui/Sonner/Sonner.tsx — ONE mount only
-</NextIntlClientProvider>
+<html lang="en-US">
+<PostHogProvider>          // src/providers/PostHogProvider.tsx
+  <a href="#main" />       // skip link
+  <AnnouncementBar />      // only when SiteSettings.announcement is set
+  <Header />               // CMS Header global
+  <main id="main">{children}</main>
+  <Footer />               // CMS Footer global + SiteSettings
+</PostHogProvider>
+<Toaster />                // src/components/ui/Sonner/Sonner.tsx — ONE mount only
+</html>
 ```
 
 ---
@@ -98,8 +96,7 @@
 | [src/components/ui/Sonner/](../../../src/components/ui/Sonner/) | dir | `<Toaster />` Sonner wrapper |
 | [src/components/ui/Typography/](../../../src/components/ui/Typography/) | dir | Typed heading/text variants |
 | [src/components/ui/index.ts](../../../src/components/ui/index.ts) | file | Barrel — re-exports all ui components |
-| [src/components/shared/](../../../src/components/shared/) | dir | Cross-feature reusable — may use i18n |
-| [src/components/shared/LanguageSwitcher/](../../../src/components/shared/LanguageSwitcher/) | dir | Locale toggle |
+| [src/components/shared/](../../../src/components/shared/) | dir | Cross-feature reusable |
 | [src/components/shared/StructuredData/](../../../src/components/shared/StructuredData/) | dir | `<StructuredData id schema>` — JSON-LD `<script>` |
 | [src/components/shared/index.ts](../../../src/components/shared/index.ts) | file | Barrel |
 | [src/components/layout/](../../../src/components/layout/) | dir | Page scaffolding |

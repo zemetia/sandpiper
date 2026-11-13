@@ -4,7 +4,7 @@
 
 Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQL at `/api/graphql`. Postgres via `@payloadcms/db-postgres` (`DATABASE_URI`, `PAYLOAD_SECRET`). In `next dev` the schema is pushed automatically; production needs migrations. Uploads go to `/media` (git-ignored).
 
-**All visitor-facing content lives here** — pages, menu, hours, contact, nav, footer, announcement. `src/config/site.ts` keeps only SEO/GEO/LLMs.txt brand copy; `messages/` keeps only UI chrome.
+**All visitor-facing content lives here** — pages, menu, hours, contact, nav, footer, announcement. `src/config/site.ts` keeps only SEO/GEO/LLMs.txt brand copy; `src/config/copy.ts` keeps only fixed UI chrome strings.
 
 ## File map
 
@@ -16,7 +16,7 @@ Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQ
 | `src/cms/fields/` | `slugField()` / `formatSlug`, `link()` / `linkGroup()`, `seoTab` |
 | `src/cms/blocks/` | Page-builder block configs, collected in `pageBlocks` |
 | `src/cms/globals/` | `SiteSettings` (`site-settings` — brand, contact, hours, socials, announcement), `Header` (nav items with drawer icon/badge, CTA + `ctaBadge`, blue info bar, ticker, mobile-drawer contact heading + promo card), `Footer` (blurb, Explore links, column headings, copyright, note, giant `wordmark`, newsletter copy) |
-| `src/cms/preview.ts` | `pagePath(slug)` (`home` → `''`) and `previewUrl(path, locale)` → `/preview?path=/<locale><path>` |
+| `src/cms/preview.ts` | `pagePath(slug)` (`home` → `''`) and `previewUrl(path)` → `/preview?path=<path>` |
 | `src/cms/admin/` | Admin React components: `Brand` (logo/icon), `NavBrand` (sidebar header), `HeaderActions` (top-bar "View site"), `Avatar` (initials avatar), `Dashboard`, `RowLabel`s, `FieldNote`, `SeedButton`, `ViewSiteLink` |
 | `src/cms/seed/` | Starter content (Philadelphia café: landing page, 6 pages, 6 categories, 28 menu items) + `images/` (webp photos uploaded to Media on seed) + `seedEndpoint` (`POST /api/seed`, signed-in only, refuses with 409 if any page exists) |
 | `src/app/(payload)/` | Payload's own root layout, `admin/[[...segments]]`, `api/[...slug]`, `api/graphql` |
@@ -28,8 +28,8 @@ Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQ
 | `src/types/value-objects/cms.vo.ts` | `ImageVO`, `LinkVO`, `MenuItemVO`, `MenuCategoryVO`, `SiteSettingsVO`, `NavigationVO` |
 | `src/components/cms/` | `CmsPage` (+ `cmsMetadata`), `RenderBlocks`, one renderer per block in `blocks/`, `CmsLink` (button), `LinkTo` (unstyled internal/external link), `CmsImage`, `RichText`, `MenuItemCard`, `SectionHeading`, `LivePreviewListener` |
 | `src/components/cms/landing/` | Landing-page pieces: `primitives` (`pillVariants`/`PillLink`, `Sticker`, `Eyebrow` — CVA), client `HeroSlider`, `MenuBoardTabs`, `PlateScroller` |
-| `src/app/[locale]/page.tsx` | Home → `CmsPage slug="home"` (shows an empty-site state with an `/admin` link if not seeded) |
-| `src/app/[locale]/[...slug]/page.tsx` | All other pages, nested slugs supported; `/home` redirects to `/` |
+| `src/app/(site)/page.tsx` | Home → `CmsPage slug="home"` (shows an empty-site state with an `/admin` link if not seeded) |
+| `src/app/(site)/[...slug]/page.tsx` | All other pages, nested slugs supported; `/home` redirects to `/` |
 | `src/app/preview/` | `route.ts` enables draft mode (requires CMS login via `payload.auth`); `exit/route.ts` disables it. Both validate `path` with `isSafePath` |
 
 ## Blocks
@@ -68,18 +68,18 @@ The first ten are the homepage design (admin group **Landing page**); the rest a
 ## Request flow
 
 ```
-/en/menu
-  src/middleware.ts → intlMiddleware            (/admin, /api, /preview bypass it)
-  [locale]/[...slug]/page.tsx
-    generateMetadata → cmsMetadata(slug, locale) → buildMetadata()
-    <CmsPage slug locale>
+/menu
+  src/middleware.ts → rate limit + security headers   (/en/*, /id/* → 308 unprefixed)
+  (site)/[...slug]/page.tsx
+    generateMetadata → cmsMetadata(slug) → buildMetadata()
+    <CmsPage slug>
       cmsService.getPage()        published only, or draft when draft mode is on
       draft? → DraftBanner + LivePreviewListener
       <StructuredData> webpage · breadcrumb · business (home) · faq (if FAQ block)
       <RenderBlocks> → blocks/<Name>Block.tsx
 ```
 
-Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getSiteSettings()` + `getNavigation()` in `src/app/[locale]/layout.tsx`.
+Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getSiteSettings()` + `getNavigation()` in `src/app/(site)/layout.tsx`.
 
 ## Rules
 
@@ -87,14 +87,14 @@ Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getS
 - Config files (`payload.config.ts`, `collections/`, `cms/` except `admin/`) use **relative imports**, not `@/`, so the Payload CLI can load them.
 - `cmsService` is **not** exported from `@/services` — that barrel is used client-side. Never import `payload` or `@payload-config` in client components or middleware.
 - Public reads pass `overrideAccess: false` (published only). Draft mode → `draft: true, overrideAccess: true`.
-- Internal links from the CMS are locale-less (`/menu`); render them with `CmsLink` / `Link` from `@/i18n/navigation`.
-- Any new field with copy visitors read → `localized: true`. Avoid `required: true` on localized block fields: saving a page in a second locale validates every one of them, so a page can't be saved in `id` until all are translated.
+- Internal links from the CMS are site paths (`/menu`); render them with `CmsLink` / `LinkTo` (`next/link`, href cast to `Route` because `typedRoutes` is on).
+- Payload `localization` (en + id) is still configured because the DB schema depends on it, but the site only reads the default `en`. Don't add `localized: true` to new fields and don't write content in `id`.
 - Media URLs go through `toImage()`, which strips the `serverURL` origin Payload adds to size variants — `next/image` only accepts relative (local) URLs here.
 - CMS strings in JSON-LD are safe only through `<StructuredData>` / `serializeSchema` (escapes `<`). Redirect targets from query params must pass `isSafePath`.
 - Page SEO: CMS SEO tab wins; `siteConfig.pages` entry with the same path is the fallback.
 - Admin sidebar: style Payload's default Nav, don't replace it. Nav icons are keyed by `#nav-<collection-slug>` / `#nav-global-<global-slug>` in `custom.css` — add a rule when adding a collection or global.
 - Rich text renders through `RichText` with the `.prose-cms` class → [DESIGN_SYSTEM/02](./DESIGN_SYSTEM/02-typography-utilities.md).
-- Prices are formatted with `formatPrice()` from `@/lib/format` (IDR uses Indonesian grouping in both locales — intentional).
+- Prices are formatted with `formatPrice()` from `@/lib/format` (USD as `en-US`; IDR still supported as `id-ID`).
 
 ## Adding a block
 

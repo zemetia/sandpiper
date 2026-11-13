@@ -1,5 +1,5 @@
 import { Gift } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
 import type { GiftCardHeroBlock as GiftCardHeroData } from '@/payload-types';
 import { toLink } from '@/services/cms.mappers';
@@ -15,7 +15,6 @@ export async function GiftCardHeroBlock({
   block: GiftCardHeroData;
   isFirst: boolean;
 }) {
-  const t = await getTranslations('site');
   const Heading = isFirst ? 'h1' : 'h2';
   const buy = toLink(block.buyLink);
   const balance = toLink(block.balanceLink);
@@ -50,7 +49,7 @@ export async function GiftCardHeroBlock({
           amounts={amounts}
           initial={initial}
           anyAmount={block.anyAmount}
-          groupLabel={t('giftAmount')}
+          groupLabel={copy.giftAmount}
           card={{
             label: block.card?.label,
             address: block.card?.address,

@@ -1,4 +1,3 @@
-import type { Locale } from '@/i18n/routing';
 import type { MenuBoardBlock as MenuBoardBlockData } from '@/payload-types';
 import { toLink } from '@/services/cms.mappers';
 import { cmsService } from '@/services/cms.service';
@@ -6,14 +5,8 @@ import { cmsService } from '@/services/cms.service';
 import { MenuBoardTabs } from '../landing/MenuBoardTabs';
 import { Eyebrow } from '../landing/primitives';
 
-export async function MenuBoardBlock({
-  block,
-  locale,
-}: {
-  block: MenuBoardBlockData;
-  locale: Locale;
-}) {
-  const categories = await cmsService.getMenuBoard(block, locale);
+export async function MenuBoardBlock({ block }: { block: MenuBoardBlockData }) {
+  const categories = await cmsService.getMenuBoard(block);
   if (categories.length === 0) return null;
 
   return (

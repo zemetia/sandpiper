@@ -1,8 +1,7 @@
 import { MapPin, Minus, Phone, Plus } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import type { Locale } from '@/i18n/routing';
 import type { CateringQuoteBlock as CateringQuoteBlockData } from '@/payload-types';
 import { cmsService } from '@/services/cms.service';
 
@@ -46,17 +45,8 @@ function ContactCard({
 
 const tel = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`;
 
-export async function CateringQuoteBlock({
-  block,
-  locale,
-}: {
-  block: CateringQuoteBlockData;
-  locale: Locale;
-}) {
-  const [settings, t] = await Promise.all([
-    cmsService.getSiteSettings(locale),
-    getTranslations('site.catering'),
-  ]);
+export async function CateringQuoteBlock({ block }: { block: CateringQuoteBlockData }) {
+  const settings = await cmsService.getSiteSettings();
   const phone = block.phone || settings.phone;
   const address = block.pickupAddress || settings.address?.split('\n')[0] || null;
   const faqs = block.faqs ?? [];
@@ -107,33 +97,33 @@ export async function CateringQuoteBlock({
           <CateringQuoteForm
             title={block.formTitle ?? null}
             occasions={block.occasions ?? []}
-            submitLabel={block.submitLabel || t('send')}
+            submitLabel={block.submitLabel || copy.catering.send}
             finePrint={block.finePrint ?? null}
             success={{
-              heading: block.successHeading || t('thanks'),
+              heading: block.successHeading || copy.catering.thanks,
               body: block.successBody ?? null,
             }}
             labels={{
-              name: t('form.name'),
-              email: t('form.email'),
-              phone: t('form.phone'),
-              date: t('form.date'),
-              headcount: t('form.headcount'),
-              budget: t('form.budget'),
-              occasion: t('form.occasion'),
-              fulfillment: t('form.fulfillment'),
-              pickup: t('form.pickup'),
-              delivery: t('form.delivery'),
-              notes: t('form.notes'),
-              namePlaceholder: t('form.namePlaceholder'),
-              emailPlaceholder: t('form.emailPlaceholder'),
-              phonePlaceholder: t('form.phonePlaceholder'),
-              headcountPlaceholder: t('form.headcountPlaceholder'),
-              budgetPlaceholder: t('form.budgetPlaceholder'),
-              notesPlaceholder: t('form.notesPlaceholder'),
-              sending: t('form.sending'),
-              invalid: t('form.invalid'),
-              error: t('form.error'),
+              name: copy.catering.form.name,
+              email: copy.catering.form.email,
+              phone: copy.catering.form.phone,
+              date: copy.catering.form.date,
+              headcount: copy.catering.form.headcount,
+              budget: copy.catering.form.budget,
+              occasion: copy.catering.form.occasion,
+              fulfillment: copy.catering.form.fulfillment,
+              pickup: copy.catering.form.pickup,
+              delivery: copy.catering.form.delivery,
+              notes: copy.catering.form.notes,
+              namePlaceholder: copy.catering.form.namePlaceholder,
+              emailPlaceholder: copy.catering.form.emailPlaceholder,
+              phonePlaceholder: copy.catering.form.phonePlaceholder,
+              headcountPlaceholder: copy.catering.form.headcountPlaceholder,
+              budgetPlaceholder: copy.catering.form.budgetPlaceholder,
+              notesPlaceholder: copy.catering.form.notesPlaceholder,
+              sending: copy.catering.form.sending,
+              invalid: copy.catering.form.invalid,
+              error: copy.catering.form.error,
             }}
           />
         </div>

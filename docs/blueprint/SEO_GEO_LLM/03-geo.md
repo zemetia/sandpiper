@@ -19,7 +19,7 @@ Exports schema builders and a `serializeSchema()` serializer. Render them with t
 | Export | Schema type | Use on |
 |---|---|---|
 | `organizationSchema()` | `Organization` | Root layout or home page — once per site |
-| `webPageSchema(opts)` | `WebPage` | Every public page (pass `locale` → `inLanguage`) |
+| `webPageSchema(opts)` | `WebPage` | Every public page (`inLanguage` defaults to `en`) |
 | `localBusinessSchema(opts)` | `CafeOrCoffeeShop` | Home page — built from CMS `SiteSettings` (address, hours, phone, socials, menu URL) |
 | `faqSchema(faqs)` | `FAQPage` | Any page with a FAQ section |
 | `breadcrumbSchema(items)` | `BreadcrumbList` | All pages except home |
@@ -35,26 +35,25 @@ Exports schema builders and a `serializeSchema()` serializer. Render them with t
 For a hand-coded page, use `<StructuredData>`:
 
 ```tsx
-// src/app/[locale]/<path>/page.tsx
+// src/app/(site)/<path>/page.tsx
 import { StructuredData } from '@/components/shared';
 import { siteConfig } from '@/config/site';
-import { localizedUrl } from '@/lib/seo';
+import { absoluteUrl } from '@/lib/seo';
 import { breadcrumbSchema, webPageSchema } from '@/lib/structured-data';
 
-export default async function Page({ params }: Props) {
-  const { locale } = await params;
+export default function Page() {
   const page = siteConfig.pages['about'];
-  const url = localizedUrl('/about', locale);
+  const url = absoluteUrl('/about');
   return (
     <>
       <StructuredData
         id="webpage"
-        schema={webPageSchema({ name: page?.title ?? '', description: page?.description ?? '', url, locale })}
+        schema={webPageSchema({ name: page?.title ?? '', description: page?.description ?? '', url })}
       />
       <StructuredData
         id="breadcrumb"
         schema={breadcrumbSchema([
-          { name: siteConfig.name, url: localizedUrl('/', locale) },
+          { name: siteConfig.name, url: absoluteUrl('/') },
           { name: 'About', url },
         ])}
       />

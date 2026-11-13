@@ -28,7 +28,7 @@ Defined in `src/app/globals.css` `@theme {}`. Allow shadcn-generated components 
 
 ## Typography
 
-Fonts loaded via `next/font/google` in `src/app/[locale]/layout.tsx`, injected as CSS vars:
+Fonts loaded via `next/font/google` in `src/app/(site)/layout.tsx`, injected as CSS vars:
 
 | CSS variable | Font family | Weights | Utility |
 |---|---|---|---|

@@ -28,7 +28,7 @@ export const MenuItems: CollectionConfig = {
     groupBy: true,
     description:
       'Your product catalogue. Prices, sizes and availability update on the site the moment you publish.',
-    preview: (_, { locale }) => previewUrl('/menu', locale),
+    preview: () => previewUrl('/menu'),
   },
   access: {
     read: publishedOrAuthenticated,

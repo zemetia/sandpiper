@@ -2,18 +2,16 @@
 
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
-import { useLocale } from 'next-intl';
 import { Suspense, useEffect } from 'react';
 
-import { usePathname } from '@/i18n/navigation';
+import { usePathname } from 'next/navigation';
 
 function PostHogPageView() {
   const pathname = usePathname();
-  const locale = useLocale();
 
   useEffect(() => {
     posthog.capture('$pageview', { $current_url: window.location.href });
-  }, [pathname, locale]);
+  }, [pathname]);
 
   return null;
 }

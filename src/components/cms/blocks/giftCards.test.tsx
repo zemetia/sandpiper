@@ -1,7 +1,6 @@
-import type React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type {
   GiftCardFaqBlock as GiftCardFaqData,
@@ -14,11 +13,6 @@ import { GiftCardFaqBlock } from './GiftCardFaqBlock';
 import { GiftCardHeroBlock } from './GiftCardHeroBlock';
 import { GiftCardPanelsBlock } from './GiftCardPanelsBlock';
 import { GiftCardStepsBlock } from './GiftCardStepsBlock';
-
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: React.ComponentProps<'a'>) => <a {...props} />,
-}));
-vi.mock('next-intl/server', () => ({ getTranslations: async () => (key: string) => key }));
 
 const toast = 'https://order.toasttab.com/egiftcards/sandpiper-1640-south-street';
 
@@ -47,7 +41,7 @@ describe('GiftCardHeroBlock', () => {
 
   it('re-prints the front card when another amount is picked', async () => {
     const { container } = render(await GiftCardHeroBlock({ block, isFirst: false }));
-    const group = screen.getByRole('group', { name: 'giftAmount' });
+    const group = screen.getByRole('group', { name: 'Gift card amount' });
     await userEvent.click(within(group).getByRole('button', { name: '$25' }));
     expect(within(group).getByRole('button', { name: '$25' })).toHaveAttribute(
       'aria-pressed',

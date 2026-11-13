@@ -11,7 +11,7 @@
 
 | Layer | Goal | Standard |
 |---|---|---|
-| **SEO** | Rank in traditional search | Title, description, OG, Twitter, canonical, hreflang, sitemap, robots |
+| **SEO** | Rank in traditional search | Title, description, OG, Twitter, canonical, sitemap, robots |
 | **GEO** | Be cited in AI search overviews | JSON-LD structured data, clear factual statements, FAQPage schema |
 | **LLMs.txt** | Be understood by LLM systems | `/llms.txt` route describing site purpose and page index |
 
@@ -22,7 +22,7 @@
 | Part | Coverage |
 |---|---|
 | [01 — Site Config](./SEO_GEO_LLM/01-site-config.md) | `src/config/site.ts` — the company brain driving all layers |
-| [02 — SEO](./SEO_GEO_LLM/02-seo.md) | `buildMetadata()`, sitemap, robots, OpenGraph, Twitter, hreflang |
+| [02 — SEO](./SEO_GEO_LLM/02-seo.md) | `buildMetadata()`, sitemap, robots, OpenGraph, Twitter |
 | [03 — GEO](./SEO_GEO_LLM/03-geo.md) | JSON-LD schemas, `StructuredData` component, GEO writing strategy |
 | [04 — LLMs.txt](./SEO_GEO_LLM/04-llms-txt.md) | `/llms.txt` route handler, format, update workflow |
 

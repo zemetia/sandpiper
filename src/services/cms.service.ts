@@ -4,7 +4,6 @@ import { getPayload } from 'payload';
 import type { Where } from 'payload';
 import { cache } from 'react';
 
-import type { Locale } from '@/i18n/routing';
 import type {
   Category,
   MenuBoardBlock,
@@ -40,13 +39,12 @@ const client = () => getPayload({ config });
 
 const isDraft = async () => (await draftMode()).isEnabled;
 
-const getPage = cache(async (slug: string, locale: Locale): Promise<Page | null> => {
+const getPage = cache(async (slug: string): Promise<Page | null> => {
   const draft = await isDraft();
   const payload = await client();
   const { docs } = await payload.find({
     collection: 'pages',
     where: { slug: { equals: slug } },
-    locale,
     draft,
     overrideAccess: draft,
     depth: 2,
@@ -69,9 +67,9 @@ const getPageSlugs = async (): Promise<{ slug: string; updatedAt: string }[]> =>
   return docs.flatMap((d) => (d.slug ? [{ slug: d.slug, updatedAt: d.updatedAt }] : []));
 };
 
-const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettingsVO> => {
+const getSiteSettings = cache(async (): Promise<SiteSettingsVO> => {
   const payload = await client();
-  const s = await payload.findGlobal({ slug: 'site-settings', locale, depth: 1 });
+  const s = await payload.findGlobal({ slug: 'site-settings', depth: 1 });
   const digits = s.whatsapp?.replace(/\D/g, '');
   return {
     siteName: s.siteName || 'Sandpiper',
@@ -92,11 +90,11 @@ const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettingsVO> =>
   };
 });
 
-const getNavigation = cache(async (locale: Locale): Promise<NavigationVO> => {
+const getNavigation = cache(async (): Promise<NavigationVO> => {
   const payload = await client();
   const [header, footer] = await Promise.all([
-    payload.findGlobal({ slug: 'header', locale, depth: 1 }),
-    payload.findGlobal({ slug: 'footer', locale, depth: 1 }),
+    payload.findGlobal({ slug: 'header', depth: 1 }),
+    payload.findGlobal({ slug: 'footer', depth: 1 }),
   ]);
   const promo = header.promo;
   const news = footer.newsletter;
@@ -138,13 +136,12 @@ const getNavigation = cache(async (locale: Locale): Promise<NavigationVO> => {
 });
 
 /** Public reads keep access control on (published only); draft mode bypasses it for editors. */
-const queryMenuItems = async (locale: Locale, where: Where | undefined, limit: number) => {
+const queryMenuItems = async (where: Where | undefined, limit: number) => {
   const draft = await isDraft();
-  const [payload, settings] = await Promise.all([client(), getSiteSettings(locale)]);
+  const [payload, settings] = await Promise.all([client(), getSiteSettings()]);
   const { docs } = await payload.find({
     collection: 'menu-items',
     ...(where ? { where } : {}),
-    locale,
     draft,
     overrideAccess: draft,
     depth: 1,
@@ -154,25 +151,24 @@ const queryMenuItems = async (locale: Locale, where: Where | undefined, limit: n
   });
   return docs.map((d) => ({
     categoryId: populated<Category>(d.category)?.id ?? (d.category as number),
-    item: toMenuItem(d, settings.currency, locale),
+    item: toMenuItem(d, settings.currency),
   }));
 };
 
-const findMenuItems = async (locale: Locale, where: Where, limit = 200): Promise<MenuItemVO[]> =>
-  (await queryMenuItems(locale, where, limit)).map((r) => r.item);
+const findMenuItems = async (where: Where, limit = 200): Promise<MenuItemVO[]> =>
+  (await queryMenuItems(where, limit)).map((r) => r.item);
 
-const getMenu = cache(async (locale: Locale): Promise<MenuCategoryVO[]> => {
+const getMenu = cache(async (): Promise<MenuCategoryVO[]> => {
   const payload = await client();
   const [{ docs: categories }, rows] = await Promise.all([
     payload.find({
       collection: 'categories',
-      locale,
       sort: '_order',
       depth: 0,
       limit: 100,
       pagination: false,
     }),
-    queryMenuItems(locale, undefined, 500),
+    queryMenuItems(undefined, 500),
   ]);
 
   return categories.map((c) => ({
@@ -184,23 +180,20 @@ const getMenu = cache(async (locale: Locale): Promise<MenuCategoryVO[]> => {
   }));
 });
 
-const getMenuHighlights = async (
-  block: MenuHighlightsBlock,
-  locale: Locale,
-): Promise<MenuItemVO[]> => {
+const getMenuHighlights = async (block: MenuHighlightsBlock): Promise<MenuItemVO[]> => {
   const limit = block.limit ?? 6;
   if (block.source === 'manual') {
     const ids = (block.items ?? []).map((i) => (typeof i === 'object' ? i.id : i));
     if (ids.length === 0) return [];
-    const items = await findMenuItems(locale, { id: { in: ids } });
+    const items = await findMenuItems({ id: { in: ids } });
     return ids.flatMap((id) => items.find((i) => i.id === id) ?? []);
   }
   if (block.source === 'category') {
     const category = populated(block.category)?.id ?? block.category;
     if (!category) return [];
-    return findMenuItems(locale, { category: { equals: category } }, limit);
+    return findMenuItems({ category: { equals: category } }, limit);
   }
-  return findMenuItems(locale, { featured: { equals: true } }, limit);
+  return findMenuItems({ featured: { equals: true } }, limit);
 };
 
 const relationIds = <T extends { id: number }>(values: (number | T)[] | null | undefined) =>
@@ -209,23 +202,19 @@ const relationIds = <T extends { id: number }>(values: (number | T)[] | null | u
 /** Menu items in the exact order they were picked in the admin. */
 const getMenuItemsByIds = async (
   values: (number | MenuItem)[] | null | undefined,
-  locale: Locale,
 ): Promise<MenuItemVO[]> => {
   const ids = relationIds(values);
   if (ids.length === 0) return [];
-  const items = await findMenuItems(locale, { id: { in: ids } });
+  const items = await findMenuItems({ id: { in: ids } });
   return ids.flatMap((id) => items.find((i) => i.id === id) ?? []);
 };
 
-const getPlateParade = (block: PlateParadeBlock, locale: Locale): Promise<MenuItemVO[]> =>
+const getPlateParade = (block: PlateParadeBlock): Promise<MenuItemVO[]> =>
   block.source === 'manual'
-    ? getMenuItemsByIds(block.items, locale)
-    : findMenuItems(locale, { featured: { equals: true } }, block.limit ?? 6);
+    ? getMenuItemsByIds(block.items)
+    : findMenuItems({ featured: { equals: true } }, block.limit ?? 6);
 
-const getMenuBoard = async (
-  block: MenuBoardBlock,
-  locale: Locale,
-): Promise<MenuBoardCategoryVO[]> => {
+const getMenuBoard = async (block: MenuBoardBlock): Promise<MenuBoardCategoryVO[]> => {
   const ids = relationIds(block.categories);
   if (ids.length === 0) return [];
   const payload = await client();
@@ -233,12 +222,11 @@ const getMenuBoard = async (
     payload.find({
       collection: 'categories',
       where: { id: { in: ids } },
-      locale,
       depth: 1,
       limit: ids.length,
       pagination: false,
     }),
-    queryMenuItems(locale, { category: { in: ids } }, 500),
+    queryMenuItems({ category: { in: ids } }, 500),
   ]);
   return ids.flatMap((id) => {
     const category = categories.find((c) => c.id === id);

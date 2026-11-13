@@ -1,8 +1,7 @@
 import { ArrowRight } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 import type { CSSProperties } from 'react';
 
-import type { Locale } from '@/i18n/routing';
 import { cn } from '@/lib/cn';
 import type { PlateParadeBlock as PlateParadeBlockData } from '@/payload-types';
 import { cmsService } from '@/services/cms.service';
@@ -21,17 +20,8 @@ const WAVE = [
 
 const vw = (px: number) => `min(${((px / 1440) * 100).toFixed(2)}vw, ${px}px)`;
 
-export async function PlateParadeBlock({
-  block,
-  locale,
-}: {
-  block: PlateParadeBlockData;
-  locale: Locale;
-}) {
-  const [items, t] = await Promise.all([
-    cmsService.getPlateParade(block, locale),
-    getTranslations('site'),
-  ]);
+export async function PlateParadeBlock({ block }: { block: PlateParadeBlockData }) {
+  const items = await cmsService.getPlateParade(block);
   if (items.length === 0) return null;
   const dragLabel = block.dragLabel || 'Drag';
 
@@ -54,7 +44,7 @@ export async function PlateParadeBlock({
           aria-hidden="true"
           className="bg-blue text-paper font-ui mb-1 grid size-16 shrink-0 place-content-center justify-items-center rounded-full text-[10px] font-extrabold tracking-[0.1em] uppercase lg:hidden"
         >
-          {t('swipe')}
+          {copy.swipe}
           <ArrowRight className="size-3.5" />
         </span>
       </div>
@@ -62,7 +52,7 @@ export async function PlateParadeBlock({
       <PlateScroller
         count={items.length}
         dragLabel={dragLabel}
-        label={t('plates')}
+        label={copy.plates}
         className="mt-8 lg:mt-0"
       >
         <ul className="flex gap-5 px-5 lg:gap-[min(2vw,28px)] lg:pr-0 lg:pl-[min(14.6vw,210px)]">

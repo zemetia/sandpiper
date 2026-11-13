@@ -11,7 +11,6 @@ export const cateringRequestSchema = z.object({
   occasion: z.string().trim().max(80).optional(),
   fulfillment: z.enum(['pickup', 'delivery']).default('pickup'),
   notes: z.string().trim().max(2000).optional(),
-  locale: z.enum(['en', 'id']).optional(),
 });
 
 export type CateringRequestInput = z.input<typeof cateringRequestSchema>;

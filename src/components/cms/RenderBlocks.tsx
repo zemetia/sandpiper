@@ -1,4 +1,3 @@
-import type { Locale } from '@/i18n/routing';
 import type { Page } from '@/payload-types';
 import { assertNever } from '@/lib/utils';
 
@@ -35,18 +34,18 @@ import { VisitUsBlock } from './blocks/VisitUsBlock';
 
 type Block = NonNullable<Page['layout']>[number];
 
-function renderBlock(block: Block, index: number, locale: Locale) {
+function renderBlock(block: Block, index: number) {
   switch (block.blockType) {
     case 'homeHero':
-      return <HomeHeroBlock block={block} locale={locale} isFirst={index === 0} />;
+      return <HomeHeroBlock block={block} isFirst={index === 0} />;
     case 'ribbons':
       return <RibbonsBlock block={block} />;
     case 'menuBoard':
-      return <MenuBoardBlock block={block} locale={locale} />;
+      return <MenuBoardBlock block={block} />;
     case 'plateParade':
-      return <PlateParadeBlock block={block} locale={locale} />;
+      return <PlateParadeBlock block={block} />;
     case 'coffeeOrbit':
-      return <CoffeeOrbitBlock block={block} locale={locale} />;
+      return <CoffeeOrbitBlock block={block} />;
     case 'muralStory':
       return <MuralStoryBlock block={block} />;
     case 'gramWall':
@@ -54,7 +53,7 @@ function renderBlock(block: Block, index: number, locale: Locale) {
     case 'reviewThread':
       return <ReviewThreadBlock block={block} />;
     case 'visitHours':
-      return <VisitHoursBlock block={block} locale={locale} />;
+      return <VisitHoursBlock block={block} />;
     case 'sunCta':
       return <SunCtaBlock block={block} />;
     case 'cateringHero':
@@ -68,7 +67,7 @@ function renderBlock(block: Block, index: number, locale: Locale) {
     case 'cateringSteps':
       return <CateringStepsBlock block={block} />;
     case 'cateringQuote':
-      return <CateringQuoteBlock block={block} locale={locale} />;
+      return <CateringQuoteBlock block={block} />;
     case 'giftCardHero':
       return <GiftCardHeroBlock block={block} isFirst={index === 0} />;
     case 'giftCardSteps':
@@ -84,9 +83,9 @@ function renderBlock(block: Block, index: number, locale: Locale) {
     case 'mediaContent':
       return <MediaContentBlock block={block} />;
     case 'menuHighlights':
-      return <MenuHighlightsBlock block={block} locale={locale} />;
+      return <MenuHighlightsBlock block={block} />;
     case 'fullMenu':
-      return <FullMenuBlock block={block} locale={locale} />;
+      return <FullMenuBlock block={block} />;
     case 'gallery':
       return <GalleryBlock block={block} />;
     case 'testimonials':
@@ -94,7 +93,7 @@ function renderBlock(block: Block, index: number, locale: Locale) {
     case 'faq':
       return <FaqBlock block={block} />;
     case 'visitUs':
-      return <VisitUsBlock block={block} locale={locale} />;
+      return <VisitUsBlock block={block} />;
     case 'cta':
       return <CallToActionBlock block={block} />;
     default:
@@ -102,7 +101,7 @@ function renderBlock(block: Block, index: number, locale: Locale) {
   }
 }
 
-export function RenderBlocks({ blocks, locale }: { blocks: Page['layout']; locale: Locale }) {
+export function RenderBlocks({ blocks }: { blocks: Page['layout'] }) {
   return (
     <>
       {(blocks ?? []).map((block, i) => (
@@ -110,7 +109,7 @@ export function RenderBlocks({ blocks, locale }: { blocks: Page['layout']; local
           key={block.id ?? i}
           id={block.blockName ? block.blockName.toLowerCase().replace(/\s+/g, '-') : undefined}
         >
-          {renderBlock(block, i, locale)}
+          {renderBlock(block, i)}
         </div>
       ))}
     </>

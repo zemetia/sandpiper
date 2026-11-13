@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useLocale } from 'next-intl';
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
@@ -21,10 +20,9 @@ export function NewsletterForm({
   labels,
   className,
 }: NewsletterFormProps) {
-  const locale = useLocale();
   const [invalid, setInvalid] = useState(false);
   const mutation = useMutation({
-    mutationFn: (email: string) => newsletterService.subscribe(email, locale),
+    mutationFn: (email: string) => newsletterService.subscribe(email),
   });
 
   if (mutation.isSuccess) {

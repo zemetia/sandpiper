@@ -52,7 +52,7 @@ export const WithBadge: Story = {
   render: () => (
     <Card className="w-72">
       <CardHeader>
-        <Badge variant="outline" className="mb-1 w-fit">next-intl v3</Badge>
+        <Badge variant="outline" className="mb-1 w-fit">Payload v3</Badge>
         <CardTitle>Internationalization</CardTitle>
         <CardDescription>Type-safe i18n with server and client support.</CardDescription>
       </CardHeader>

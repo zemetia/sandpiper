@@ -2,7 +2,7 @@
 
 import { RefreshRouteOnSave } from '@payloadcms/live-preview-react';
 
-import { useRouter } from '@/i18n/navigation';
+import { useRouter } from 'next/navigation';
 
 /** Re-renders the server page whenever an editor autosaves in the admin's Live Preview pane. */
 export function LivePreviewListener() {

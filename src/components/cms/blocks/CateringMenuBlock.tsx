@@ -1,5 +1,5 @@
 import { Leaf } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
 import { cn } from '@/lib/cn';
 import type { CateringMenuBlock as CateringMenuBlockData } from '@/payload-types';
@@ -67,7 +67,6 @@ function CategoryCard({ category, index, id }: { category: Category; index: numb
 export async function CateringMenuBlock({ block }: { block: CateringMenuBlockData }) {
   const categories = block.categories ?? [];
   if (categories.length === 0) return null;
-  const t = await getTranslations('site.catering');
   const ids = categories.map((_, i) => `catering-menu-${i + 1}`);
 
   return (
@@ -95,7 +94,7 @@ export async function CateringMenuBlock({ block }: { block: CateringMenuBlockDat
 
         <div className="mt-5 lg:hidden">
           <CateringMenuChips
-            label={t('jumpToCategory')}
+            label={copy.catering.jumpToCategory}
             chips={categories.map((c, i) => ({
               id: ids[i] as string,
               label: c.shortLabel || c.title || pad(i + 1),
