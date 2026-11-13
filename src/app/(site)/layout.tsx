@@ -46,7 +46,13 @@ export function generateMetadata(): Metadata {
     title: { template: siteConfig.seo.titleTemplate, default: siteConfig.seo.defaultTitle },
     description: siteConfig.description,
     metadataBase: new URL(siteConfig.url),
-    icons: { icon: '/sandpiper-mark.svg' },
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: '48x48' },
+        { url: '/sandpiper-mark.svg', type: 'image/svg+xml' },
+      ],
+      apple: '/apple-touch-icon.png',
+    },
   };
 }
 

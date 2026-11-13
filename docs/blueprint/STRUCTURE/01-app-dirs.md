@@ -10,7 +10,7 @@
 |---|---|---|
 | [src/](../../../src/) | dir | All application source |
 | [docs/blueprint/](../../../docs/blueprint/) | dir | AI reference docs (this dir) |
-| [public/](../../../public/) | dir | Static assets (`sandpiper-mark.svg` favicon/admin icon, `og.png`) |
+| [public/](../../../public/) | dir | Static assets (`sandpiper-mark.svg` + `favicon.ico` + `apple-touch-icon.png` — the badge logo as favicon for site + admin, `og.png`) |
 | `media/` | dir | Payload upload storage — git-ignored, created at runtime |
 | [.env.example](../../../.env.example) | file | Env var template → copy to `.env.local` |
 | [components.json](../../../components.json) | file | shadcn/ui CLI config → [COMPONENTS.md](../COMPONENTS.md) |

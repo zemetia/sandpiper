@@ -41,7 +41,11 @@ export default buildConfig({
     meta: {
       titleSuffix: ' · Sandpiper CMS',
       description: 'Sandpiper content studio',
-      icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/sandpiper-mark.svg' }],
+      icons: [
+        { rel: 'icon', sizes: '48x48', url: '/favicon.ico' },
+        { rel: 'icon', type: 'image/svg+xml', url: '/sandpiper-mark.svg' },
+        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
+      ],
     },
     components: {
       graphics: { Logo: '/cms/admin/Brand#Logo', Icon: '/cms/admin/Brand#Icon' },
