@@ -84,6 +84,17 @@ export const copy = {
     },
   },
   giftAmount: 'Gift card amount',
+  order: {
+    pickup: 'PICKUP',
+    delivery: 'DELIVERY',
+    switch: 'Pickup or delivery',
+    copy: 'COPY',
+    copied: 'COPIED',
+    copyCode: (code: string) => `Copy promo code ${code}`,
+    copiedToast: (code: string) => `Code ${code} copied`,
+    copyFailed: "Couldn't copy the code. Select it and copy it by hand.",
+    newTab: '(opens in a new tab)',
+  },
   contactForm: {
     send: 'Send message',
     thanks: 'Message sent!',

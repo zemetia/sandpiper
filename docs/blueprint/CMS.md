@@ -63,6 +63,8 @@ The first ten are the homepage design (admin group **Landing page**); the rest a
 | `ContactHero` | `contactHero` | `ContactHeroBlock` (admin group **Contact page**; call button from Site settings phone, hours card, polaroid, stamp) |
 | `ContactForm` | `contactForm` | `ContactFormBlock` + client `contact/ContactMessageForm` → `contactService.send` → `POST /api/contact-messages/submit` |
 | `ContactFind` | `contactFind` | `ContactFindBlock` (button can use the Site settings map URL) |
+| `OrderHero` | `orderHero` | `OrderHeroBlock` (admin group **Order page**; centred on desktop; phones get client `order/OrderToggle`, a Pickup/Delivery switch that sets `data-order-view` on `<html>`) |
+| `OrderChoices` | `orderChoices` | `OrderChoicesBlock` (both cards side by side on desktop; below `lg` only the card picked in `OrderToggle` shows, via `in-data-[order-view=…]`; pickup card → Toast link + numbered steps; delivery card → one row per app with `order/AppTile` brand tile, optional client `order/PromoCode` copy chip) |
 | `Hero` | `hero` | `HeroBlock` |
 | `Content` | `content` | `ContentBlock` |
 | `MediaContent` | `mediaContent` | `MediaContentBlock` |

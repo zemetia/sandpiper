@@ -183,6 +183,8 @@ export interface Page {
         | ContactHeroBlock
         | ContactFormBlock
         | ContactFindBlock
+        | OrderHeroBlock
+        | OrderChoicesBlock
         | HeroBlock
         | ContentBlock
         | MediaContentBlock
@@ -1476,6 +1478,105 @@ export interface ContactFindBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OrderHeroBlock".
+ */
+export interface OrderHeroBlock {
+  eyebrow?: string | null;
+  /**
+   * Phone version. Falls back to the eyebrow.
+   */
+  eyebrowShort?: string | null;
+  /**
+   * Ink line.
+   */
+  line1?: string | null;
+  /**
+   * Blue line.
+   */
+  line2?: string | null;
+  body?: string | null;
+  /**
+   * Phone only: a Pickup / Delivery switch that jumps to the matching card of the "Order choices" block below.
+   */
+  toggle?: {
+    pickup?: string | null;
+    delivery?: string | null;
+  };
+  menuLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: (number | null) | Page;
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'orderHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OrderChoicesBlock".
+ */
+export interface OrderChoicesBlock {
+  /**
+   * White card. Pickup orders are placed on Toast.
+   */
+  pickup?: {
+    title?: string | null;
+    /**
+     * Outlined pill, top right.
+     */
+    tag?: string | null;
+    body?: string | null;
+    steps?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: (number | null) | Page;
+      url?: string | null;
+      label?: string | null;
+    };
+    note?: string | null;
+  };
+  /**
+   * Blue card with one row per delivery app.
+   */
+  delivery?: {
+    title?: string | null;
+    /**
+     * Outlined pill, top right.
+     */
+    tag?: string | null;
+    body?: string | null;
+    apps?:
+      | {
+          /**
+           * Picks the logo tile.
+           */
+          app: 'doordash' | 'ubereats' | 'grubhub';
+          name: string;
+          /**
+           * Optional. Shown with a copy button.
+           */
+          promoCode?: string | null;
+          description?: string | null;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    note?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'orderChoices';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
@@ -1905,6 +2006,8 @@ export interface PagesSelect<T extends boolean = true> {
         contactHero?: T | ContactHeroBlockSelect<T>;
         contactForm?: T | ContactFormBlockSelect<T>;
         contactFind?: T | ContactFindBlockSelect<T>;
+        orderHero?: T | OrderHeroBlockSelect<T>;
+        orderChoices?: T | OrderChoicesBlockSelect<T>;
         hero?: T | HeroBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaContent?: T | MediaContentBlockSelect<T>;
@@ -2730,6 +2833,83 @@ export interface ContactFindBlockSelect<T extends boolean = true> {
         top?: T;
         value?: T;
         bottom?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OrderHeroBlock_select".
+ */
+export interface OrderHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  eyebrowShort?: T;
+  line1?: T;
+  line2?: T;
+  body?: T;
+  toggle?:
+    | T
+    | {
+        pickup?: T;
+        delivery?: T;
+      };
+  menuLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OrderChoicesBlock_select".
+ */
+export interface OrderChoicesBlockSelect<T extends boolean = true> {
+  pickup?:
+    | T
+    | {
+        title?: T;
+        tag?: T;
+        body?: T;
+        steps?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        note?: T;
+      };
+  delivery?:
+    | T
+    | {
+        title?: T;
+        tag?: T;
+        body?: T;
+        apps?:
+          | T
+          | {
+              app?: T;
+              name?: T;
+              promoCode?: T;
+              description?: T;
+              url?: T;
+              id?: T;
+            };
+        note?: T;
       };
   id?: T;
   blockName?: T;

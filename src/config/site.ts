@@ -113,6 +113,14 @@ export const siteConfig: SiteConfig = {
       changeFreq: 'daily',
       priority: 0.9,
     },
+    order: {
+      path: '/order',
+      title: 'Order online — pickup on Toast or delivery',
+      description:
+        'Order Sandpiper Cafe ahead for pickup at 1640 South St on Toast, ready in about 15 minutes, or get delivery through DoorDash, Uber Eats or Grubhub.',
+      changeFreq: 'monthly',
+      priority: 0.9,
+    },
     about: {
       path: '/about',
       title: 'About Sandpiper — our story, hours & location',

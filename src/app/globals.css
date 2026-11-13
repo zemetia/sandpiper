@@ -19,6 +19,11 @@
   --color-paper: oklch(1 0 0);
   --color-slate: oklch(0.458 0.034 285);
 
+  /* Delivery partner brand tiles (Order page) */
+  --color-doordash: oklch(0.645 0.242 31.8);
+  --color-ubereats: oklch(0.711 0.183 152.8);
+  --color-grubhub: oklch(0.732 0.186 53);
+
   /* ─── Semantic tokens (mapped onto the palette) ──────────────── */
 
   /* Surface — cream paper */
@@ -432,5 +437,26 @@
   }
   .ct-lift:hover {
     translate: none;
+  }
+}
+
+/* ─── Order page ──────────────────────────────────────────────── */
+@keyframes od-swap {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer utilities {
+  /* Phones: the order card fades up each time the Pickup / Delivery switch brings it back */
+  @media (width < 64rem) and (prefers-reduced-motion: no-preference) {
+    .od-swap {
+      animation: od-swap 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
   }
 }

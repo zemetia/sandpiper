@@ -30,6 +30,8 @@ import { MediaContent } from './MediaContent';
 import { MenuBoard } from './MenuBoard';
 import { MenuHighlights } from './MenuHighlights';
 import { MuralStory } from './MuralStory';
+import { OrderChoices } from './OrderChoices';
+import { OrderHero } from './OrderHero';
 import { PlateParade } from './PlateParade';
 import { ReviewThread } from './ReviewThread';
 import { Ribbons } from './Ribbons';
@@ -68,6 +70,8 @@ export const pageBlocks = [
   ContactHero,
   ContactForm,
   ContactFind,
+  OrderHero,
+  OrderChoices,
   Hero,
   Content,
   MediaContent,

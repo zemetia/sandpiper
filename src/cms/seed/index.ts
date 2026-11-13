@@ -7,6 +7,7 @@ import { contactLayout } from './contact';
 import { categories, menuItems, sitePhotos } from './content';
 import type { SitePhoto } from './content';
 import { giftCardLayout } from './giftCards';
+import { orderLayout } from './order';
 
 const imagesDir = path.resolve(process.cwd(), 'src/cms/seed/images');
 
@@ -133,11 +134,17 @@ export async function seed(payload: Payload, req: PayloadRequest) {
     { blockType: 'fullMenu', showSoldOut: true },
   ]);
 
+  const order = await page(
+    'order',
+    'Order',
+    orderLayout(pageLink(menu.id, 'Not sure yet? See our menu')),
+  );
+
   const about = await page(
     'about',
     'About',
     await aboutLayout(upload, {
-      orderOnline: pageLink(menu.id, 'Order online', 'primary'),
+      orderOnline: pageLink(order.id, 'Order online', 'primary'),
       menu: pageLink(menu.id, 'See the menu', 'outline'),
     }),
   );
@@ -150,7 +157,7 @@ export async function seed(payload: Payload, req: PayloadRequest) {
     await contactLayout(upload, { catering: pageLink(catering.id, 'Request a catering quote') }),
   );
 
-  const orderNow = pageLink(menu.id, 'Order now');
+  const orderNow = pageLink(order.id, 'Order now');
 
   const home = await page('home', 'Home', [
     {
@@ -161,7 +168,7 @@ export async function seed(payload: Payload, req: PayloadRequest) {
       line3: 'COFFEE.',
       pillImage: await upload('buttermilk-pancakes.webp', 'Buttermilk Pancakes'),
       body: 'Breakfast, lunch & Lavazza coffee on South Street. Grab a seat or order ahead.',
-      links: [ref(menu.id, 'Order online', 'primary'), ref(menu.id, 'See the menu', 'outline')],
+      links: [ref(order.id, 'Order online', 'primary'), ref(menu.id, 'See the menu', 'outline')],
       polaroid: { image: await photo('polaroid'), caption: 'the mural, 1640 South St' },
       stamp: { label: 'OPEN DAILY', value: '7–4' },
       slides: [
@@ -178,7 +185,7 @@ export async function seed(payload: Payload, req: PayloadRequest) {
           pitch: 'Blueberry, strawberry, banana and honey, blended to order.',
         },
       ],
-      orderLink: pageLink(menu.id, 'Order online'),
+      orderLink: pageLink(order.id, 'Order online'),
       autoplay: 7,
     },
     {
@@ -294,7 +301,7 @@ export async function seed(payload: Payload, req: PayloadRequest) {
       sideText: 'Order ahead, pick up at 1640 South St.',
       eyebrow: 'HUNGRY?',
       heading: 'Skip the line.',
-      link: pageLink(menu.id, 'Order online'),
+      link: pageLink(order.id, 'Order online'),
       stamp: { label: 'READY IN', value: '~15 min' },
     },
   ]);
@@ -362,7 +369,7 @@ export async function seed(payload: Payload, req: PayloadRequest) {
         ref(menu.id, 'Menu'),
         ref(about.id, 'Our Story'),
         ref(contact.id, 'Visit'),
-        ref(menu.id, 'Order Online'),
+        ref(order.id, 'Order Online'),
       ],
       copyright: 'Sandpiper Cafe · South Philly',
       note: 'Proudly serving Lavazza ☕',

@@ -33,6 +33,8 @@ import { MediaContentBlock } from './blocks/MediaContentBlock';
 import { MenuBoardBlock } from './blocks/MenuBoardBlock';
 import { MenuHighlightsBlock } from './blocks/MenuHighlightsBlock';
 import { MuralStoryBlock } from './blocks/MuralStoryBlock';
+import { OrderChoicesBlock } from './blocks/OrderChoicesBlock';
+import { OrderHeroBlock } from './blocks/OrderHeroBlock';
 import { PlateParadeBlock } from './blocks/PlateParadeBlock';
 import { ReviewThreadBlock } from './blocks/ReviewThreadBlock';
 import { RibbonsBlock } from './blocks/RibbonsBlock';
@@ -103,6 +105,10 @@ function renderBlock(block: Block, index: number) {
       return <ContactFormBlock block={block} />;
     case 'contactFind':
       return <ContactFindBlock block={block} />;
+    case 'orderHero':
+      return <OrderHeroBlock block={block} isFirst={index === 0} />;
+    case 'orderChoices':
+      return <OrderChoicesBlock block={block} />;
     case 'hero':
       return <HeroBlock block={block} isFirst={index === 0} />;
     case 'content':
