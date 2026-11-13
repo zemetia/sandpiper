@@ -96,8 +96,10 @@ export default buildConfig({
   plugins: [
     // Vercel's filesystem is read-only, so production media lives in Vercel Blob. Without
     // BLOB_READ_WRITE_TOKEN (local dev) the plugin disables itself and uploads stay in ./media.
-    // Files are served through /api/media/file/…, same as local storage.
+    // Files are served through /api/media/file/…, same as local storage. alwaysInsertFields keeps
+    // the plugin's `prefix` / `_objectKey` columns in every environment, token or not.
     vercelBlobStorage({
+      alwaysInsertFields: true,
       collections: { media: true },
       token: process.env['BLOB_READ_WRITE_TOKEN'],
     }),
