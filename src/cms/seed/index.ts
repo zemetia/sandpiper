@@ -79,6 +79,9 @@ export async function seed(payload: Payload, req: PayloadRequest) {
       collection: 'media',
       data: { alt, ...focal },
       filePath: path.join(imagesDir, file),
+      // Keep the photo's own name: without this, a file already in ./media (an earlier local
+      // seed) makes Payload save "photo-1.webp", which no other environment has.
+      overwriteExistingFiles: true,
     });
     uploaded.set(file, doc.id);
     return doc.id;
