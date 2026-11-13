@@ -4,6 +4,9 @@ import { siteConfig } from '@/config/site';
 import { absoluteUrl } from '@/lib/seo';
 import { cmsService } from '@/services/cms.service';
 
+// Refreshed hourly so pages published after the deploy show up.
+export const revalidate = 3600;
+
 /**
  * Sitemap = static pages from siteConfig.pages + every published CMS page.
  * CMS pages that share a path with siteConfig are skipped.

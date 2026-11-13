@@ -119,7 +119,7 @@ Layout chrome (`AnnouncementBar`, `Header`, `Footer`) is fed by `cmsService.getS
 
 1. Collection → `src/collections/<Name>.ts`; global → `src/cms/globals/<Name>.ts`. Register in `payload.config.ts`.
 2. Access from `src/cms/access`; visitor copy `localized: true`; add `versions.drafts` if editors should preview before publishing.
-3. Regenerate `payload-types.ts`; add VO in `cms.vo.ts`, mapper in `cms.mappers.ts` (+ test), reader in `cmsService`.
+3. Regenerate `payload-types.ts` **and create a migration** (see Database & migrations); add VO in `cms.vo.ts`, mapper in `cms.mappers.ts` (+ test), reader in `cmsService`.
 4. Add a nav icon rule in `src/app/(payload)/custom.css`.
 5. Extend the seed if a fresh site should have starter content.
 
@@ -133,7 +133,23 @@ Pages and menu items have drafts + versions. Pages autosave (400 ms) and show a 
 
 ## Rate limiting
 
-`/api/*` is limited to 60 req/min per IP; with a `payload-token` cookie the ceiling rises to 600 (the admin is chatty). The cookie is not verified in middleware → [ARCHITECTURE/04-proxy.md](./ARCHITECTURE/04-proxy.md).
+`/api/*` is limited to 60 req/min per IP, auth endpoints to 10 per 15 min, and a verified CMS session to 600/min; users lock after 5 failed logins → [ARCHITECTURE/04-proxy.md](./ARCHITECTURE/04-proxy.md).
+
+## Database & migrations
+
+Production is Vercel + Neon. `payload.config.ts` reads `DATABASE_URI`, falling back to `DATABASE_URL` / `POSTGRES_URL` (what the Neon integration sets), and turns on TLS for any non-localhost host — Neon rejects plaintext even when the URL has no `sslmode`.
+
+`next dev` pushes schema changes on the fly; production never does. It runs `src/migrations` through `prodMigrations` on the first Payload init — in practice during `next build` (the sitemap is the one build-time DB reader), so functions start on a migrated DB. **Any schema change (field, block, collection, global, localization) needs a new migration committed with it**, or production queries hit missing columns. Because the CLI crashes locally (see Known issue), create it from a temporary dev route and delete the route afterwards:
+
+```ts
+// src/app/api/tmp-create-migration/route.ts — delete after use
+const payload = await getPayload({ config });
+await payload.db.createMigration({ migrationName: '<name>', payload, forceAcceptWarning: true });
+```
+
+It diffs against the latest snapshot in `src/migrations` (not the DB). Generated files are lint/prettier-ignored; drop the unused `payload, req` params (`noUnusedParameters`). Never point `next dev` at the production DB — the dev push marks it, and `prodMigrations` then stops at an interactive "data loss" prompt, which exits the process on Vercel.
+
+CMS pages render per request (`/` is `force-dynamic`, like `[...slug]`): a build-time snapshot would ignore CMS edits and bake a 404 while the production DB is still empty.
 
 ## Known issue
 
