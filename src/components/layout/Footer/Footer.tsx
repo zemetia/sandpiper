@@ -1,113 +1,152 @@
-import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/cn';
-import type { LinkVO, SiteSettingsVO } from '@/types/value-objects';
+import { MapPin, Phone } from 'lucide-react';
 
-import { BrandMark } from '../Header/Header';
+import Link from 'next/link';
+import { cn } from '@/lib/cn';
+import { LinkTo } from '@/components/cms/LinkTo';
+import { InstagramIcon } from '@/components/shared/Icons';
+import { Logo } from '@/components/shared/Logo';
+import type { NavigationVO, SiteSettingsVO } from '@/types/value-objects';
+
+import { NewsletterForm } from './NewsletterForm';
+import type { NewsletterFormProps } from './NewsletterForm';
 
 export interface FooterProps {
   settings: SiteSettingsVO;
-  blurb: string | null;
-  items: LinkVO[];
-  labels: { hours: string; address: string; follow: string; rights: string };
+  footer: NavigationVO['footer'];
+  labels: {
+    explore: string;
+    visit: string;
+    instagram: string;
+    map: string;
+    call: string;
+    newsletter: NewsletterFormProps['labels'];
+  };
   className?: string;
 }
 
-export function Footer({ settings, blurb, items, labels, className }: FooterProps) {
+const heading = 'font-sans text-sunny mb-5 text-[13px] font-bold tracking-[0.2em] uppercase';
+const social =
+  'grid size-11 place-items-center rounded-full transition-transform hover:-translate-y-0.5 max-lg:border max-lg:border-sunny-soft/40 max-lg:text-sunny lg:bg-sunny lg:text-ink';
+
+export function Footer({ settings, footer, labels, className }: FooterProps) {
   const year = new Date().getFullYear();
+  const instagram = settings.socials.find((s) => s.platform === 'instagram');
+  const visit = [
+    ...(settings.address?.split('\n') ?? []),
+    ...(settings.phone ? [settings.phone] : []),
+    ...settings.hours.map((h) => `${h.days} ${h.time}`),
+  ];
+  const news = footer.newsletter;
 
   return (
-    <footer className={cn('border-border/60 bg-surface mt-8 border-t', className)}>
-      <div className="container-page grid gap-12 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <footer className={cn('bg-blue-deep text-paper overflow-hidden', className)}>
+      <div className="container-wide grid gap-x-10 gap-y-10 pt-14 lg:grid-cols-[1.35fr_1fr_1fr_1.45fr] lg:pt-14">
         <div className="max-w-sm">
-          <Link href="/" className="text-foreground flex items-center gap-2.5">
-            <BrandMark />
-            <span className="font-display text-xl font-semibold">{settings.siteName}</span>
+          <Link href="/" aria-label={settings.siteName} className="inline-block">
+            <Logo variant="badge" className="size-24 lg:size-[140px]" />
           </Link>
-          {(blurb ?? settings.tagline) && (
-            <p className="text-foreground-muted mt-4 text-sm leading-relaxed">
-              {blurb ?? settings.tagline}
+          {(footer.blurb ?? settings.tagline) && (
+            <p className="text-sunny-soft mt-5 text-base leading-[1.55]">
+              {footer.blurb ?? settings.tagline}
             </p>
           )}
-          {items.length > 0 && (
-            <nav aria-label="Footer" className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
-              {items.map((l) =>
-                l.href.startsWith('/') ? (
-                  <Link
-                    key={l.href + l.label}
-                    href={l.href}
-                    className="text-foreground-muted hover:text-foreground text-sm"
-                  >
-                    {l.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={l.href + l.label}
-                    href={l.href}
-                    className="text-foreground-muted hover:text-foreground text-sm"
-                  >
-                    {l.label}
-                  </a>
-                ),
-              )}
+          <div className="mt-5 flex gap-2.5">
+            {instagram && (
+              <a
+                href={instagram.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={labels.instagram}
+                className={social}
+              >
+                <InstagramIcon className="size-5" />
+              </a>
+            )}
+            {settings.mapUrl && (
+              <a
+                href={settings.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={labels.map}
+                className={social}
+              >
+                <MapPin aria-hidden="true" className="size-5" />
+              </a>
+            )}
+            {settings.phone && (
+              <a
+                href={`tel:${settings.phone.replace(/[^\d+]/g, '')}`}
+                aria-label={labels.call}
+                className={social}
+              >
+                <Phone aria-hidden="true" className="size-5" />
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 lg:contents">
+          {footer.items.length > 0 && (
+            <nav aria-label={footer.exploreHeading ?? labels.explore}>
+              <h2 className={heading}>{footer.exploreHeading ?? labels.explore}</h2>
+              <ul className="space-y-3 text-base">
+                {footer.items.map((l) => (
+                  <li key={l.href + l.label}>
+                    <LinkTo link={l} className="hover:text-sunny transition-colors">
+                      {l.label}
+                    </LinkTo>
+                  </li>
+                ))}
+              </ul>
             </nav>
+          )}
+          {visit.length > 0 && (
+            <div>
+              <h2 className={heading}>{footer.visitHeading ?? labels.visit}</h2>
+              <address className="space-y-3 text-base not-italic">
+                {visit.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </address>
+            </div>
           )}
         </div>
 
-        {settings.hours.length > 0 && (
-          <div>
-            <h2 className="text-primary mb-4 text-xs font-semibold tracking-[0.18em] uppercase">
-              {labels.hours}
-            </h2>
-            <ul className="space-y-1.5 text-sm">
-              {settings.hours.map((h) => (
-                <li key={h.days} className="text-foreground-muted">
-                  <span className="text-foreground">{h.days}</span> ·{' '}
-                  <span className="tabular-nums">{h.time}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {settings.address && (
-          <div>
-            <h2 className="text-primary mb-4 text-xs font-semibold tracking-[0.18em] uppercase">
-              {labels.address}
-            </h2>
-            <address className="text-foreground-muted text-sm leading-relaxed whitespace-pre-line not-italic">
-              {settings.address}
-            </address>
-            {settings.phone && <p className="text-foreground mt-3 text-sm">{settings.phone}</p>}
-          </div>
-        )}
-
-        {settings.socials.length > 0 && (
-          <div>
-            <h2 className="text-primary mb-4 text-xs font-semibold tracking-[0.18em] uppercase">
-              {labels.follow}
-            </h2>
-            <ul className="space-y-1.5 text-sm">
-              {settings.socials.map((s) => (
-                <li key={s.url}>
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-foreground-muted hover:text-foreground capitalize"
-                  >
-                    {s.platform}
-                  </a>
-                </li>
-              ))}
-            </ul>
+        {news && (
+          <div className="max-lg:bg-blue/60 max-lg:border-sunny-soft/20 max-lg:rounded-[20px] max-lg:border max-lg:p-5">
+            {news.heading && (
+              <h2 className="font-display text-sunny text-[26px] leading-none font-extrabold lg:text-[32px]">
+                {news.heading}
+              </h2>
+            )}
+            {news.body && (
+              <p className="text-sunny-soft mt-3 text-[15px] leading-normal">{news.body}</p>
+            )}
+            <NewsletterForm
+              className="mt-5"
+              placeholder={news.placeholder ?? ''}
+              buttonLabel={news.buttonLabel ?? 'Sign up'}
+              labels={labels.newsletter}
+            />
           </div>
         )}
       </div>
 
-      <div className="border-border/60 border-t">
-        <p className="container-page text-foreground-subtle py-6 text-xs">
-          © {year} {settings.siteName}. {labels.rights}
-        </p>
+      <div className="container-wide">
+        <div className="border-sunny-soft/20 text-sunny-soft mt-12 flex flex-col gap-3 border-t pt-6 text-[13px] sm:flex-row sm:items-center sm:justify-between lg:mt-[72px]">
+          <p>
+            © {year} {footer.copyright ?? settings.siteName}
+          </p>
+          {footer.note && <p>{footer.note}</p>}
+        </div>
+        {footer.wordmark && (
+          <p
+            aria-hidden="true"
+            className="font-display text-sunny mt-10 translate-y-[16%] text-[min(18.6vw,280px)] leading-[0.8] font-extrabold tracking-[-0.035em] whitespace-nowrap select-none lg:mt-16"
+          >
+            {footer.wordmark}
+          </p>
+        )}
       </div>
     </footer>
   );

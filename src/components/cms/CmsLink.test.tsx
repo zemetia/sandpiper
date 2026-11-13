@@ -1,24 +1,8 @@
-import type React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { LinkVO } from '@/types/value-objects';
 import { CmsLink } from './CmsLink';
-
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: {
-    href: string;
-    className?: string;
-    target?: string;
-    rel?: string;
-    children?: React.ReactNode;
-  }) => (
-    <a href={props.href} className={props.className} target={props.target} rel={props.rel}>
-      {props.children}
-    </a>
-  ),
-  usePathname: () => '/',
-}));
 
 describe('CmsLink', () => {
   it('renders internal link with href /menu', () => {

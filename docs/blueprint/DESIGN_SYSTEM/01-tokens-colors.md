@@ -10,7 +10,7 @@ Token source: [src/app/globals.css](../../../src/app/globals.css) `@theme {}` bl
 
 | Rule | Detail |
 |---|---|
-| Theme | Dark-only, warm espresso neutrals (hue ~60) with a crema/amber primary and a sea-teal accent. `color-scheme: dark` global. No light/dark toggle. The Payload admin has its own theme in `src/app/(payload)/custom.css` → [CMS.md](../CMS.md). |
+| Theme | Light-only Sandpiper brand: cream paper, ink text, Sandpiper blue primary, sunny-yellow accent (from the Pencil brand file). `color-scheme: light` global. No light/dark toggle. The Payload admin has its own theme in `src/app/(payload)/custom.css` → [CMS.md](../CMS.md). |
 | Color space | `oklch()` — wide-gamut, perceptually uniform. Never convert to hex. |
 | Token location | `src/app/globals.css` `@theme {}` |
 | Tailwind version | v4 — `@theme {}` auto-generates utility classes, no `tailwind.config.*` |
@@ -38,6 +38,28 @@ Token source: [src/app/globals.css](../../../src/app/globals.css) `@theme {}` bl
 ```
 
 ---
+
+## Brand Palette (Sandpiper)
+
+Raw palette — semantic tokens below are mapped onto these. Use them directly for brand moments (bands, stickers, ribbons).
+
+| Utility | CSS variable | oklch | Hex in design |
+|---|---|---|---|
+| `bg-sunny` | `--color-sunny` | `oklch(0.896 0.166 95.7)` | `#FEDB41` |
+| `bg-sunny-soft` | `--color-sunny-soft` | `oklch(0.954 0.084 97.4)` | `#FFF1B0` |
+| `bg-blue` | `--color-blue` | `oklch(0.405 0.222 266.1)` | `#142DBE` |
+| `bg-blue-deep` | `--color-blue-deep` | `oklch(0.325 0.177 266.4)` | `#0D1F8C` |
+| `bg-berry` | `--color-berry` | `oklch(0.593 0.203 6.2)` | `#D9336B` (one pink accent per section, max) |
+| `text-ink` | `--color-ink` | `oklch(0.234 0.109 268.3)` | `#0A1450` |
+| `bg-cream` | `--color-cream` | `oklch(0.987 0.023 96)` | `#FFFBEA` |
+| `bg-paper` | `--color-paper` | `oklch(1 0 0)` | `#FFFFFF` |
+| `text-slate` | `--color-slate` | `oklch(0.458 0.034 285)` | `#55556A` |
+
+Semantic mapping: `background`=cream, `surface`=paper, `surface-raised`=sunny-soft, `foreground`=ink, `foreground-muted`=slate, `primary`=blue (hover blue-deep), `sea`=sunny, `ring`=blue.
+
+Motion tokens: `animate-marquee(-reverse)` (set `--marquee-duration`), `animate-orbit(-reverse)`, `animate-progress` (`--slide-ms`). Helper classes in `globals.css`: `.container-wide` (1440 artboard, 56px → 20px gutters), `.sticker-pop` (scroll-driven pop-in), `.wobble` (`--wobble` hover tilt), `.no-scrollbar`. All motion is disabled under `prefers-reduced-motion`.
+
+> The per-token values in the tables below predate the rebrand; the live values are in `globals.css`.
 
 ## Surface Tokens
 

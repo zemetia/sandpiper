@@ -5,7 +5,6 @@
 
 import type { Metadata } from 'next';
 
-import { routing } from '@/i18n/routing';
 import { siteConfig } from '@/config/site';
 
 export interface BuildMetadataOptions {
@@ -13,38 +12,27 @@ export interface BuildMetadataOptions {
   title?: string;
   /** Meta description — omit to fall back to siteConfig.description */
   description?: string;
-  /** Locale-stripped path, e.g. '/about' (no locale prefix) */
+  /** Site path, e.g. '/about' */
   path: string;
-  /** Active locale, e.g. 'en' */
-  locale: string;
   /** Absolute URL or root-relative path to OG image — defaults to siteConfig.ogImage */
   ogImage?: string;
   /** Set true for noindex/nofollow (e.g. private/auth pages) */
   noIndex?: boolean;
 }
 
-/** Absolute URL for a locale-stripped path. Routing uses `localePrefix: 'always'`, so every locale is prefixed. */
-export function localizedUrl(path: string, locale: string): string {
-  return `${siteConfig.url}/${locale}${path === '/' ? '' : path}`;
-}
-
-/** Build hreflang alternate map for all supported locales. */
-function buildAlternates(path: string): Record<string, string> {
-  const alts: Record<string, string> = {};
-  for (const locale of routing.locales) alts[locale] = localizedUrl(path, locale);
-  alts['x-default'] = localizedUrl(path, routing.defaultLocale);
-  return alts;
+/** Absolute URL for a site path. */
+export function absoluteUrl(path: string): string {
+  return `${siteConfig.url}${path === '/' ? '' : path}`;
 }
 
 /**
  * Builds a complete Next.js Metadata object with SEO, OpenGraph, Twitter,
- * canonical URL, and hreflang alternates.
+ * and canonical URL.
  *
  * Usage — in page.tsx:
  * ```ts
- * export async function generateMetadata({ params }: Props): Promise<Metadata> {
- *   const { locale } = await params;
- *   return buildMetadata({ title: 'About', path: '/about', locale });
+ * export async function generateMetadata(): Promise<Metadata> {
+ *   return buildMetadata({ title: 'About', path: '/about' });
  * }
  * ```
  */
@@ -52,7 +40,6 @@ export function buildMetadata({
   title,
   description,
   path,
-  locale,
   ogImage,
   noIndex = false,
 }: BuildMetadataOptions): Metadata {
@@ -60,7 +47,7 @@ export function buildMetadata({
   const resolvedDescription = description ?? siteConfig.description;
   const resolvedOgImage = ogImage ?? siteConfig.ogImage;
 
-  const canonicalUrl = localizedUrl(path, locale);
+  const canonicalUrl = absoluteUrl(path);
 
   return {
     title: title
@@ -71,7 +58,6 @@ export function buildMetadata({
 
     alternates: {
       canonical: canonicalUrl,
-      languages: buildAlternates(path),
     },
 
     openGraph: {
@@ -88,7 +74,7 @@ export function buildMetadata({
           alt: resolvedTitle,
         },
       ],
-      locale: locale === 'id' ? 'id_ID' : siteConfig.seo.locale,
+      locale: siteConfig.seo.locale,
     },
 
     twitter: {

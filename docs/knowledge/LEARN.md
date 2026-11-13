@@ -8,6 +8,18 @@
 
 <!-- Entries below, newest first -->
 
+[2026-11-13] - The `/api` rate limiter keyed on the leftmost `X-Forwarded-For` entry and gave 600/min to any request carrying a `payload-token` cookie without checking it, so rotating a header or sending a fake cookie bypassed it; login had no stricter tier and no account lockout - Added `clientIp()` (trusted header / rightmost hop, IPv6 /64), HS256 verification of the session cookie, a 10 per 15 min auth tier, a bounded store, and `maxLoginAttempts` on Users - Never key a security control on a header the client can set, and never let an unverified cookie raise a limit
+
+[2026-11-13] - Syncing the new menu into the dev DB, a generic page-layout remap rewrote every block key named `items`/`categories`, which also emptied the Gift Cards FAQ and Catering menu (arrays of objects, not relationship ids) - Restored both pages from the on-disk backup taken before the sync and verified they matched exactly - When remapping relationship ids in page layouts, match on blockType + field, never on a field name alone
+
+[2026-11-13] - Asked to remove i18n "for this branch landing-page", I first created a new branch `chore/remove-i18n` before noticing the instruction - Switched back to `feat/landing-page` and deleted the empty branch before any commit - When the user names the branch to work on, work on that branch; don't branch off by reflex
+
+[2026-11-13] - Catering mobile hero headline wrapped to 3 lines at 412px although the design fits 2: sizing it `15vw` matched the Pencil px value, but the web font renders a little wider than Pencil's - Dropped to `min(14.5vw,62px)` and re-checked the screenshot - Don't trust a 1:1 px→vw conversion for giant display type; leave ~5% headroom and verify at the exact frame width
+
+[2026-11-13] - Reseeding the dev DB for the landing page: a temp route deleted pages/menu/categories, then the seed failed validation, and the "backup" of the old pages was only in the HTTP response (an error page), so the old starter pages and one user edit to Home were lost; each failed run also re-uploaded every seed image - Reseeded, deleted the 66 orphaned media docs, reported the loss - Write any backup to disk BEFORE the destructive step, and dry-run a seed (or wrap it in a transaction) before deleting what it replaces
+
+[2026-11-13] - Seed's `locale: 'id'` page-title updates failed: Payload validates every required localized block field in that locale, and they are empty until translated - Dropped page-title translations from the seed and made new landing-block text fields optional - Avoid `required: true` on localized fields in blocks; never update a block page in a second locale from a seed
+
 [2026-11-09] - Seed wrote all English content under the `id` locale: Payload Local API writes `locale` back onto the shared `req`, so one `update({ locale: "id", req })` flipped every later call - Pinned `locale: "en"` in the seed base options; backfilled missing `en` rows in every `*_locales` table in one transaction (dry run first) - When sharing `req` across Local API calls, always pass `locale` explicitly; verify the admin list view, not just the storefront
 
 [2026-11-09] - Deleting an admin component file that was in the generated import map crashed the whole admin (Module not found) before the map could regenerate - Removed the stale lines from importMap.js by hand - Remove the config reference and let `next dev` regenerate the map BEFORE deleting the component file

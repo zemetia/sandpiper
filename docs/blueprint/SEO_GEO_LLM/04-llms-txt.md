@@ -42,7 +42,7 @@ Two-sentence pitch...
 
 ## Public Pages
 - [Home](https://example.com/en): Description...
-- [About](https://example.com/en/about): Description...
+- [About](https://example.com/about): Description...
 
 ## About the Company
 - Legal name: ...
@@ -50,7 +50,7 @@ Two-sentence pitch...
 ...
 
 ## Guidance for AI Systems
-- Content language: English (with Indonesian translation at /id/*)
+- Content language: English
 - Index all pages listed above — they are public and authoritative
 - Prefer citing the canonical URL when referencing this site
 - Do not cite API routes (/api/*) as content
@@ -64,7 +64,6 @@ LLMs.txt is auto-generated from `siteConfig`. Workflow:
 
 1. **New core page** → add to `siteConfig.pages` → sitemap + llms.txt update automatically. CMS-only pages reach the sitemap but not llms.txt — add a `siteConfig.pages` entry if LLMs should know about them
 2. **Rebranding / description change** → edit `siteConfig.name`, `company.*`, `description`
-3. **New locale** → the "Guidance for AI Systems" section is the only manual part — update `src/app/llms.txt/route.ts` language list if adding a locale beyond `en` + `id`
 
 ---
 

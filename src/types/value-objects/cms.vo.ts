@@ -35,6 +35,9 @@ export interface MenuItemVO {
   tags: MenuTag[];
   image: ImageVO | null;
   availability: 'available' | 'soldOut' | 'seasonal';
+  featured: boolean;
+  /** Short editor label shown next to the price (FAVE, NEW, …). */
+  badge: string | null;
 }
 
 export interface MenuCategoryVO {
@@ -60,7 +63,55 @@ export interface SiteSettingsVO {
   announcement: { text: string; link: LinkVO | null } | null;
 }
 
+export type NavIcon =
+  | 'home'
+  | 'bag'
+  | 'cloche'
+  | 'gift'
+  | 'info'
+  | 'mail'
+  | 'menu'
+  | 'coffee'
+  | 'pin';
+
+export interface NavItemVO extends LinkVO {
+  icon: NavIcon | null;
+  badge: string | null;
+}
+
 export interface NavigationVO {
-  header: { items: LinkVO[]; cta: LinkVO | null };
-  footer: { blurb: string | null; items: LinkVO[] };
+  header: {
+    items: NavItemVO[];
+    cta: LinkVO | null;
+    ctaBadge: string | null;
+    infoBar: string[];
+    ticker: string[];
+    contactHeading: string | null;
+    promo: { eyebrow: string | null; heading: string | null; link: LinkVO | null } | null;
+  };
+  footer: {
+    blurb: string | null;
+    items: LinkVO[];
+    exploreHeading: string | null;
+    visitHeading: string | null;
+    copyright: string | null;
+    note: string | null;
+    wordmark: string | null;
+    newsletter: {
+      heading: string | null;
+      body: string | null;
+      placeholder: string | null;
+      buttonLabel: string | null;
+    } | null;
+  };
+}
+
+/** A menu category prepared for the homepage menu board. */
+export interface MenuBoardCategoryVO {
+  id: number;
+  slug: string;
+  name: string;
+  items: MenuItemVO[];
+  image: ImageVO | null;
+  featured: MenuItemVO | null;
 }

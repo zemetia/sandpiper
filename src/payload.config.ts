@@ -6,20 +6,30 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
+import { CateringRequests } from './collections/CateringRequests';
+import { ContactMessages } from './collections/ContactMessages';
 import { Categories } from './collections/Categories';
 import { Media } from './collections/Media';
 import { MenuItems } from './collections/MenuItems';
 import { Pages } from './collections/Pages';
+import { Subscribers } from './collections/Subscribers';
 import { Users } from './collections/Users';
 import { Footer } from './cms/globals/Footer';
 import { Header } from './cms/globals/Header';
 import { SiteSettings } from './cms/globals/SiteSettings';
 import { pagePath } from './cms/preview';
+import { payloadSecret } from './cms/secret';
 import { seedEndpoint } from './cms/seed';
+import { migrations } from './migrations';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const siteUrl = process.env['NEXT_PUBLIC_APP_URL'] ?? 'http://localhost:3000';
+// DATABASE_URL / POSTGRES_URL are what Vercel's Neon integration sets.
+const databaseUrl =
+  process.env['DATABASE_URI'] || process.env['DATABASE_URL'] || process.env['POSTGRES_URL'] || '';
+// Hosted Postgres (Neon) refuses plaintext connections, even without `sslmode` in the URL.
+const isLocalDatabase = /@(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\//.test(databaseUrl);
 
 type SeoDoc = {
   title?: string;
@@ -38,7 +48,11 @@ export default buildConfig({
     meta: {
       titleSuffix: ' · Sandpiper CMS',
       description: 'Sandpiper content studio',
-      icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/sandpiper-mark.svg' }],
+      icons: [
+        { rel: 'icon', sizes: '48x48', url: '/favicon.ico' },
+        { rel: 'icon', type: 'image/svg+xml', url: '/sandpiper-mark.svg' },
+        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
+      ],
     },
     components: {
       graphics: { Logo: '/cms/admin/Brand#Logo', Icon: '/cms/admin/Brand#Icon' },
@@ -57,7 +71,16 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, MenuItems, Categories, Media, Users],
+  collections: [
+    Pages,
+    MenuItems,
+    Categories,
+    Media,
+    Subscribers,
+    CateringRequests,
+    ContactMessages,
+    Users,
+  ],
   globals: [SiteSettings, Header, Footer],
   endpoints: [seedEndpoint],
   localization: {
@@ -78,15 +101,16 @@ export default buildConfig({
         if (typeof img === 'object' && img && 'id' in img) return img.id as number;
         return typeof img === 'number' ? img : '';
       },
-      generateURL: ({ doc, locale }: { doc: SeoDoc; locale?: string }) =>
-        `${siteUrl}/${locale ?? 'en'}${pagePath(doc.slug)}`,
+      generateURL: ({ doc }: { doc: SeoDoc }) => `${siteUrl}${pagePath(doc.slug) || '/'}`,
     }),
   ],
   sharp,
   editor: lexicalEditor(),
-  secret: process.env['PAYLOAD_SECRET'] || 'super-secret-payload-key-change-in-production',
+  secret: payloadSecret,
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
-    pool: { connectionString: process.env['DATABASE_URI'] || '' },
+    pool: { connectionString: databaseUrl, ...(isLocalDatabase ? {} : { ssl: true }) },
+    // Dev pushes the schema on the fly; production (Vercel build + functions) runs these instead.
+    prodMigrations: migrations,
   }),
 });

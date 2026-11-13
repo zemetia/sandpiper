@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
 import { cn } from '@/lib/cn';
 import { Badge } from '@/components/ui/Badge';
@@ -15,19 +15,18 @@ export interface MenuItemCardProps {
 }
 
 export async function MenuItemCard({ item, layout = 'card' }: MenuItemCardProps) {
-  const t = await getTranslations('site');
   const soldOut = item.availability === 'soldOut';
 
   const badges = (
     <div className="flex flex-wrap gap-1.5">
       {item.availability !== 'available' && (
         <Badge size="sm" variant={soldOut ? 'destructive' : 'warning'}>
-          {soldOut ? t('soldOut') : t('seasonal')}
+          {soldOut ? copy.soldOut : copy.seasonal}
         </Badge>
       )}
       {item.tags.map((tag) => (
         <Badge key={tag} size="sm" variant={HIGHLIGHT_TAGS.has(tag) ? 'default' : 'secondary'}>
-          {t(`tags.${tag}`)}
+          {copy.tags[tag]}
         </Badge>
       ))}
     </div>

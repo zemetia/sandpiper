@@ -1,4 +1,5 @@
-import { Link } from '@/i18n/navigation';
+import type { Route } from 'next';
+import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '@/components/ui/Button';
 import type { LinkVO } from '@/types/value-objects';
@@ -23,7 +24,7 @@ export function CmsLink({ link, size = 'lg', className }: CmsLinkProps) {
 
   if (link.href.startsWith('/')) {
     return (
-      <Link href={link.href} className={classes} {...target}>
+      <Link href={link.href as Route} className={classes} {...target}>
         {link.label}
       </Link>
     );

@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
 import { pagePath } from '@/cms/preview';
 import { siteConfig } from '@/config/site';
-import type { Locale } from '@/i18n/routing';
-import { buildMetadata, localizedUrl } from '@/lib/seo';
+import { buildMetadata, absoluteUrl } from '@/lib/seo';
 import {
   breadcrumbSchema,
   faqSchema,
@@ -31,8 +30,8 @@ function describe(page: Page | null, slug: string) {
   };
 }
 
-export async function cmsMetadata(slug: string, locale: Locale): Promise<Metadata> {
-  const page = await cmsService.getPage(slug, locale);
+export async function cmsMetadata(slug: string): Promise<Metadata> {
+  const page = await cmsService.getPage(slug);
   if (!page && slug !== 'home') return { title: 'Not found', robots: { index: false } };
 
   const { title, description } = describe(page, slug);
@@ -41,7 +40,6 @@ export async function cmsMetadata(slug: string, locale: Locale): Promise<Metadat
     title,
     description,
     path: pathFor(slug),
-    locale,
     ...(ogImage ? { ogImage } : {}),
   });
   // The homepage title already carries the brand — skip the "%s · Sandpiper" template.
@@ -49,45 +47,43 @@ export async function cmsMetadata(slug: string, locale: Locale): Promise<Metadat
 }
 
 async function EmptyHome() {
-  const t = await getTranslations('site');
   return (
     <section className="container-page flex min-h-[60vh] flex-col items-start justify-center py-24">
       <p className="text-primary mb-4 text-xs font-semibold tracking-[0.2em] uppercase">
         Sandpiper
       </p>
       <h1 className="font-display text-foreground text-4xl font-semibold tracking-tight md:text-5xl">
-        {t('emptyTitle')}
+        {copy.emptyTitle}
       </h1>
-      <p className="text-foreground-muted mt-4 max-w-xl text-lg">{t('emptyBody')}</p>
+      <p className="text-foreground-muted mt-4 max-w-xl text-lg">{copy.emptyBody}</p>
       {/* The admin is a separate root layout — this must be a full page load, not client navigation. */}
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
       <a
         href="/admin"
         className="bg-primary text-primary-foreground hover:bg-primary-hover mt-8 inline-flex h-11 items-center rounded-full px-6 font-medium"
       >
-        {t('emptyCta')}
+        {copy.emptyCta}
       </a>
     </section>
   );
 }
 
 async function DraftBanner({ path }: { path: string }) {
-  const t = await getTranslations('site');
   return (
     <div className="bg-warning text-warning-foreground sticky top-0 z-[60] flex items-center justify-center gap-3 px-4 py-2 text-sm font-medium">
-      {t('previewMode')}
+      {copy.previewMode}
       <a
         href={`/preview/exit?path=${encodeURIComponent(path)}`}
         className="underline underline-offset-2"
       >
-        {t('exitPreview')}
+        {copy.exitPreview}
       </a>
     </div>
   );
 }
 
-export async function CmsPage({ slug, locale }: { slug: string; locale: Locale }) {
-  const [page, draft] = await Promise.all([cmsService.getPage(slug, locale), cmsService.isDraft()]);
+export async function CmsPage({ slug }: { slug: string }) {
+  const [page, draft] = await Promise.all([cmsService.getPage(slug), cmsService.isDraft()]);
 
   if (!page) {
     if (slug === 'home') return <EmptyHome />;
@@ -95,18 +91,18 @@ export async function CmsPage({ slug, locale }: { slug: string; locale: Locale }
   }
 
   const path = pathFor(slug);
-  const url = localizedUrl(path, locale);
+  const url = absoluteUrl(path);
   const { title, description } = describe(page, slug);
   const faqs = (page.layout ?? []).flatMap((b) => (b.blockType === 'faq' ? (b.items ?? []) : []));
 
   let business = null;
   if (slug === 'home') {
-    const s = await cmsService.getSiteSettings(locale);
+    const s = await cmsService.getSiteSettings();
     business = localBusinessSchema({
       name: s.siteName,
       description: s.tagline ?? siteConfig.description,
-      url: localizedUrl('/', locale),
-      menuUrl: localizedUrl('/menu', locale),
+      url: absoluteUrl('/'),
+      menuUrl: absoluteUrl('/menu'),
       telephone: s.phone,
       email: s.email,
       address: s.address,
@@ -120,7 +116,7 @@ export async function CmsPage({ slug, locale }: { slug: string; locale: Locale }
     <>
       {draft && (
         <>
-          <DraftBanner path={`/${locale}${path === '/' ? '' : path}`} />
+          <DraftBanner path={path} />
           <LivePreviewListener />
         </>
       )}
@@ -130,7 +126,6 @@ export async function CmsPage({ slug, locale }: { slug: string; locale: Locale }
           name: title,
           description,
           url,
-          locale,
           dateModified: page.updatedAt,
           ...(page.publishedAt ? { datePublished: page.publishedAt } : {}),
         })}
@@ -139,14 +134,14 @@ export async function CmsPage({ slug, locale }: { slug: string; locale: Locale }
         <StructuredData
           id="breadcrumb"
           schema={breadcrumbSchema([
-            { name: siteConfig.name, url: localizedUrl('/', locale) },
+            { name: siteConfig.name, url: absoluteUrl('/') },
             { name: page.title, url },
           ])}
         />
       )}
       {business && <StructuredData id="business" schema={business} />}
       {faqs.length > 0 && <StructuredData id="faq" schema={faqSchema(faqs)} />}
-      <RenderBlocks blocks={page.layout} locale={locale} />
+      <RenderBlocks blocks={page.layout} />
     </>
   );
 }

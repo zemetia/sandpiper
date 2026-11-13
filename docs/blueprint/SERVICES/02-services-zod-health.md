@@ -45,12 +45,12 @@ Export from [src/services/index.ts](../../../src/services/index.ts) barrel.
 ```ts
 import { cmsService } from '@/services/cms.service';
 
-await cmsService.getPage(slug, locale);        // Page | null — draft-aware
+await cmsService.getPage(slug);                // Page | null — draft-aware
 await cmsService.getPageSlugs();               // sitemap
-await cmsService.getSiteSettings(locale);      // SiteSettingsVO
-await cmsService.getNavigation(locale);        // NavigationVO (header + footer)
-await cmsService.getMenu(locale);              // MenuCategoryVO[]
-await cmsService.getMenuHighlights(locale, …); // MenuItemVO[]
+await cmsService.getSiteSettings();            // SiteSettingsVO
+await cmsService.getNavigation();              // NavigationVO (header + footer)
+await cmsService.getMenu();                    // MenuCategoryVO[]
+await cmsService.getMenuHighlights(block);     // MenuItemVO[]
 await cmsService.isDraft();
 ```
 

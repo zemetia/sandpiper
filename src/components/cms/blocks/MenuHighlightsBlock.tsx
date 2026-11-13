@@ -1,24 +1,14 @@
-import { getTranslations } from 'next-intl/server';
+import { copy } from '@/config/copy';
 
-import { Link } from '@/i18n/navigation';
-import type { Locale } from '@/i18n/routing';
+import Link from 'next/link';
 import type { MenuHighlightsBlock as MenuHighlightsBlockData } from '@/payload-types';
 import { cmsService } from '@/services/cms.service';
 
 import { MenuItemCard } from '../MenuItemCard';
 import { SectionHeading } from '../SectionHeading';
 
-export async function MenuHighlightsBlock({
-  block,
-  locale,
-}: {
-  block: MenuHighlightsBlockData;
-  locale: Locale;
-}) {
-  const [items, t] = await Promise.all([
-    cmsService.getMenuHighlights(block, locale),
-    getTranslations('site'),
-  ]);
+export async function MenuHighlightsBlock({ block }: { block: MenuHighlightsBlockData }) {
+  const items = await cmsService.getMenuHighlights(block);
   if (items.length === 0) return null;
 
   return (
@@ -30,7 +20,7 @@ export async function MenuHighlightsBlock({
             href="/menu"
             className="text-primary mb-10 text-sm font-semibold underline-offset-4 transition-colors hover:underline"
           >
-            {t('seeFullMenu')} →
+            {copy.seeFullMenu} →
           </Link>
         )}
       </div>

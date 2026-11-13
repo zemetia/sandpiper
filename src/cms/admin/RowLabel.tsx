@@ -43,3 +43,37 @@ export function VariantRowLabel() {
     : undefined;
   return <Label text={text} fallback="Variant" />;
 }
+
+export function TextRowLabel() {
+  const { data } = useRowLabel<{ text?: string }>();
+  return <Label text={data?.text} fallback="Item" />;
+}
+
+export function NavItemRowLabel() {
+  const { data } = useRowLabel<{ link?: { label?: string }; badge?: string }>();
+  const label = data?.link?.label;
+  return <Label text={label && data?.badge ? `${label} · ${data.badge}` : label} fallback="Link" />;
+}
+
+export function CaptionRowLabel() {
+  const { data } = useRowLabel<{ caption?: string }>();
+  return <Label text={data?.caption} fallback="Magnifier" />;
+}
+
+export function RatingRowLabel() {
+  const { data } = useRowLabel<{ score?: string; platform?: string }>();
+  return (
+    <Label
+      text={data?.platform ? `★ ${data.score ?? ''} ${data.platform}` : undefined}
+      fallback="Rating"
+    />
+  );
+}
+
+export function DishRowLabel() {
+  const { data } = useRowLabel<{ pitch?: string }>();
+  const pitch = data?.pitch?.trim();
+  return (
+    <Label text={pitch && pitch.length > 48 ? `${pitch.slice(0, 48)}…` : pitch} fallback="Dish" />
+  );
+}

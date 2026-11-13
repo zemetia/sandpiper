@@ -1,91 +1,101 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* ─── Typography ─────────────────────────────────────────────── */
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, "Cascadia Code", monospace;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-ui: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-caveat), 'Comic Sans MS', cursive;
+  --font-mono: ui-monospace, 'Cascadia Code', monospace;
 
-  /* ─── Brand / Semantic Colors (oklch for wide-gamut) ─────────── */
+  /* ─── Sandpiper palette (yellow / blue / ink / cream) ────────── */
+  --color-sunny: oklch(0.896 0.166 95.7);
+  --color-sunny-soft: oklch(0.954 0.084 97.4);
+  --color-blue: oklch(0.405 0.222 266.1);
+  --color-blue-deep: oklch(0.325 0.177 266.4);
+  --color-berry: oklch(0.593 0.203 6.2);
+  --color-ink: oklch(0.234 0.109 268.3);
+  --color-cream: oklch(0.987 0.023 96);
+  --color-paper: oklch(1 0 0);
+  --color-slate: oklch(0.458 0.034 285);
 
-  /* Surface — warm driftwood dark */
-  --color-background: oklch(0.155 0.008 60);
-  --color-surface: oklch(0.19 0.009 60);
-  --color-surface-raised: oklch(0.225 0.01 60);
-  --color-surface-overlay: oklch(0.265 0.011 60);
+  /* Delivery partner brand tiles (Order page) */
+  --color-doordash: oklch(0.645 0.242 31.8);
+  --color-ubereats: oklch(0.711 0.183 152.8);
+  --color-grubhub: oklch(0.732 0.186 53);
+
+  /* ─── Semantic tokens (mapped onto the palette) ──────────────── */
+
+  /* Surface — cream paper */
+  --color-background: var(--color-cream);
+  --color-surface: var(--color-paper);
+  --color-surface-raised: var(--color-sunny-soft);
+  --color-surface-overlay: oklch(0.93 0.11 96);
 
   /* Text */
-  --color-foreground: oklch(0.955 0.012 85);
-  --color-foreground-muted: oklch(0.76 0.015 75);
-  --color-foreground-subtle: oklch(0.58 0.014 70);
+  --color-foreground: var(--color-ink);
+  --color-foreground-muted: var(--color-slate);
+  --color-foreground-subtle: oklch(0.234 0.109 268.3 / 0.55);
 
   /* Border */
-  --color-border: oklch(0.29 0.011 60);
-  --color-border-strong: oklch(0.38 0.013 62);
-  --color-input: oklch(0.29 0.011 60);
+  --color-border: oklch(0.234 0.109 268.3 / 0.14);
+  --color-border-strong: var(--color-ink);
+  --color-input: oklch(0.234 0.109 268.3 / 0.2);
 
-  /* Primary — warm sand */
-  --color-primary: oklch(0.8 0.105 75);
-  --color-primary-hover: oklch(0.75 0.115 72);
-  --color-primary-active: oklch(0.7 0.12 70);
-  --color-primary-foreground: oklch(0.2 0.02 60);
-  --color-primary-subtle: oklch(0.8 0.105 75 / 0.14);
-  --color-primary-glow: oklch(0.8 0.105 75 / 0.3);
+  /* Primary — Sandpiper blue */
+  --color-primary: var(--color-blue);
+  --color-primary-hover: var(--color-blue-deep);
+  --color-primary-active: oklch(0.29 0.16 266.4);
+  --color-primary-foreground: var(--color-paper);
+  --color-primary-subtle: oklch(0.405 0.222 266.1 / 0.1);
+  --color-primary-glow: oklch(0.405 0.222 266.1 / 0.25);
 
-  /* Sea — secondary accent */
-  --color-sea: oklch(0.7 0.09 195);
-  --color-sea-subtle: oklch(0.7 0.09 195 / 0.14);
+  /* Sea — secondary accent (yellow in this brand) */
+  --color-sea: var(--color-sunny);
+  --color-sea-subtle: oklch(0.896 0.166 95.7 / 0.35);
 
   /* Destructive */
-  --color-destructive: oklch(0.62 0.19 30);
-  --color-destructive-hover: oklch(0.57 0.19 30);
+  --color-destructive: oklch(0.58 0.2 25);
+  --color-destructive-hover: oklch(0.53 0.2 25);
   --color-destructive-foreground: oklch(0.98 0.004 30);
-  --color-destructive-subtle: oklch(0.62 0.19 30 / 0.14);
+  --color-destructive-subtle: oklch(0.58 0.2 25 / 0.12);
 
   /* Success */
-  --color-success: oklch(0.7 0.13 160);
-  --color-success-hover: oklch(0.64 0.13 160);
-  --color-success-foreground: oklch(0.18 0.02 160);
-  --color-success-subtle: oklch(0.7 0.13 160 / 0.14);
+  --color-success: oklch(0.6 0.13 160);
+  --color-success-hover: oklch(0.55 0.13 160);
+  --color-success-foreground: oklch(0.98 0.01 160);
+  --color-success-subtle: oklch(0.6 0.13 160 / 0.12);
 
   /* Warning */
-  --color-warning: oklch(0.79 0.15 75);
-  --color-warning-hover: oklch(0.72 0.15 75);
-  --color-warning-foreground: oklch(0.2 0.02 75);
-  --color-warning-subtle: oklch(0.79 0.15 75 / 0.14);
+  --color-warning: var(--color-sunny);
+  --color-warning-hover: oklch(0.84 0.17 95);
+  --color-warning-foreground: var(--color-ink);
+  --color-warning-subtle: oklch(0.896 0.166 95.7 / 0.3);
 
   /* Card */
-  --color-card: oklch(0.19 0.009 60);
-  --color-card-foreground: oklch(0.955 0.012 85);
+  --color-card: var(--color-paper);
+  --color-card-foreground: var(--color-ink);
 
   /* Focus ring */
-  --color-ring: oklch(0.8 0.105 75);
+  --color-ring: var(--color-blue);
 
-  /* ─── shadcn/ui semantic aliases ────────────────────────────────
-     These mirror the tokens above so shadcn-generated components
-     (popover, secondary, muted, accent, sidebar) work without
-     any extra configuration.                                       */
-
-  --color-popover: oklch(0.19 0.009 60);
-  --color-popover-foreground: oklch(0.955 0.012 85);
-
-  --color-secondary: oklch(0.225 0.01 60);
-  --color-secondary-foreground: oklch(0.955 0.012 85);
-
-  --color-muted: oklch(0.225 0.01 60);
-  --color-muted-foreground: oklch(0.76 0.015 75);
-
-  --color-accent: oklch(0.8 0.105 75 / 0.14);
-  --color-accent-foreground: oklch(0.955 0.012 85);
-
-  --color-sidebar: oklch(0.19 0.009 60);
-  --color-sidebar-foreground: oklch(0.955 0.012 85);
-  --color-sidebar-primary: oklch(0.8 0.105 75);
-  --color-sidebar-primary-foreground: oklch(0.2 0.02 60);
-  --color-sidebar-accent: oklch(0.225 0.01 60);
-  --color-sidebar-accent-foreground: oklch(0.955 0.012 85);
-  --color-sidebar-border: oklch(0.29 0.011 60);
-  --color-sidebar-ring: oklch(0.8 0.105 75);
+  /* ─── shadcn/ui semantic aliases ──────────────────────────────── */
+  --color-popover: var(--color-paper);
+  --color-popover-foreground: var(--color-ink);
+  --color-secondary: var(--color-sunny-soft);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: var(--color-sunny-soft);
+  --color-muted-foreground: var(--color-slate);
+  --color-accent: oklch(0.405 0.222 266.1 / 0.1);
+  --color-accent-foreground: var(--color-ink);
+  --color-sidebar: var(--color-paper);
+  --color-sidebar-foreground: var(--color-ink);
+  --color-sidebar-primary: var(--color-blue);
+  --color-sidebar-primary-foreground: var(--color-paper);
+  --color-sidebar-accent: var(--color-sunny-soft);
+  --color-sidebar-accent-foreground: var(--color-ink);
+  --color-sidebar-border: oklch(0.234 0.109 268.3 / 0.14);
+  --color-sidebar-ring: var(--color-blue);
 
   /* ─── Radius ──────────────────────────────────────────────────── */
   --radius-xs: 0.25rem;
@@ -95,6 +105,61 @@
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
+
+  /* ─── Motion ──────────────────────────────────────────────────── */
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-marquee-reverse: marquee var(--marquee-duration, 40s) linear infinite reverse;
+  --animate-orbit: orbit 90s linear infinite;
+  --animate-orbit-reverse: orbit 90s linear infinite reverse;
+  --animate-progress: progress var(--slide-ms, 7s) linear both;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  @keyframes orbit {
+    to {
+      rotate: 360deg;
+    }
+  }
+}
+
+/* Used from plain CSS / arbitrary values, so they live outside @theme. */
+@keyframes sticker-pop {
+  0% {
+    scale: 0.8;
+    opacity: 0;
+  }
+  70% {
+    scale: 1.05;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes progress {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
 }
 
 /* ─── Base Styles ─────────────────────────────────────────────── */
@@ -106,8 +171,14 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
     scroll-behavior: smooth;
+    /* Keep #anchor targets clear of the sticky header bar (72px / 80px on lg). */
+    scroll-padding-top: 72px;
+
+    @media (width >= 64rem) {
+      scroll-padding-top: 80px;
+    }
   }
 
   body {
@@ -213,11 +284,185 @@
     border: 1px solid transparent;
     background:
       linear-gradient(var(--color-card), var(--color-card)) padding-box,
-      linear-gradient(
-          135deg,
-          var(--color-primary),
-          var(--color-sea)
-        )
-        border-box;
+      linear-gradient(135deg, var(--color-primary), var(--color-sea)) border-box;
+  }
+}
+
+/* ─── Sandpiper landing helpers ───────────────────────────────── */
+@layer utilities {
+  /* 1440 artboard → 56px gutters on desktop, 20px on phones */
+  .container-wide {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 3.9vw, 3.5rem);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Stickers pop in with a little overshoot as they scroll into view */
+  .sticker-pop {
+    animation: sticker-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @supports (animation-timeline: view()) {
+    .sticker-pop {
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+
+  /* Polaroids wobble on hover, like they're pinned with tape */
+  .wobble {
+    transition: rotate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .wobble:hover {
+    rotate: var(--wobble, 2deg);
+  }
+
+  .marquee-track:hover,
+  .orbit-ring:hover,
+  .orbit-ring:hover .orbit-tag {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .animate-orbit,
+  .animate-orbit-reverse,
+  .sticker-pop {
+    animation: none !important;
+  }
+  .wobble:hover {
+    rotate: none;
+  }
+}
+
+/* ─── Gift cards page ─────────────────────────────────────────── */
+@keyframes gc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes gc-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -8px;
+  }
+}
+
+@layer utilities {
+  /* Sections rise in as they scroll into view (plays once on load where scroll timelines are unsupported) */
+  .gc-rise {
+    animation: gc-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @supports (animation-timeline: view()) {
+    .gc-rise {
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+
+  /* The illustrated gift cards bob gently, out of step with each other */
+  .gc-float {
+    animation: gc-float 3.2s ease-in-out var(--float-delay, 0s) infinite alternate;
+  }
+
+  /* Front card's amount re-pops when a chip is picked */
+  .gc-amount-pop {
+    animation: sticker-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .shadow-gift-card {
+    box-shadow: 10px 12px 0 color-mix(in oklab, var(--color-ink) 50%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc-rise,
+  .gc-float,
+  .gc-amount-pop {
+    animation: none !important;
+  }
+}
+
+/* ─── Catering page ───────────────────────────────────────────── */
+@keyframes ct-bob {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -6px;
+  }
+}
+
+@layer utilities {
+  /* Sections drift up as they scroll in; without scroll timelines they simply show */
+  @supports (animation-timeline: view()) {
+    .ct-reveal {
+      animation: slide-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+  }
+
+  /* Doodles bob lazily behind the hero copy */
+  .ct-bob {
+    animation: ct-bob 3.6s ease-in-out infinite alternate;
+  }
+
+  /* Menu cards and contact cards lift with a hard ink shadow on hover */
+  .ct-lift {
+    transition:
+      translate 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .ct-lift:hover {
+    translate: 0 -4px;
+    box-shadow: 4px 4px 0 var(--color-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-reveal,
+  .ct-bob {
+    animation: none !important;
+  }
+  .ct-lift:hover {
+    translate: none;
+  }
+}
+
+/* ─── Order page ──────────────────────────────────────────────── */
+@keyframes od-swap {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer utilities {
+  /* Phones: the order card fades up each time the Pickup / Delivery switch brings it back */
+  @media (width < 64rem) and (prefers-reduced-motion: no-preference) {
+    .od-swap {
+      animation: od-swap 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
   }
 }

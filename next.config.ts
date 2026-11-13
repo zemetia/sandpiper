@@ -1,9 +1,6 @@
 import type { NextConfig } from 'next';
-import createNextIntlPlugin from 'next-intl/plugin';
 import { withSentryConfig } from '@sentry/nextjs';
 import { withPayload } from '@payloadcms/next/withPayload';
-
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   typedRoutes: true,
@@ -13,7 +10,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-const baseConfig = withPayload(withNextIntl(nextConfig));
+const baseConfig = withPayload(nextConfig);
 
 export default withSentryConfig(baseConfig, {
   org: process.env['SENTRY_ORG'],

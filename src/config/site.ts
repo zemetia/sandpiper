@@ -57,9 +57,9 @@ export const siteConfig: SiteConfig = {
   // Brand copy for SEO/GEO/LLMs.txt. Visitor-facing contact details, hours and
   // navigation are edited in the CMS (Site settings / Header / Footer globals).
   name: 'Sandpiper',
-  tagline: 'Specialty coffee and all-day kitchen by the shore.',
+  tagline: 'Breakfast, lunch & Lavazza coffee on South Street.',
   description:
-    'Sandpiper is a neighbourhood café serving single-origin Indonesian coffee, all-day breakfast and seasonal plates. Open daily from 7am, with Wi-Fi, vegan options and a view of the water.',
+    'Sandpiper Cafe is a corner café at 1640 South St, Philadelphia, serving all-day breakfast, sandwiches, smoothies and Lavazza coffee. Open every day from 7am to 4pm for dine in, takeout and online orders.',
   url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://sandpiper.cafe',
 
   // ─── Brand Assets ────────────────────────────────────────────────────────────
@@ -67,20 +67,20 @@ export const siteConfig: SiteConfig = {
 
   // ─── Company Details (drives Organization schema + LLMs.txt) ─────────────────
   company: {
-    legalName: 'Sandpiper Café',
+    legalName: 'Sandpiper Cafe',
     foundedYear: 2024,
-    industry: 'Food & beverage / Specialty coffee café',
+    industry: 'Food & beverage / Breakfast and coffee café',
     targetAudience:
-      'Locals, remote workers and travellers looking for great coffee, an all-day brunch menu and a relaxed place to sit by the water.',
+      'South Philly neighbors, commuters and visitors on South Street looking for a quick, friendly breakfast, lunch or coffee.',
     problemSolved:
-      'Good specialty coffee and honest food in a calm setting are hard to find in one place — most cafés pick either the coffee or the kitchen.',
+      'A fast, good breakfast and a proper coffee in the same stop — without a long wait.',
     solution:
-      'Sandpiper roasts single-origin Indonesian beans weekly and runs a full kitchen from open to close, with clearly labelled vegan, vegetarian and gluten-free options.',
+      'Sandpiper makes breakfast plates, sandwiches and smoothies to order, pours Lavazza espresso, and has online ordering with pickup in about 15 minutes.',
     keyBenefits: [
-      'Single-origin Indonesian coffee (Aceh, Toraja, Flores) roasted in small weekly batches',
-      'All-day breakfast and Indonesian classics, made in-house',
-      'Vegan, vegetarian and gluten-free dishes tagged on every menu item',
-      'Open daily from 07:00 with fast Wi-Fi and seating by the water',
+      'Breakfast served all day: pancakes, bagels, breakfast sandos and house plates',
+      'Lavazza espresso, cold brew, matcha and chai',
+      'Smoothies and fresh juices blended to order',
+      'Open every day 7am – 4pm; order ahead for pickup in about 15 minutes',
     ],
     contactEmail: 'hello@sandpiper.cafe',
     socialLinks: {},
@@ -89,7 +89,7 @@ export const siteConfig: SiteConfig = {
   // ─── SEO Settings ────────────────────────────────────────────────────────────
   seo: {
     titleTemplate: '%s · Sandpiper',
-    defaultTitle: 'Sandpiper — Specialty coffee & all-day kitchen',
+    defaultTitle: 'Sandpiper Cafe — Breakfast, lunch & Lavazza coffee in Philadelphia',
     locale: 'en_US',
   },
 
@@ -99,25 +99,33 @@ export const siteConfig: SiteConfig = {
   pages: {
     home: {
       path: '/',
-      title: 'Sandpiper — Specialty coffee & all-day kitchen',
+      title: 'Sandpiper Cafe — Breakfast, lunch & Lavazza coffee in Philadelphia',
       description:
-        'Neighbourhood café serving single-origin Indonesian coffee, all-day breakfast and seasonal plates. See the menu, opening hours and how to find us.',
+        'Corner café at 1640 South St, Philadelphia: all-day breakfast, sandwiches, smoothies and Lavazza coffee. Open daily 7am – 4pm. See the menu or order ahead.',
       changeFreq: 'weekly',
       priority: 1.0,
     },
     menu: {
       path: '/menu',
-      title: 'Menu — coffee, breakfast & mains',
+      title: 'Menu — breakfast, sandwiches, smoothies & coffee',
       description:
-        'The full Sandpiper menu with prices: espresso and pour-over coffee, teas, all-day breakfast, Indonesian mains and house-baked pastry. Vegan and gluten-free options marked.',
+        'The full Sandpiper Cafe menu with prices: all-day breakfast, sandwiches, lunch, smoothies, juices and Lavazza coffee. Vegan and vegetarian options marked.',
       changeFreq: 'daily',
+      priority: 0.9,
+    },
+    order: {
+      path: '/order',
+      title: 'Order online — pickup on Toast or delivery',
+      description:
+        'Order Sandpiper Cafe ahead for pickup at 1640 South St on Toast, ready in about 15 minutes, or get delivery through DoorDash, Uber Eats or Grubhub.',
+      changeFreq: 'monthly',
       priority: 0.9,
     },
     about: {
       path: '/about',
       title: 'About Sandpiper — our story, hours & location',
       description:
-        'How Sandpiper sources and roasts its coffee, what the kitchen cooks, answers to common questions, and our opening hours and address.',
+        'The story of Sandpiper Cafe on South Street — the hand-drawn mural, the kitchen and the coffee — plus opening hours and address.',
       changeFreq: 'monthly',
       priority: 0.8,
     },

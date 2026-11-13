@@ -1,4 +1,5 @@
-import { Link } from '@/i18n/navigation';
+import type { Route } from 'next';
+import Link from 'next/link';
 import type { LinkVO } from '@/types/value-objects';
 
 export interface AnnouncementBarProps {
@@ -16,15 +17,15 @@ export function AnnouncementBar({ text, link }: AnnouncementBarProps) {
             {' '}
             {link.href.startsWith('/') ? (
               <Link
-                href={link.href}
-                className="text-sea font-semibold underline-offset-4 hover:underline"
+                href={link.href as Route}
+                className="text-primary font-semibold underline-offset-4 hover:underline"
               >
                 {link.label} →
               </Link>
             ) : (
               <a
-                href={link.href}
-                className="text-sea font-semibold underline-offset-4 hover:underline"
+                href={link.href as Route}
+                className="text-primary font-semibold underline-offset-4 hover:underline"
               >
                 {link.label} →
               </a>

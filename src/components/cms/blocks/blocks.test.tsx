@@ -1,6 +1,5 @@
-import type React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type {
   CallToActionBlock as CtaData,
@@ -14,14 +13,6 @@ import { CallToActionBlock } from './CallToActionBlock';
 import { FaqBlock } from './FaqBlock';
 import { HeroBlock } from './HeroBlock';
 import { TestimonialsBlock } from './TestimonialsBlock';
-
-vi.mock('@/i18n/navigation', () => ({
-  Link: (props: { href: string; className?: string; children?: React.ReactNode }) => (
-    <a href={props.href} className={props.className}>
-      {props.children}
-    </a>
-  ),
-}));
 
 const menuPage = { id: 1, slug: 'menu', title: 'Menu', updatedAt: '', createdAt: '' } as Page;
 

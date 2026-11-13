@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 
 import { isAuthenticated, publishedOrAuthenticated } from '../cms/access';
+import { menuHooks } from '../cms/hooks/revalidateMenu';
 import { seoTab } from '../cms/fields/seo';
 import { slugField } from '../cms/fields/slug';
 import { previewUrl } from '../cms/preview';
@@ -28,8 +29,9 @@ export const MenuItems: CollectionConfig = {
     groupBy: true,
     description:
       'Your product catalogue. Prices, sizes and availability update on the site the moment you publish.',
-    preview: (_, { locale }) => previewUrl('/menu', locale),
+    preview: () => previewUrl('/menu'),
   },
+  hooks: menuHooks,
   access: {
     read: publishedOrAuthenticated,
     create: isAuthenticated,
@@ -144,6 +146,16 @@ export const MenuItems: CollectionConfig = {
         { label: 'Seasonal', value: 'seasonal' },
       ],
       admin: { position: 'sidebar' },
+    },
+    {
+      name: 'badge',
+      type: 'text',
+      maxLength: 12,
+      admin: {
+        position: 'sidebar',
+        placeholder: 'FAVE',
+        description: 'Short pink label next to the price on the menu, e.g. FAVE, NEW, HOT, LOCAL.',
+      },
     },
     {
       name: 'featured',

@@ -1,13 +1,15 @@
 import type { MetadataRoute } from 'next';
 
-import { routing } from '@/i18n/routing';
 import { siteConfig } from '@/config/site';
-import { localizedUrl } from '@/lib/seo';
+import { absoluteUrl } from '@/lib/seo';
 import { cmsService } from '@/services/cms.service';
 
+// Refreshed hourly so pages published after the deploy show up.
+export const revalidate = 3600;
+
 /**
- * Sitemap = static pages from siteConfig.pages + every published CMS page,
- * one URL per locale. CMS pages that share a path with siteConfig are skipped.
+ * Sitemap = static pages from siteConfig.pages + every published CMS page.
+ * CMS pages that share a path with siteConfig are skipped.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
@@ -15,14 +17,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const page of Object.values(siteConfig.pages)) {
     known.add(page.path);
-    for (const locale of routing.locales) {
-      entries.push({
-        url: localizedUrl(page.path, locale),
-        lastModified: new Date(),
-        changeFrequency: page.changeFreq,
-        priority: page.priority,
-      });
-    }
+    entries.push({
+      url: absoluteUrl(page.path),
+      lastModified: new Date(),
+      changeFrequency: page.changeFreq,
+      priority: page.priority,
+    });
   }
 
   // The DB may be unreachable at build time — fall back to static pages only.
@@ -30,14 +30,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const { slug, updatedAt } of cmsPages) {
     const path = slug === 'home' ? '/' : `/${slug}`;
     if (known.has(path)) continue;
-    for (const locale of routing.locales) {
-      entries.push({
-        url: localizedUrl(path, locale),
-        lastModified: new Date(updatedAt),
-        changeFrequency: 'weekly',
-        priority: 0.7,
-      });
-    }
+    entries.push({
+      url: absoluteUrl(path),
+      lastModified: new Date(updatedAt),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    });
   }
 
   return entries;

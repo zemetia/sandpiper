@@ -100,7 +100,7 @@ Prop `as?: ElementType` overrides the rendered element.
 
 | Export | Notes |
 |---|---|
-| `Toaster` | Pre-configured Sonner. Mount ONCE in `src/app/[locale]/layout.tsx` |
+| `Toaster` | Pre-configured Sonner. Mount ONCE in `src/app/(site)/layout.tsx` |
 
 Config: `theme="dark"`, `richColors`, `position="bottom-right"`, classNames use design-system tokens with `!` Tailwind v4 important suffix.
 

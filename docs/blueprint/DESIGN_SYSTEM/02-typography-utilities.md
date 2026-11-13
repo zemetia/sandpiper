@@ -28,20 +28,16 @@ Defined in `src/app/globals.css` `@theme {}`. Allow shadcn-generated components 
 
 ## Typography
 
-Fonts loaded via `next/font/google` in `src/app/[locale]/layout.tsx`, injected as CSS vars:
+Fonts loaded via `next/font/google` in `src/app/(site)/layout.tsx`, injected as CSS vars:
 
 | CSS variable | Font family | Weights | Utility |
 |---|---|---|---|
-| `--font-outfit` | Outfit | 300–700 | `font-sans` — all body + UI text |
-| `--font-fraunces` | Fraunces (variable, `opsz` + `SOFT` axes) | variable | `font-display` — headings, section titles, quotes |
-| `--font-jetbrains-mono` | JetBrains Mono | 400–600 | `font-mono` — code, monospace data |
+| `--font-poppins` | Poppins | 300–700 | `font-sans` — body copy |
+| `--font-bricolage` | Bricolage Grotesque (variable, `opsz` axis — keeps giant type tight) | variable | `font-display` — headlines, prices, 800 weight, negative tracking |
+| `--font-archivo` | Archivo | 700–800 | `font-ui` — all-caps labels, nav, buttons, stickers |
+| `--font-caveat` | Caveat | 400–700 | `font-script` — handwritten captions |
 
-`@theme` mapping:
-```css
---font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
---font-display: var(--font-fraunces), ui-serif, Georgia, serif;
---font-mono: var(--font-jetbrains-mono), ui-monospace, "Cascadia Code", monospace;
-```
+`font-mono` falls back to the system monospace stack.
 
 ### Typography component ([src/components/ui/Typography/](../../../src/components/ui/Typography/))
 
