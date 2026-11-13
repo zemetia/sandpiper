@@ -5,6 +5,7 @@
  */
 
 import type { MetadataRoute } from 'next';
+import { appUrl } from './app-url';
 
 export type SitemapChangeFreq = NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
 
@@ -60,7 +61,7 @@ export const siteConfig: SiteConfig = {
   tagline: 'Breakfast, lunch & Lavazza coffee on South Street.',
   description:
     'Sandpiper Cafe is a corner café at 1640 South St, Philadelphia, serving all-day breakfast, sandwiches, smoothies and Lavazza coffee. Open every day from 7am to 4pm for dine in, takeout and online orders.',
-  url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://sandpiper.cafe',
+  url: appUrl ?? 'https://sandpiper.cafe',
 
   // ─── Brand Assets ────────────────────────────────────────────────────────────
   ogImage: '/og.png',

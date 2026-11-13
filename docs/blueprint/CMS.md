@@ -18,7 +18,7 @@ Payload runs inside the Next.js app: admin at `/admin`, REST at `/api/*`, GraphQ
 | `src/cms/globals/` | `SiteSettings` (`site-settings` — brand, contact, hours, socials, announcement), `Header` (nav items with drawer icon/badge, CTA + `ctaBadge`, blue info bar, ticker, mobile-drawer contact heading + promo card), `Footer` (blurb, Explore links, column headings, copyright, note, giant `wordmark`, newsletter copy) |
 | `src/cms/preview.ts` | `pagePath(slug)` (`home` → `''`) and `previewUrl(path)` → `/preview?path=<path>` |
 | `src/cms/admin/` | Admin React components: `Brand` (logo/icon), `NavBrand` (sidebar header), `HeaderActions` (top-bar "View site"), `Avatar` (initials avatar), `Dashboard`, `RowLabel`s, `FieldNote`, `SeedButton`, `ViewSiteLink` |
-| `src/cms/seed/` | Mirrors the live site (Philadelphia café: 7 pages, 13 categories, 103 menu items, 3 globals, first admin from `SEED_ADMIN_*` env when `users` is empty) + `images/` (webp photos uploaded to Media on seed) + `seedEndpoint` (`POST /api/seed`: signed-in user **or** `Authorization: Bearer $SEED_SECRET`; refuses with 409 if any page exists). CLI: `npm run seed` (`scripts/seed.mjs`, app must be running). Form submissions (subscribers, contact, catering) are never seeded |
+| `src/cms/seed/` | Mirrors the live site (Philadelphia café: 7 pages, 13 categories, 103 menu items, 3 globals, first admin from `SEED_ADMIN_*` env when `users` is empty) + `images/` (webp photos uploaded to Media on seed) + `seedEndpoint` (`POST /api/seed`: signed-in user **or** `Authorization: Bearer $SEED_SECRET`; refuses with 409 if any page exists). CLI: `npm run seed` (`scripts/seed.mjs`, app must be running) or `npm run seed:direct` (`scripts/seed-direct.ts`, Local API straight into `DATABASE_URI` — the way to seed production; runs in production mode so it never dev-pushes, and applies pending migrations first). Form submissions (subscribers, contact, catering) are never seeded |
 | `src/app/(payload)/` | Payload's own root layout, `admin/[[...segments]]`, `api/[...slug]`, `api/graphql` |
 | `src/app/(payload)/custom.css` | Admin theme (overrides Payload's `--color-base-*` / `--color-success-*` scales) + sidebar, top bar (app header) styling and nav icons |
 | `src/app/(payload)/admin/importMap.js` | **Generated** — never hand-edit or replace with a `.ts` file |
@@ -139,7 +139,7 @@ Pages and menu items have drafts + versions. Pages autosave (400 ms) and show a 
 
 Production is Vercel + Neon. `payload.config.ts` reads `DATABASE_URI`, falling back to `DATABASE_URL` / `POSTGRES_URL` (what the Neon integration sets), and turns on TLS for any non-localhost host — Neon rejects plaintext even when the URL has no `sslmode`.
 
-`next dev` pushes schema changes on the fly; production never does. It runs `src/migrations` through `prodMigrations` on the first Payload init — in practice during `next build` (the sitemap is the one build-time DB reader), so functions start on a migrated DB. **Any schema change (field, block, collection, global, localization) needs a new migration committed with it**, or production queries hit missing columns. Because the CLI crashes locally (see Known issue), create it from a temporary dev route and delete the route afterwards:
+`next dev` pushes schema changes on the fly; production never does. It runs `src/migrations` through `prodMigrations` on the first Payload init — in practice during `next build` (the sitemap is the one build-time DB reader), so functions start on a migrated DB. **Any schema change (field, block, collection, global, localization) needs a new migration committed with it**, or production queries hit missing columns. Use `npx payload migrate:create <name>` (see Payload CLI below), or create it from a temporary dev route and delete the route afterwards:
 
 ```ts
 // src/app/api/tmp-create-migration/route.ts — delete after use
@@ -151,8 +151,14 @@ It diffs against the latest snapshot in `src/migrations` (not the DB). Generated
 
 CMS pages render per request (`/` is `force-dynamic`, like `[...slug]`): a build-time snapshot would ignore CMS edits and bake a 404 while the production DB is still empty.
 
-## Known issue
+## Media storage
 
-`npx payload generate:types` / `generate:importmap` crash locally (undici `Illegal constructor` under tsx on Node 22.18). The import map regenerates in `next dev`; for types, call `generateTypes(config)` from `payload/node` in a temporary dev route and delete the route afterwards.
+Vercel's filesystem is read-only, so `media` uploads go to MinIO through `@payloadcms/storage-s3` (`forcePathStyle`) only when `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY_ID` and `S3_SECRET_ACCESS_KEY` are all set (`S3_REGION` optional) — a half-filled env keeps local storage. Files are served through Payload (`/api/media/file/…`), so the bucket can stay private. Otherwise (local dev) files stay in `./media`. Seeding production needs the S3 vars too, or the photos land on the seeding machine's disk.
+
+`NEXT_PUBLIC_APP_URL` is read only through `src/config/app-url.ts` (`appUrl`): it adds a missing `https://` and falls back to `VERCEL_PROJECT_PRODUCTION_URL`. A scheme-less value used to crash every page's `generateMetadata` (`Invalid URL`).
+
+## Payload CLI
+
+`package.json` has `"type": "module"`, which the Payload CLI needs: as CommonJS, `npx payload …` died in undici (`Illegal constructor`) under tsx. `npx payload generate:importmap` / `generate:types` / `payload run <script>` work now.
 
 ← [Blueprint INDEX](./INDEX.md)

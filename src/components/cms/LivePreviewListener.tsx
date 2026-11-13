@@ -4,15 +4,12 @@ import { RefreshRouteOnSave } from '@payloadcms/live-preview-react';
 
 import { useRouter } from 'next/navigation';
 
+import { appUrl } from '@/config/app-url';
+
 /** Re-renders the server page whenever an editor autosaves in the admin's Live Preview pane. */
 export function LivePreviewListener() {
   const router = useRouter();
-  return (
-    <RefreshRouteOnSave
-      refresh={() => router.refresh()}
-      serverURL={process.env['NEXT_PUBLIC_APP_URL'] ?? ''}
-    />
-  );
+  return <RefreshRouteOnSave refresh={() => router.refresh()} serverURL={appUrl ?? ''} />;
 }
 
 LivePreviewListener.displayName = 'LivePreviewListener';

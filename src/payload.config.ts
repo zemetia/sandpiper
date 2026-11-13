@@ -2,6 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { seoPlugin } from '@payloadcms/plugin-seo';
+import { s3Storage } from '@payloadcms/storage-s3';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
@@ -18,18 +19,27 @@ import { Footer } from './cms/globals/Footer';
 import { Header } from './cms/globals/Header';
 import { SiteSettings } from './cms/globals/SiteSettings';
 import { pagePath } from './cms/preview';
+import { appUrl } from './config/app-url';
 import { payloadSecret } from './cms/secret';
 import { seedEndpoint } from './cms/seed';
 import { migrations } from './migrations';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
-const siteUrl = process.env['NEXT_PUBLIC_APP_URL'] ?? 'http://localhost:3000';
+const siteUrl = appUrl ?? 'http://localhost:3000';
 // DATABASE_URL / POSTGRES_URL are what Vercel's Neon integration sets.
 const databaseUrl =
   process.env['DATABASE_URI'] || process.env['DATABASE_URL'] || process.env['POSTGRES_URL'] || '';
 // Hosted Postgres (Neon) refuses plaintext connections, even without `sslmode` in the URL.
 const isLocalDatabase = /@(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\//.test(databaseUrl);
+// MinIO turns on only once every S3_* value is set; a half-filled env keeps local storage.
+const s3Env = {
+  endpoint: process.env['S3_ENDPOINT'],
+  bucket: process.env['S3_BUCKET'],
+  accessKeyId: process.env['S3_ACCESS_KEY_ID'],
+  secretAccessKey: process.env['S3_SECRET_ACCESS_KEY'],
+};
+const hasS3 = Object.values(s3Env).every(Boolean);
 
 type SeoDoc = {
   title?: string;
@@ -92,6 +102,23 @@ export default buildConfig({
     fallback: true,
   },
   plugins: [
+    // Vercel's filesystem is read-only, so production media lives in MinIO (S3-compatible).
+    // Without the S3_* env (local dev) uploads stay in ./media. Files are served through
+    // /api/media/file/…, so the bucket can stay private.
+    s3Storage({
+      enabled: hasS3,
+      collections: { media: true },
+      bucket: s3Env.bucket ?? '',
+      config: {
+        endpoint: s3Env.endpoint,
+        region: process.env['S3_REGION'] || 'us-east-1',
+        forcePathStyle: true, // MinIO serves buckets by path, not subdomain
+        credentials: {
+          accessKeyId: s3Env.accessKeyId ?? '',
+          secretAccessKey: s3Env.secretAccessKey ?? '',
+        },
+      },
+    }),
     seoPlugin({
       // The site appends " · Sandpiper" via its title template — don't repeat the brand here.
       generateTitle: ({ doc }: { doc: SeoDoc }) => doc.title ?? doc.name ?? 'Sandpiper',

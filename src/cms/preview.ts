@@ -1,4 +1,6 @@
-const SITE_URL = process.env['NEXT_PUBLIC_APP_URL'] ?? 'http://localhost:3000';
+import { appUrl } from '../config/app-url';
+
+const SITE_URL = appUrl ?? 'http://localhost:3000';
 
 /** Public path for a page slug — "home" maps to the site root. */
 export const pagePath = (slug: string | null | undefined): string =>
