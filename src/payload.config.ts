@@ -2,8 +2,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { seoPlugin } from '@payloadcms/plugin-seo';
-import { s3Storage } from '@payloadcms/storage-s3';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
@@ -32,14 +32,6 @@ const databaseUrl =
   process.env['DATABASE_URI'] || process.env['DATABASE_URL'] || process.env['POSTGRES_URL'] || '';
 // Hosted Postgres (Neon) refuses plaintext connections, even without `sslmode` in the URL.
 const isLocalDatabase = /@(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\//.test(databaseUrl);
-// MinIO turns on only once every S3_* value is set; a half-filled env keeps local storage.
-const s3Env = {
-  endpoint: process.env['S3_ENDPOINT'],
-  bucket: process.env['S3_BUCKET'],
-  accessKeyId: process.env['S3_ACCESS_KEY_ID'],
-  secretAccessKey: process.env['S3_SECRET_ACCESS_KEY'],
-};
-const hasS3 = Object.values(s3Env).every(Boolean);
 
 type SeoDoc = {
   title?: string;
@@ -102,22 +94,12 @@ export default buildConfig({
     fallback: true,
   },
   plugins: [
-    // Vercel's filesystem is read-only, so production media lives in MinIO (S3-compatible).
-    // Without the S3_* env (local dev) uploads stay in ./media. Files are served through
-    // /api/media/file/…, so the bucket can stay private.
-    s3Storage({
-      enabled: hasS3,
+    // Vercel's filesystem is read-only, so production media lives in Vercel Blob. Without
+    // BLOB_READ_WRITE_TOKEN (local dev) the plugin disables itself and uploads stay in ./media.
+    // Files are served through /api/media/file/…, same as local storage.
+    vercelBlobStorage({
       collections: { media: true },
-      bucket: s3Env.bucket ?? '',
-      config: {
-        endpoint: s3Env.endpoint,
-        region: process.env['S3_REGION'] || 'us-east-1',
-        forcePathStyle: true, // MinIO serves buckets by path, not subdomain
-        credentials: {
-          accessKeyId: s3Env.accessKeyId ?? '',
-          secretAccessKey: s3Env.secretAccessKey ?? '',
-        },
-      },
+      token: process.env['BLOB_READ_WRITE_TOKEN'],
     }),
     seoPlugin({
       // The site appends " · Sandpiper" via its title template — don't repeat the brand here.

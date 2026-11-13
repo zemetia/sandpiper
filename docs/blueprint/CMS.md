@@ -153,7 +153,7 @@ CMS pages render per request (`/` is `force-dynamic`, like `[...slug]`): a build
 
 ## Media storage
 
-Vercel's filesystem is read-only, so `media` uploads go to MinIO through `@payloadcms/storage-s3` (`forcePathStyle`) only when `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY_ID` and `S3_SECRET_ACCESS_KEY` are all set (`S3_REGION` optional) — a half-filled env keeps local storage. Files are served through Payload (`/api/media/file/…`), so the bucket can stay private. Otherwise (local dev) files stay in `./media`. Seeding production needs the S3 vars too, or the photos land on the seeding machine's disk.
+Vercel's filesystem is read-only, so `media` uploads go to Vercel Blob through `@payloadcms/storage-vercel-blob` whenever `BLOB_READ_WRITE_TOKEN` is set (Vercel sets it when a Blob store is connected to the project); without it the plugin disables itself and files stay in `./media`. Blobs are stored at the root under the Payload filename (no random suffix, no prefix — so no `prefix` column and no migration), and served through Payload (`/api/media/file/…`). Seeding production needs the token too, or the photos land on the seeding machine's disk. `npm run media:blob` (`scripts/upload-media-to-blob.mjs`) pushes the seed photos (original + every image size from `./media`) to Blob under the same names, so a seeded DB resolves them.
 
 `NEXT_PUBLIC_APP_URL` is read only through `src/config/app-url.ts` (`appUrl`): it adds a missing `https://` and falls back to `VERCEL_PROJECT_PRODUCTION_URL`. A scheme-less value used to crash every page's `generateMetadata` (`Invalid URL`).
 

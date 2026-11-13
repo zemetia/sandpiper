@@ -1,6 +1,6 @@
 // `npm run seed:direct` — seeds an empty site straight into the database, no running app needed.
 // Use it for production (Vercel + Neon): set DATABASE_URI (it wins over DATABASE_URL in .env),
-// S3_* (MinIO) and SEED_ADMIN_* to the production values, then run it from your machine.
+// BLOB_READ_WRITE_TOKEN (Vercel Blob) and SEED_ADMIN_* to the production values, then run it from your machine.
 // Production mode stops the dev schema push (which would mark the DB) and runs pending migrations.
 Object.assign(process.env, { NODE_ENV: 'production' });
 
@@ -21,12 +21,8 @@ if (totalDocs > 0) {
   await exit(1);
 }
 
-if (
-  !['S3_ENDPOINT', 'S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'].every(
-    (k) => process.env[k],
-  )
-) {
-  console.warn('S3_* is not fully set — photos go to ./media, which Vercel cannot serve.');
+if (!process.env['BLOB_READ_WRITE_TOKEN']) {
+  console.warn('BLOB_READ_WRITE_TOKEN is not set — photos go to ./media, which Vercel cannot serve.');
 }
 
 try {
